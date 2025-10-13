@@ -1,0 +1,97 @@
+<nav class="navbar navbar-expand-lg navbar-dark bg-dark sticky-top animate__animated animate__fadeInDown">
+  <div class="container-fluid">
+    <!-- Logo o Nombre de la App -->
+    <a class="navbar-brand d-flex align-items-center" href="#">
+      <span class="material-symbols-outlined me-2" style="font-size: 32px; color: #50fa7b;">
+        pets
+      </span>
+      <strong class="fs-4">VetFront</strong>
+    </a>
+
+    <!-- Botón para pantallas móviles -->
+    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+      <span class="navbar-toggler-icon"></span>
+    </button>
+
+    <!-- Enlaces de Navegación -->
+    <div class="collapse navbar-collapse" id="navbarNav">
+      <ul class="navbar-nav ms-auto">
+        <li class="nav-item">
+          <a class="nav-link active" aria-current="page" href="#">Inicio</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" href="#">Citas</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" href="#">Servicios</a>
+        </li>
+        <li class="nav-item">
+          <button class="btn btn-outline-light ms-lg-3">
+            <span class="material-symbols-outlined align-middle me-1">
+              login
+            </span>
+            Acceder
+          </button>
+        </li>
+      </ul>
+    </div>
+  </div>
+</nav>
+
+<div class="d-flex justify-content-center align-items-center min-vh-100 py-5 animate__animated animate__fadeIn">
+  <!-- Tarjeta de Login (Card de Bootstrap) -->
+  <div class="card shadow-lg p-4" style="max-width: 420px; width: 90%;">
+    <div class="card-body">
+      <!-- Icono y Título -->
+      <div class="text-center mb-4">
+        <span class="material-symbols-outlined display-3 text-primary">
+          lock
+        </span>
+        <h3 class="card-title fw-bold mt-2">Acceso a VetFront</h3>
+        <p class="text-muted">Ingresa tus credenciales para continuar.</p>
+      </div>
+
+      <!-- Formulario (Maquetado HTML puro) -->
+      <form>
+        <!-- Campo Correo Electrónico -->
+        <div class="mb-3">
+          <label for="inputEmail" class="form-label">Correo Electrónico</label>
+          <div class="input-group">
+            <span class="input-group-text">
+              <span class="material-symbols-outlined" style="font-size: 18px;">mail</span>
+            </span>
+            <input type="email" class="form-control" id="inputEmail" placeholder="nombre@ejemplo.com" required>
+          </div>
+        </div>
+
+        <!-- Campo Contraseña -->
+        <div class="mb-3">
+          <label for="inputPassword" class="form-label">Contraseña</label>
+          <div class="input-group">
+            <span class="input-group-text">
+              <span class="material-symbols-outlined" style="font-size: 18px;">vpn_key</span>
+            </span>
+            <input type="password" class="form-control" id="inputPassword" placeholder="••••••••" required>
+          </div>
+        </div>
+
+        <!-- Checkbox 'Recordarme' -->
+        <div class="mb-4 form-check">
+          <input type="checkbox" class="form-check-input" id="checkRemember">
+          <label class="form-check-label" for="checkRemember">Recordarme</label>
+        </div>
+
+        <!-- Botón de Acceso -->
+        <button type="button" class="btn btn-primary w-100 mb-3" (click)="ingresar()">
+          <span class="material-symbols-outlined align-middle me-1">login</span>
+          Ingresar
+        </button>
+
+        <!-- Enlace de 'Olvidé mi contraseña' -->
+        <p class="text-center">
+          <a href="#" class="text-primary text-decoration-none">¿Olvidaste tu contraseña?</a>
+        </p>
+      </form>
+    </div>
+  </div>
+</div>

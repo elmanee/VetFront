@@ -1,0 +1,80 @@
+<!--
+  Navbar de Bootstrap:
+  - Usamos 'bg-primary' para el color azul.
+  - Usamos 'navbar-expand-lg' para que se expanda en pantallas grandes.
+-->
+<nav class="navbar navbar-expand-lg navbar-dark bg-dark sticky-top animate__animated animate__fadeInDown">
+  <div class="container-fluid">
+    <!-- Logo o Nombre de la App -->
+    <a class="navbar-brand d-flex align-items-center" href="#">
+      <span class="material-symbols-outlined me-2" style="font-size: 32px; color: #50fa7b;">
+        pets
+      </span>
+      <strong class="fs-4">VetFront</strong>
+    </a>
+
+    <!-- Botón para pantallas móviles -->
+    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+      <span class="navbar-toggler-icon"></span>
+    </button>
+
+    <!-- Enlaces de Navegación -->
+    <div class="collapse navbar-collapse" id="navbarNav">
+      <ul class="navbar-nav ms-auto">
+        <li class="nav-item">
+          <a class="nav-link active" aria-current="page" href="#">Inicio</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" href="#">Citas</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" href="#">Servicios</a>
+        </li>
+        <li class="nav-item">
+          <!-- Este botón ahora podría ser un botón de "Cerrar Sesión" en un dashboard -->
+          <button class="btn btn-outline-light ms-lg-3">
+            <span class="material-symbols-outlined align-middle me-1">
+              logout
+            </span>
+            Cerrar Sesión
+          </button>
+        </li>
+      </ul>
+    </div>
+  </div>
+</nav>
+
+<!--
+  Contenido Principal: Dashboard de Bienvenida
+  - Usamos 'container-fluid' para que ocupe todo el ancho.
+  - min-vh-100 para asegurar que, incluso si el contenido es corto,
+    el dashboard ocupe al menos toda la altura de la pantalla (menos el navbar).
+  - pt-4 para dar un poco de padding superior.
+-->
+<div class="container-fluid min-vh-100 pt-4 animate__animated animate__fadeIn">
+  <div class="row">
+    <!-- Contenido Principal Centrado -->
+    <div class="col-12">
+
+      <!-- Tarjeta o Alerta de Bienvenida (estilo Bootstrap) -->
+      <div class="alert alert-success p-5 shadow-sm text-center" role="alert">
+        <h1 class="display-4 fw-bold text-success-emphasis">
+          <span class="material-symbols-outlined display-3 align-middle me-2">waving_hand</span>
+          ¡Bienvenido/a al Dashboard de VetFront!
+        </h1>
+        <p class="lead mt-3 mb-4 text-secondary">
+          Tu plataforma de gestión veterinaria está lista. Utiliza el menú superior para navegar.
+        </p>
+
+        <!-- Botón de Acción -->
+        <a href="#" class="btn btn-outline-success btn-lg">
+          <span class="material-symbols-outlined align-middle me-2">calendar_month</span>
+          Ir a Citas Programadas
+        </a>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- Puedes añadir aquí filas con estadísticas o accesos rápidos si lo necesitas -->
+</div>
