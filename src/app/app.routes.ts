@@ -14,12 +14,16 @@ export const routes: Routes = [
     path: 'login',
     component: LoginComponent,
     title: 'Pet Health+'
-  }
-  ,
+  },
   {
     path: 'dashboard',
     component: DasboardComponent,
     title: 'Dasboard'
+  },
+  {
+    path: 'invetario',
+    component: InicioComponent,
+    title: 'Inventario'
   }
 
 
