@@ -1,18 +1,18 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 
-import { InventarioComponent } from './inventario.component';
+import { CitaFormComponent } from './cita-form.component';
 
-describe('InventarioComponent', () => {
-  let component: InventarioComponent;
-  let fixture: ComponentFixture<InventarioComponent>;
+describe('CitaFormComponent', () => {
+  let component: CitaFormComponent;
+  let fixture: ComponentFixture<CitaFormComponent>;
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [InventarioComponent]
+      imports: [CitaFormComponent]
     })
     .compileComponents();
 
-    fixture = TestBed.createComponent(InventarioComponent);
+    fixture = TestBed.createComponent(CitaFormComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();
   });
