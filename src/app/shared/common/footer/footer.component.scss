@@ -1,3 +1,103 @@
+// /home/agus/Documentos/VetHealth/VetFront/src/app/shared/common/footer/footer.component.scss
+
 :host {
   display: block;
+}
+
+$primary-color: #FFD95A;
+$dark-bg: #1a1a1a;
+
+.footer-main {
+  background-color: $dark-bg;
+  margin-top: auto;
+}
+
+.footer-brand {
+  h3 {
+    font-size: 1.75rem;
+    letter-spacing: -0.5px;
+  }
+}
+
+.footer-title {
+  color: $primary-color;
+  font-weight: 700;
+  font-size: 1rem;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.footer-links {
+  li {
+    margin-bottom: 0.75rem;
+
+    a {
+      color: #adb5bd;
+      text-decoration: none;
+      font-size: 0.9rem;
+      transition: all 0.2s ease;
+      display: inline-block;
+
+      &:hover {
+        color: $primary-color;
+        transform: translateX(4px);
+      }
+    }
+  }
+}
+
+.contact-info {
+  li {
+    color: #adb5bd;
+    font-size: 0.9rem;
+    display: flex;
+    align-items: center;
+
+    i {
+      font-size: 1rem;
+    }
+  }
+}
+
+.social-links {
+  .social-link {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 2.5rem;
+    height: 2.5rem;
+    border-radius: 50%;
+    background-color: rgba(255, 255, 255, 0.1);
+    color: #adb5bd;
+    font-size: 1.1rem;
+    transition: all 0.3s ease;
+
+    &:hover {
+      background-color: $primary-color;
+      color: $dark-bg;
+      transform: translateY(-4px);
+    }
+  }
+}
+
+.border-secondary {
+  border-color: rgba(255, 255, 255, 0.1) !important;
+}
+
+@media (max-width: 768px) {
+  .footer-main {
+    text-align: center;
+
+    .footer-links,
+    .contact-info {
+      li a,
+      li {
+        justify-content: center;
+      }
+    }
+
+    .social-links {
+      justify-content: center;
+    }
+  }
 }

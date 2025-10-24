@@ -1,3 +1,94 @@
+// /home/agus/Documentos/VetHealth/VetFront/src/app/home/inicio/inicio.component.scss
+
 :host {
   display: block;
+}
+
+$primary-color: #FFD95A;
+$secondary-color: #FFC040;
+$text-dark: #333333;
+$light-bg: #FFFBF5;
+
+.bg-warm-light {
+  background-color: $light-bg;
+}
+
+.hero-section {
+  padding-top: 3rem;
+  padding-bottom: 3rem;
+
+  .hero-content {
+    h1 {
+      line-height: 1.2;
+      letter-spacing: -1px;
+    }
+  }
+
+  .hero-image {
+    img {
+      max-width: 100%;
+      height: auto;
+    }
+  }
+}
+
+.services-section {
+  padding: 5rem 0;
+
+  .service-card {
+    background-color: $light-bg;
+    border-radius: 1rem;
+    border: 2px solid transparent;
+    transition: all 0.3s ease;
+
+    &:hover {
+      border-color: $primary-color;
+      transform: translateY(-8px);
+      box-shadow: 0 12px 24px rgba(0, 0, 0, 0.1);
+    }
+
+    .service-icon {
+      i {
+        font-size: 3rem;
+        color: $primary-color;
+      }
+    }
+  }
+}
+
+.cta-section {
+  background-color: $primary-color;
+}
+
+.btn-primary {
+  background-color: $primary-color;
+  border-color: $primary-color;
+  color: $text-dark;
+  transition: all 0.2s ease;
+  box-shadow: 0 4px 12px rgba(255, 217, 90, 0.4);
+
+  &:hover {
+    background-color: $secondary-color;
+    border-color: $secondary-color;
+    transform: translateY(-2px);
+  }
+}
+
+.btn-outline-dark {
+  border-width: 2px;
+  font-weight: 600;
+
+  &:hover {
+    transform: translateY(-2px);
+  }
+}
+
+@media (max-width: 991px) {
+  .hero-section {
+    text-align: center;
+
+    h1 {
+      font-size: 2.5rem;
+    }
+  }
 }

@@ -1,17 +1,144 @@
-@import url('https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css');
+// /home/agus/Documentos/VetHealth/VetFront/src/app/home/citas/solicitarcita/solicitarcita.component.scss
 
-.calendar-container {
-    padding: 1rem;
-    background-color: #f8f9fa; /* Fondo claro para el calendario */
-    border-radius: 0.5rem;
-    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+:host {
+  display: block;
 }
 
-// Estilos básicos para las citas en el calendario (ej. fondo de color)
-:host ::ng-deep .fc-event {
-    border-radius: 4px;
-    padding: 2px 5px;
-    font-size: 12px;
-    background-color: var(--bs-info); /* Color para indicar disponibilidad */
-    border: 1px solid var(--bs-info);
+$primary-color: #FFD95A;
+$light-bg: #FFFBF5;
+
+.bg-light {
+  background-color: $light-bg !important;
+}
+
+.legend-item {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.5rem 1rem;
+  background-color: #f8f9fa;
+  border-radius: 0.5rem;
+
+  .legend-color {
+    width: 1.25rem;
+    height: 1.25rem;
+    border-radius: 0.25rem;
+    display: inline-block;
+  }
+
+  .legend-text {
+    font-size: 0.9rem;
+    font-weight: 500;
+    color: #495057;
+  }
+}
+
+// Estilos para FullCalendar usando ::ng-deep
+:host ::ng-deep {
+  .fc {
+    font-family: 'Inter', sans-serif;
+  }
+
+  .fc-toolbar-title {
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: #333333;
+  }
+
+  .fc-button {
+    background-color: $primary-color !important;
+    border-color: $primary-color !important;
+    color: #333333 !important;
+    font-weight: 600;
+    text-transform: capitalize;
+
+    &:hover {
+      background-color: #FFC040 !important;
+      border-color: #FFC040 !important;
+    }
+
+    &:focus {
+      box-shadow: 0 0 0 0.2rem rgba(255, 217, 90, 0.5) !important;
+    }
+  }
+
+  .fc-button-active {
+    background-color: #FFC040 !important;
+    border-color: #FFC040 !important;
+  }
+
+  .fc-day-today {
+    background-color: rgba(255, 217, 90, 0.1) !important;
+  }
+
+  .fc-daygrid-day:hover {
+    background-color: rgba(255, 217, 90, 0.05);
+    cursor: pointer;
+  }
+
+  .fc-event {
+    border-radius: 0.25rem;
+    padding: 0.25rem;
+    font-size: 0.85rem;
+    font-weight: 500;
+    cursor: pointer;
+  }
+
+  .fc-col-header-cell {
+    background-color: #f8f9fa;
+    font-weight: 600;
+    text-transform: uppercase;
+    font-size: 0.85rem;
+    padding: 0.75rem 0;
+  }
+
+  .fc-daygrid-day-number {
+    padding: 0.5rem;
+    font-weight: 600;
+  }
+}
+
+.card {
+  border-radius: 1rem;
+}
+
+.shadow-sm {
+  box-shadow: 0 0.125rem 0.5rem rgba(0, 0, 0, 0.075) !important;
+}
+
+.btn-primary {
+  background-color: $primary-color;
+  border-color: $primary-color;
+  color: #333333;
+  transition: all 0.2s ease;
+
+  &:hover {
+    background-color: #FFC040;
+    border-color: #FFC040;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(255, 217, 90, 0.4);
+  }
+}
+
+@media (max-width: 768px) {
+  .legend-item {
+    font-size: 0.85rem;
+    padding: 0.4rem 0.75rem;
+
+    .legend-color {
+      width: 1rem;
+      height: 1rem;
+    }
+  }
+
+  :host ::ng-deep {
+    .fc-toolbar {
+      flex-direction: column;
+      gap: 1rem;
+    }
+
+    .fc-toolbar-title {
+      font-size: 1.25rem;
+    }
+  }
 }

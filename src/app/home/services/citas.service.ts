@@ -1,142 +1,173 @@
+// /home/agus/Documentos/VetHealth/VetFront/src/app/home/services/citas.service.ts
 import { Injectable } from '@angular/core';
-import { Observable, of, throwError } from 'rxjs'; // Usamos Observable para simular llamadas asíncronas (como un Backend real)
+import { HttpClient, HttpErrorResponse } from '@angular/common/http';
+import { Observable, throwError } from 'rxjs';
+import { catchError, tap, map } from 'rxjs/operators';
+import { environment } from '../../../environments/environment';
 
-// RQF01 - Interfaz de Datos: Define la estructura de una Cita
+// Interfaces existentes...
 export interface Cita {
-  id: number;
-  fecha: string; // Formato YYYY-MM-DD
-  hora: string; // Formato HH:MM
-  clienteId: number;
-  mascotaId: number;
-  veterinarioId: number;
+  id_cita?: number;
+  fecha_cita: string;
+  hora_cita: string;
+  cliente_id: number;
+  mascota_id: number | null;
+  veterinario_id: number;
+  animal_id: number;
   motivo: string;
-  telefonoContacto: string;
+  estado?: string;
+  created_at?: string;
+}
+
+export interface DatosCliente {
+  nombre_completo: string;
+  correo: string;
+  telefono: string;
+  direccion?: string;
+}
+
+export interface DatosCita {
+  fecha_cita: string;
+  hora_cita: string;
+  motivo: string;
+  animal_id: number;
+  mascota_id?: number | null;
+  veterinario_id?: number;
+}
+
+export interface ValidacionCliente {
+  existe: boolean;
+  cliente_id?: number;
+  nombre?: string;
+  telefono?: string;
+  mascotas?: Mascota[];
+}
+
+export interface Mascota {
+  id: number;
+  nombre: string;
+  especie?: string;
+  tipo_animal: string;
+  raza?: string;
+  edad?: number;
+  peso?: number;
+}
+
+export interface RegistroCitaRequest {
+  cliente: DatosCliente | { cliente_id: number };
+  cita: DatosCita;
+}
+
+export interface RespuestaBackend {
+  success?: boolean;
+  message: string;
+  data?: any;
+  status?: string;
+}
+
+// NUEVA INTERFAZ para reprogramar
+export interface ActualizarCitaRequest {
+  fecha_cita: string;
+  hora_cita: string;
+  veterinario_id?: number;
 }
 
 @Injectable({
   providedIn: 'root'
 })
 export class CitasService {
-  // RQF01 - Base de Datos Simulada: Almacenamiento local de citas para la demo
-  private citasRegistradas: Cita[] = [
-    // Ejemplo de una cita registrada que usaremos para probar la VALIDACIÓN DE DISPONIBILIDAD
-    {
-      id: 1,
-      fecha: '2025-10-25', // Fecha futura
-      hora: '10:00',
-      clienteId: 101,
-      mascotaId: 1,
-      veterinarioId: 1, // Dr. Torres
-      motivo: 'Revisión anual',
-      telefonoContacto: '5551234567'
-    }
-  ];
-  private nextId: number = 2; // Contador simple para nuevos IDs
+  private API_URL = `${environment.apiUrl}/citas`;
+  private CLIENTES_URL = `${environment.apiUrl}/clientes`;
 
-  constructor() {
-    console.log("CitasService: Capa de Lógica de Negocio iniciada.");
+  constructor(private http: HttpClient) {
+    console.log(`CitasService inicializado. API URL: ${this.API_URL}`);
   }
 
-  // =========================================================================
-  // RQF01 - ALCANCE: Funciones CRUD
-  // =========================================================================
-
-  /**
-   * Registra una nueva cita. Simula el envío de datos a la API REST.
-   * RQF01 - Salida Esperada: Citas registradas exitosamente con confirmación automática.
-   * @param nuevaCita Datos de la cita a registrar.
-   * @returns Observable<Cita> con la cita registrada.
-   */
-  registrarCita(nuevaCita: Omit<Cita, 'id'>): Observable<Cita> {
-    console.log("Servicio: Recibiendo solicitud de registro de cita.");
-
-    // Generación simple de ID
-    const citaConId: Cita = { ...nuevaCita, id: this.nextId++ };
-
-    // RQF01 - Base de Datos: Guardamos la cita en nuestra lista simulada.
-    this.citasRegistradas.push(citaConId);
-
-    // RQF01 - ALCANCE: Simulación de Confirmación Automatizada
-    // Esto se haría en la capa de Backend (Node.js), pero lo simulamos aquí
-    // para cumplir con la funcionalidad de la arquitectura.
-    this.enviarConfirmacionAutomatica(citaConId);
-
-    // Devolvemos la cita registrada como si viniera del Backend.
-    return of(citaConId);
+  validarCliente(correo: string): Observable<ValidacionCliente> {
+    console.log(`[SERVICIO] Validando cliente con correo: ${correo}`);
+    
+    return this.http.get<RespuestaBackend>(`${this.CLIENTES_URL}/validar/${correo}`)
+      .pipe(
+        map(response => {
+          console.log('[SERVICIO] Respuesta de validación recibida:', response);
+          return response.data as ValidacionCliente;
+        }),
+        catchError(this.manejarError)
+      );
   }
 
-  /**
-   * Obtiene la lista completa de citas registradas.
-   * RQF01 - Alcance: Usado por la Agenda del Veterinario/Recepcionista.
-   * @returns Observable<Cita[]> con todas las citas.
-   */
+  registrarCita(datos: RegistroCitaRequest): Observable<RespuestaBackend> {
+    console.log('[SERVICIO] Enviando datos para registrar cita:', datos);
+    
+    return this.http.post<RespuestaBackend>(this.API_URL, datos)
+      .pipe(
+        tap((respuesta) => {
+          console.log('[SERVICIO] Cita registrada con éxito:', respuesta);
+        }),
+        catchError(this.manejarError)
+      );
+  }
+
   obtenerTodasLasCitas(): Observable<Cita[]> {
-    console.log("Servicio: Entregando todas las citas para la Agenda.");
-    // Devolvemos una copia para evitar modificación directa.
-    return of([...this.citasRegistradas]);
+    console.log('[SERVICIO] Obteniendo todas las citas de la base de datos...');
+    
+    return this.http.get<RespuestaBackend>(this.API_URL)
+      .pipe(
+        map(response => {
+          const citas = response.data as Cita[];
+          console.log(`[SERVICIO] Se obtuvieron ${citas?.length || 0} citas`);
+          return citas || [];
+        }),
+        catchError(this.manejarError)
+      );
   }
 
-  // =========================================================================
-  // RQF01 - VALIDACIONES Y LÓGICA DE NEGOCIO
-  // =========================================================================
+  // NUEVO: Reprogramar una cita
+  reprogramarCita(idCita: number, datos: ActualizarCitaRequest): Observable<RespuestaBackend> {
+    console.log(`[SERVICIO] Reprogramando cita ID: ${idCita}`, datos);
+    
+    return this.http.put<RespuestaBackend>(`${this.API_URL}/${idCita}`, datos)
+      .pipe(
+        tap((respuesta) => {
+          console.log('[SERVICIO] Cita reprogramada con éxito:', respuesta);
+        }),
+        catchError(this.manejarError)
+      );
+  }
 
-  /**
-   * RQF01 - VALIDACIÓN: Verifica la disponibilidad de horarios para evitar superposición.
-   * RQF01 - VALIDACIÓN: Verifica la disponibilidad del veterinario asignado.
-   * @param fecha Fecha solicitada.
-   * @param hora Hora solicitada.
-   * @param veterinarioId ID del veterinario asignado.
-   * @returns true si está disponible, false si hay conflicto.
-   */
-  verificarDisponibilidad(fecha: string, hora: string, veterinarioId: number): boolean {
-    console.log(`Servicio: Verificando disponibilidad para Vet ID ${veterinarioId} en ${fecha} a las ${hora}.`);
+  // NUEVO: Cancelar una cita
+  cancelarCita(idCita: number): Observable<RespuestaBackend> {
+    console.log(`[SERVICIO] Cancelando cita ID: ${idCita}`);
+    
+    return this.http.delete<RespuestaBackend>(`${this.API_URL}/${idCita}`)
+      .pipe(
+        tap((respuesta) => {
+          console.log('[SERVICIO] Cita cancelada con éxito:', respuesta);
+        }),
+        catchError(this.manejarError)
+      );
+  }
 
-    const citaExistente = this.citasRegistradas.find(cita => {
-      // RQF01 - Lógica: Busca si existe una cita en la MISMA fecha, hora Y veterinario.
-      const conflictoMismoVeterinario = cita.veterinarioId === veterinarioId;
-      const conflictoMismaFecha = cita.fecha === fecha;
-      const conflictoMismaHora = cita.hora === hora;
-
-      // Si las tres condiciones se cumplen, hay un CONFLICTO DE SUPERPOSICIÓN.
-      return conflictoMismoVeterinario && conflictoMismaFecha && conflictoMismaHora;
-    });
-
-    // RQF01 - Salida: Si encontró una cita, devuelve false (NO disponible).
-    if (citaExistente) {
-      console.warn(`Servicio: ¡CONFLITO DETECTADO! Cita ID ${citaExistente.id} ya ocupa el horario.`);
-      return false;
+  private manejarError(error: HttpErrorResponse) {
+    let mensajeError = 'Ocurrió un error desconocido.';
+    
+    if (error.error instanceof ErrorEvent) {
+      mensajeError = `Error de red: ${error.error.message}`;
+    } else {
+      if (error.status === 409) {
+        mensajeError = error.error.message || 'Ya existe una cita en ese horario';
+      } else if (error.status === 400) {
+        mensajeError = error.error.message || 'Los datos enviados son inválidos';
+      } else if (error.status === 404) {
+        mensajeError = error.error.message || 'Cita no encontrada';
+      } else if (error.status === 500) {
+        mensajeError = error.error.message || 'Error en el servidor';
+      } else {
+        mensajeError = `Error ${error.status}: ${error.error.message || error.statusText}`;
+      }
     }
-
-    // Si no encontró conflictos, devuelve true (DISPONIBLE).
-    console.log("Servicio: Horario y veterinario disponibles. Validación OK.");
-    return true;
+    
+    console.error('[SERVICIO] Error:', mensajeError);
+    return throwError(() => new Error(mensajeError));
   }
-
-  // =========================================================================
-  // RQF01 - NOTIFICACIONES (Simulación)
-  // =========================================================================
-
-  /**
-   * Simula el envío de una confirmación automática al cliente.
-   * RQF01 - ALCANCE: Cliente puede solicitar citas y recibir confirmaciones automatizadas.
-   * @param cita La cita que se acaba de registrar.
-   */
-  private enviarConfirmacionAutomatica(cita: Cita): void {
-    const mensaje = `[VETFRONT] Cita confirmada. Cliente ID ${cita.clienteId}, Mascota ID ${cita.mascotaId}. Veterinario: ${cita.veterinarioId} el ${cita.fecha} a las ${cita.hora}. Contacto: ${cita.telefonoContacto}.`;
-
-    // RQF01 - Salida Esperada: Se envían confirmaciones automáticas por SMS o Gmail.
-    console.info("---------------------------------------------------------------------");
-    console.info(`SIMULACIÓN DE ENVÍO DE NOTIFICACIÓN AUTOMÁTICA (RQF01):`);
-    console.info(`Teléfono/Email: ${cita.telefonoContacto}`);
-    console.info(`Mensaje: ${mensaje}`);
-    console.info("---------------------------------------------------------------------");
-  }
-
-  // Simulación del sistema de recordatorios (RQF01: Recordatorio 24 horas)
-  private generarRecordatorio() {
-    // NOTA: Esta lógica se ejecutaría en un CRON JOB o Tarea Programada en el Backend (Node.js)
-    // para revisar las citas y enviar el recordatorio 24 horas antes, no en el Frontend.
-  }
-
-  
 }

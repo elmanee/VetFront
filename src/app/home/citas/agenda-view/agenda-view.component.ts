@@ -1,91 +1,236 @@
-import { Component } from '@angular/core';
-import { FiltradoPorId } from '../../pipes/filtrado-por-id.pipe';
-import { FormsModule } from '@angular/forms';
+// /home/agus/Documentos/VetHealth/VetFront/src/app/home/citas/agenda-view/agenda-view.component.ts
+import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { Cita, CitasService } from '../../services/citas.service';
+import { FormsModule } from '@angular/forms';
+import { Cita, CitasService, ActualizarCitaRequest } from '../../services/citas.service';
+import Swal from 'sweetalert2';
 
 @Component({
   selector: 'app-agenda-view',
-  imports: [CommonModule, FormsModule, FiltradoPorId],
+  standalone: true,
+  imports: [CommonModule, FormsModule],
   templateUrl: './agenda-view.component.html',
   styleUrl: './agenda-view.component.scss'
 })
-export class AgendaViewComponent {
-
-  // RQF01 - DATOS DE SELECCIÓN MÍNIMOS: Listas necesarias para que el 'filtradoPorId' funcione.
-  // NOTA: Estos se reemplazarán por llamadas a la API en la capa de Backend.
+export class AgendaViewComponent implements OnInit {
+  
   veterinarios: { id: number, nombre: string }[] = [
-    { id: 1, nombre: 'Dr. Torres' },
-    { id: 2, nombre: 'Dra. Pérez' }
+    { id: 1, nombre: 'Dr. Juan Pérez' },
+    { id: 2, nombre: 'Dra. María García' }
   ];
-  clientes: { id: number, nombre: string }[] = [
-    { id: 101, nombre: 'Cliente 101' },
-    { id: 102, nombre: 'Cliente 102' }
-  ];
-  mascotas: { id: number, nombre: string }[] = [
-    { id: 1, nombre: 'Mascota 1' },
-    { id: 2, nombre: 'Mascota 2' }
-  ];
-
-  // RQF01 - ALCANCE: Lista que contendrá las citas filtradas para la vista.
+  
   citasAgenda: Cita[] = [];
-
-    // Variables de Filtro (para simular la consulta diaria/semanal).
-  // Los valores iniciales son para mostrar una agenda por defecto.
+  citasFiltradas: Cita[] = [];
+  
   veterinarioSeleccionadoId: number = 1;
-  fechaSeleccionada: string = new Date().toISOString().substring(0, 10); // Inicializa a la fecha de hoy
+  fechaSeleccionada: string = new Date().toISOString().substring(0, 10);
+  busquedaTexto: string = '';
+  
+  cargando: boolean = false;
+  mensaje: string = '';
+  mensajeClase: string = '';
 
-  // RQF01 - Evidencia de Arquitectura (Actividad 3): INYECCIÓN DEL SERVICIO.
-  // Conexión a la Capa de Lógica.
-  constructor(private citasService: CitasService) { }
+  mostrarModal: boolean = false;
+  citaSeleccionada: Cita | null = null;
+  accionModal: 'cancelar' | 'reprogramar' | null = null;
+  
+  nuevaFecha: string = '';
+  nuevaHora: string = '';
+
+  constructor(private citasService: CitasService) {
+    console.log('[AGENDA] Componente de agenda inicializado');
+  }
 
   ngOnInit(): void {
-    // RQF01 - Salida Esperada: Al cargar, se consulta la agenda.
+    console.log('[AGENDA] Cargando citas al iniciar...');
     this.cargarCitas();
   }
 
-    /**
-   * RQF01 - ALCANCE: Carga y filtra las citas usando el servicio.
-   * Esto simula la consulta a la agenda diaria/semanal.
-   */
   cargarCitas(): void {
-    console.log(`Agenda: Solicitando citas para el Vet ID ${this.veterinarioSeleccionadoId}.`);
-
-    // Llamada al servicio (simulando la consulta al backend)
+    this.cargando = true;
+    console.log(`[AGENDA] Buscando citas para Veterinario ID: ${this.veterinarioSeleccionadoId}, Fecha: ${this.fechaSeleccionada}`);
+    
     this.citasService.obtenerTodasLasCitas().subscribe({
-      next: (citas) => {
-        // RQF01 - Lógica: Filtramos las citas por Veterinario y Fecha seleccionados.
-        this.citasAgenda = citas.filter(cita =>
-          cita.veterinarioId === this.veterinarioSeleccionadoId &&
-          cita.fecha === this.fechaSeleccionada
-        );
-        // RQF01 - Salida Esperada: Muestra cuántas citas se cargaron.
-        console.log(`Agenda cargada. Mostrando ${this.citasAgenda.length} citas.`);
+      next: (todasLasCitas) => {
+        console.log(`[AGENDA] Se recibieron ${todasLasCitas.length} citas del backend`);
+        
+        this.citasAgenda = todasLasCitas.filter(cita => {
+          let fechaCitaISO = cita.fecha_cita;
+          if (fechaCitaISO.includes('T')) {
+            fechaCitaISO = fechaCitaISO.split('T')[0];
+          }
+          
+          const coincideVeterinario = cita.veterinario_id === this.veterinarioSeleccionadoId;
+          const coincideFecha = fechaCitaISO === this.fechaSeleccionada;
+          
+          return coincideVeterinario && coincideFecha;
+        });
+        
+        this.citasAgenda.sort((a, b) => {
+          return a.hora_cita.localeCompare(b.hora_cita);
+        });
+        
+        this.citasFiltradas = [...this.citasAgenda];
+        this.cargando = false;
+        
+        console.log(`[AGENDA] Después del filtro quedan ${this.citasAgenda.length} citas`);
       },
-      error: (err) => {
-        console.error('Error al cargar la agenda:', err);
+      error: (error) => {
+        console.error('[AGENDA] Error al cargar citas:', error.message);
         this.citasAgenda = [];
+        this.citasFiltradas = [];
+        this.cargando = false;
+        this.mensaje = 'Error al cargar las citas';
+        this.mensajeClase = 'error';
       }
     });
   }
 
-  /**
-   * RQF01 - ALCANCE: Simula la modificación o cancelación de una cita.
-   * @param cita Cita a gestionar.
-   * @param accion 'cancelar' o 'reprogramar'.
-   */
-  gestionarCita(cita: Cita, accion: 'cancelar' | 'reprogramar'): void {
-    console.log(`RQF01 - ALCANCE: Iniciando acción de ${accion} para Cita ID ${cita.id}.`);
+  filtrarCitas(): void {
+    if (!this.busquedaTexto.trim()) {
+      this.citasFiltradas = [...this.citasAgenda];
+      return;
+    }
 
-    // NOTA: En un desarrollo real, aquí se llamaría a:
-    // this.citasService.modificarCita(cita) o this.citasService.cancelarCita(cita.id)
+    const busqueda = this.busquedaTexto.toLowerCase();
+    this.citasFiltradas = this.citasAgenda.filter(cita => 
+      cita.motivo.toLowerCase().includes(busqueda) ||
+      cita.hora_cita.includes(busqueda)
+    );
+  }
 
-    // Usamos console.info en lugar de alert() para seguir las buenas prácticas.
-    console.info(`SIMULACIÓN: Se ha solicitado la acción '${accion}' para la cita ID ${cita.id}. Notificación enviada al Backend.`);
-
-    // Recargamos la agenda para reflejar cambios (simulando que el backend actualizó los datos).
+  verHoy(): void {
+    this.fechaSeleccionada = new Date().toISOString().substring(0, 10);
     this.cargarCitas();
   }
 
+  cambiarFecha(dias: number): void {
+    const fecha = new Date(this.fechaSeleccionada);
+    fecha.setDate(fecha.getDate() + dias);
+    this.fechaSeleccionada = fecha.toISOString().substring(0, 10);
+    this.cargarCitas();
+  }
 
+  abrirModal(cita: Cita, accion: 'cancelar' | 'reprogramar'): void {
+    this.citaSeleccionada = cita;
+    this.accionModal = accion;
+    this.mostrarModal = true;
+    
+    if (accion === 'reprogramar') {
+      let fechaCitaISO = cita.fecha_cita;
+      if (fechaCitaISO.includes('T')) {
+        fechaCitaISO = fechaCitaISO.split('T')[0];
+      }
+      this.nuevaFecha = fechaCitaISO;
+      this.nuevaHora = cita.hora_cita;
+    }
+  }
+
+  cerrarModal(): void {
+    this.mostrarModal = false;
+    this.citaSeleccionada = null;
+    this.accionModal = null;
+    this.nuevaFecha = '';
+    this.nuevaHora = '';
+  }
+
+  // ACTUALIZADO: Ahora hace la llamada REAL al backend
+confirmarCancelar(): void {
+  if (!this.citaSeleccionada || !this.citaSeleccionada.id_cita) return;
+  
+  Swal.fire({
+    title: '¿Cancelar cita?',
+    text: "Esta acción no se puede deshacer",
+    icon: 'warning',
+    showCancelButton: true,
+    confirmButtonColor: '#dc3545',
+    cancelButtonColor: '#6c757d',
+    confirmButtonText: 'Sí, cancelar',
+    cancelButtonText: 'No'
+  }).then((result) => {
+    if (result.isConfirmed) {
+      this.cargando = true;
+      
+      this.citasService.cancelarCita(this.citaSeleccionada!.id_cita!).subscribe({
+        next: (response) => {
+          this.cargando = false;
+          
+          Swal.fire({
+            title: '¡Cancelada!',
+            text: response.message,
+            icon: 'success',
+            timer: 2000
+          });
+          
+          this.cerrarModal();
+          this.cargarCitas();
+        },
+        error: (err: Error) => {
+          this.cargando = false;
+          Swal.fire({
+            title: 'Error',
+            text: err.message,
+            icon: 'error'
+          });
+        }
+      });
+    }
+  });
+}
+
+  // ACTUALIZADO: Ahora hace la llamada REAL al backend
+  confirmarReprogramar(): void {
+    if (!this.citaSeleccionada || !this.citaSeleccionada.id_cita || !this.nuevaFecha || !this.nuevaHora) {
+      this.mensaje = 'Completa la nueva fecha y hora';
+      this.mensajeClase = 'error';
+      return;
+    }
+    
+    console.log(`[AGENDA] Reprogramando cita ID: ${this.citaSeleccionada.id_cita}`);
+    console.log(`[AGENDA] Nueva fecha: ${this.nuevaFecha}, Nueva hora: ${this.nuevaHora}`);
+    
+    this.cargando = true;
+    
+    const datos: ActualizarCitaRequest = {
+      fecha_cita: this.nuevaFecha,
+      hora_cita: this.nuevaHora,
+      veterinario_id: this.citaSeleccionada.veterinario_id
+    };
+    
+    this.citasService.reprogramarCita(this.citaSeleccionada.id_cita, datos).subscribe({
+      next: (response) => {
+        this.cargando = false;
+        this.mensaje = response.message || 'Cita reprogramada exitosamente';
+        this.mensajeClase = 'success';
+        
+        setTimeout(() => {
+          this.cerrarModal();
+          this.cargarCitas();
+        }, 2000);
+      },
+      error: (err: Error) => {
+        this.cargando = false;
+        this.mensaje = `Error: ${err.message}`;
+        this.mensajeClase = 'error';
+      }
+    });
+  }
+
+  getEstadoBadgeClass(estado: string): string {
+    switch(estado) {
+      case 'Confirmada': return 'badge-success';
+      case 'Pendiente': return 'badge-warning';
+      case 'Cancelada': return 'badge-danger';
+      default: return 'badge-secondary';
+    }
+  }
+
+  getEstadoCardClass(estado: string): string {
+    switch(estado) {
+      case 'Confirmada': return 'border-success';
+      case 'Pendiente': return 'border-warning';
+      case 'Cancelada': return 'border-danger';
+      default: return 'border-secondary';
+    }
+  }
 }
