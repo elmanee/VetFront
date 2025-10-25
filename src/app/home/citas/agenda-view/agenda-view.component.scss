@@ -1,0 +1,101 @@
+// /home/agus/Documentos/VetHealth/VetFront/src/app/home/citas/agenda-view/agenda-view.component.scss
+
+:host {
+  display: block;
+}
+
+$primary-color: #FFD95A;
+$secondary-color: #FFC040;
+$text-dark: #333333;
+$light-bg: #FFFBF5;
+
+.bg-light {
+  background-color: $light-bg !important;
+}
+
+// Tarjetas de citas
+.cita-card {
+  border-left: 4px solid $primary-color;
+  transition: all 0.3s ease;
+
+  &:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.15) !important;
+  }
+
+  &.border-success {
+    border-left-color: #28a745;
+  }
+
+  &.border-warning {
+    border-left-color: #ffc107;
+  }
+
+  &.border-danger {
+    border-left-color: #dc3545;
+  }
+
+  .info-item {
+    display: flex;
+    align-items: center;
+    margin-bottom: 0.5rem;
+  }
+}
+
+// Badges
+.badge-success {
+  background-color: #28a745;
+  color: white;
+}
+
+.badge-warning {
+  background-color: #ffc107;
+  color: #000;
+}
+
+.badge-danger {
+  background-color: #dc3545;
+  color: white;
+}
+
+.badge-secondary {
+  background-color: #6c757d;
+  color: white;
+}
+
+// Botones
+.btn-primary {
+  background-color: $primary-color;
+  border-color: $primary-color;
+  color: $text-dark;
+  font-weight: 600;
+  transition: all 0.2s ease;
+
+  &:hover {
+    background-color: $secondary-color;
+    border-color: $secondary-color;
+    transform: translateY(-2px);
+  }
+}
+
+// Modal
+.modal.show {
+  background-color: rgba(0, 0, 0, 0.5);
+}
+
+.modal-content {
+  border-radius: 1rem;
+}
+
+// Cards de estadísticas
+.bg-primary {
+  background-color: $primary-color !important;
+  color: $text-dark !important;
+}
+
+// Responsive
+@media (max-width: 768px) {
+  .cita-card {
+    margin-bottom: 1rem;
+  }
+}

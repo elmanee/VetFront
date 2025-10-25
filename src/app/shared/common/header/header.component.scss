@@ -1,3 +1,128 @@
+// /home/agus/Documentos/VetHealth/VetFront/src/app/shared/common/header/header.component.scss
+
 :host {
   display: block;
+}
+
+$primary-color: #FFD95A;
+$text-dark: #333333;
+
+.header-main {
+  background-color: #ffffff;
+  z-index: 1030;
+}
+
+.navbar {
+  transition: all 0.3s ease;
+}
+
+.navbar-brand {
+  font-size: 1.5rem;
+  font-weight: 800;
+  color: $text-dark;
+  transition: all 0.2s ease;
+
+  &:hover {
+    opacity: 0.8;
+  }
+
+  .paw-icon {
+    font-size: 1.75rem;
+    display: inline-block;
+    animation: pulse-subtle 3s infinite ease-in-out;
+  }
+
+  .brand-text {
+    letter-spacing: -0.5px;
+  }
+}
+
+@keyframes pulse-subtle {
+  0%, 100% { 
+    transform: scale(1); 
+    opacity: 0.9;
+  }
+  50% { 
+    transform: scale(1.05); 
+    opacity: 1;
+  }
+}
+
+.nav-link {
+  color: #6c757d;
+  padding: 0.5rem 1rem;
+  transition: all 0.2s ease;
+  position: relative;
+
+  &:hover,
+  &.active {
+    color: $text-dark;
+  }
+
+  &::after {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    left: 50%;
+    width: 0;
+    height: 2px;
+    background-color: $primary-color;
+    transition: all 0.3s ease;
+    transform: translateX(-50%);
+  }
+
+  &:hover::after {
+    width: 80%;
+  }
+}
+
+.dropdown-menu {
+  border-radius: 0.75rem;
+  padding: 0.5rem;
+  margin-top: 0.5rem;
+
+  .dropdown-item {
+    border-radius: 0.5rem;
+    padding: 0.5rem 1rem;
+    font-size: 0.9rem;
+    transition: all 0.2s ease;
+
+    &:hover {
+      background-color: rgba(255, 217, 90, 0.1);
+      color: $text-dark;
+    }
+  }
+}
+
+.btn-primary {
+  background-color: $primary-color;
+  border-color: $primary-color;
+  color: $text-dark;
+  border-radius: 2rem;
+  transition: all 0.2s ease;
+  box-shadow: 0 2px 8px rgba(255, 217, 90, 0.3);
+
+  &:hover {
+    background-color: #FFC040;
+    border-color: #FFC040;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(255, 217, 90, 0.4);
+  }
+}
+
+.navbar-toggler {
+  &:focus {
+    box-shadow: none;
+  }
+}
+
+@media (max-width: 991px) {
+  .nav-link {
+    padding: 0.75rem 1rem;
+  }
+
+  .btn-primary {
+    width: 100%;
+    margin-top: 1rem;
+  }
 }
