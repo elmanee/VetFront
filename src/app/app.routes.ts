@@ -1,26 +1,25 @@
 import { Routes } from '@angular/router';
-import { InicioComponent } from './home/inicio/inicio.component';
+import { _DashboardComponent } from './components/dashboard/dashboard.component';
 import { LoginComponent } from './authentication/login/login.component';
-import { DasboardComponent } from './components/dasboard/dasboard.component';
 import { ErrorComponent } from './components/error/error.component';
-import { CitaFormComponent } from './home/citas/cita-form/cita-form.component';
-import { AgendaViewComponent } from './home/citas/agenda-view/agenda-view.component';
-import { SolicitarcitaComponent } from './home/citas/solicitarcita/solicitarcita.component';
+import { CitaFormComponent } from './components/home/citas/cita-form/cita-form.component';
+import { AgendaViewComponent } from './components/home/citas/agenda-view/agenda-view.component';
+import { SolicitarcitaComponent } from './components/home/citas/solicitarcita/solicitarcita.component';
 
 export const routes: Routes = [
   {
     path: '',
-    component: InicioComponent,
+    component: _DashboardComponent,
     title: 'Pet Health+'
   },
   {
-    path: 'login',
+  path: 'login',
     component: LoginComponent,
     title: 'Pet Health+'
   },
   {
     path: 'dashboard',
-    component: DasboardComponent,
+    component: _DashboardComponent,
     title: 'Dasboard'
   },
     // RQF01 - Rutas de Gestión de Citas (Para Recepcionista/Admin/Veterinario)

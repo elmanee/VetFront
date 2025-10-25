@@ -2,7 +2,7 @@
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { Cita, CitasService, ActualizarCitaRequest } from '../../services/citas.service';
+import { Cita, CitasService, ActualizarCitaRequest } from '../../../../services/citas.service';
 import Swal from 'sweetalert2';
 
 @Component({

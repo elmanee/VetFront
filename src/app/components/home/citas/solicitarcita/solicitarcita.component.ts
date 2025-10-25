@@ -8,7 +8,7 @@ import timeGridPlugin from '@fullcalendar/timegrid';
 import interactionPlugin from '@fullcalendar/interaction';
 import esLocale from '@fullcalendar/core/locales/es';
 
-import { CitasService, Cita } from '../../services/citas.service'; 
+import { CitasService, Cita } from '../../../../services/citas.service'; 
 import { Router } from '@angular/router';
 
 @Component({
