@@ -1,0 +1,402 @@
+<!-- /home/agus/Documentos/VetHealth/VetFront/src/app/home/citas/cita-form/cita-form.component.html -->
+<div class="container-fluid min-vh-100 bg-light py-5">
+  <div class="row justify-content-center">
+    <div class="col-12 col-lg-10 col-xl-8">
+      
+      <!-- Encabezado principal -->
+      <div class="text-center mb-5">
+        <h1 class="display-5 fw-bold text-dark mb-3">
+          Registro de Citas Veterinarias
+        </h1>
+        <p class="lead text-muted">
+          Agenda una consulta para tu mascota de forma rápida y sencilla
+        </p>
+      </div>
+
+      <!-- Indicador de pasos -->
+      <div class="progress-steps mb-5">
+        <div class="row g-0">
+          <div class="col-6">
+            <div class="step-item" [class.active]="paso === 1" [class.completed]="paso === 2">
+              <div class="step-number">1</div>
+              <div class="step-text">Validar Cliente</div>
+            </div>
+          </div>
+          <div class="col-6">
+            <div class="step-item" [class.active]="paso === 2">
+              <div class="step-number">2</div>
+              <div class="step-text">Agendar Cita</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Mensajes de estado -->
+      <div *ngIf="mensaje" class="alert alert-dismissible fade show mb-4" 
+           [ngClass]="{
+             'alert-success': mensajeClase === 'success',
+             'alert-danger': mensajeClase === 'error',
+             'alert-info': mensajeClase === 'info'
+           }"
+           role="alert">
+        <div class="d-flex align-items-center">
+          <i class="bi me-2" 
+             [ngClass]="{
+               'bi-check-circle-fill': mensajeClase === 'success',
+               'bi-exclamation-triangle-fill': mensajeClase === 'error',
+               'bi-info-circle-fill': mensajeClase === 'info'
+             }"></i>
+          <span>{{ mensaje }}</span>
+        </div>
+        <button type="button" class="btn-close" (click)="mensaje = ''" aria-label="Close"></button>
+      </div>
+
+      <!-- PASO 1: Validar Cliente -->
+      <div *ngIf="paso === 1" class="card border-0 shadow-sm">
+        <div class="card-body p-4 p-md-5">
+          <h3 class="h4 fw-bold text-dark mb-4">Paso 1: Ingresa tu correo electrónico</h3>
+          
+          <form (ngSubmit)="validarCliente()">
+            <div class="mb-4">
+              <label for="correo" class="form-label fw-semibold text-dark">
+                Correo Electrónico
+              </label>
+              <div class="input-group input-group-lg">
+                <span class="input-group-text bg-white border-end-0">
+                  <i class="bi bi-envelope"></i>
+                </span>
+                <input 
+                  type="email" 
+                  class="form-control border-start-0 ps-0" 
+                  id="correo"
+                  [(ngModel)]="correoCliente"
+                  name="correo"
+                  placeholder="ejemplo@correo.com"
+                  [disabled]="cargando"
+                  required>
+              </div>
+              <small class="form-text text-muted">
+                Verificaremos si ya tienes mascotas registradas con nosotros
+              </small>
+            </div>
+
+            <div class="d-grid">
+              <button 
+                type="submit"
+                class="btn btn-primary btn-lg fw-semibold"
+                [disabled]="cargando || !correoCliente">
+                <span *ngIf="!cargando">
+                  <i class="bi bi-search me-2"></i>Continuar
+                </span>
+                <span *ngIf="cargando">
+                  <span class="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>
+                  Validando...
+                </span>
+              </button>
+            </div>
+          </form>
+        </div>
+      </div>
+
+      <!-- PASO 2: Registrar Cita -->
+      <div *ngIf="paso === 2">
+        
+        <!-- Tarjeta de información del cliente -->
+        <div class="card border-0 shadow-sm mb-4" *ngIf="esClienteExistente">
+          <div class="card-body p-4 bg-success-subtle">
+            <div class="d-flex align-items-center">
+              <div class="flex-shrink-0">
+                <div class="avatar-circle bg-success text-white">
+                  <i class="bi bi-person-check-fill"></i>
+                </div>
+              </div>
+              <div class="flex-grow-1 ms-3">
+                <h5 class="mb-1 fw-bold text-dark">Cliente Registrado</h5>
+                <p class="mb-0 text-muted">
+                  Bienvenido de nuevo, {{ clienteValidado?.nombre }}
+                </p>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Tarjeta: Cliente Nuevo -->
+        <div class="card border-0 shadow-sm mb-4" *ngIf="!esClienteExistente">
+          <div class="card-body p-4 p-md-5">
+            <div class="d-flex align-items-center mb-4">
+              <div class="flex-shrink-0">
+                <div class="avatar-circle bg-primary text-white">
+                  <i class="bi bi-person-plus-fill"></i>
+                </div>
+              </div>
+              <div class="flex-grow-1 ms-3">
+                <h4 class="mb-1 fw-bold text-dark">Datos del Cliente</h4>
+                <p class="mb-0 text-muted">Complete la información para crear su perfil</p>
+              </div>
+            </div>
+
+            <div class="row g-3">
+              <div class="col-12">
+                <label for="nombre_completo" class="form-label fw-semibold">Nombre Completo</label>
+                <input 
+                  type="text" 
+                  class="form-control" 
+                  id="nombre_completo"
+                  [(ngModel)]="datosClienteNuevo.nombre_completo"
+                  placeholder="Juan Pérez García"
+                  required>
+              </div>
+
+              <div class="col-md-6">
+                <label for="correo_nuevo" class="form-label fw-semibold">Correo Electrónico</label>
+                <input 
+                  type="email" 
+                  class="form-control bg-light" 
+                  id="correo_nuevo"
+                  [(ngModel)]="datosClienteNuevo.correo"
+                  disabled>
+              </div>
+
+              <div class="col-md-6">
+                <label for="telefono" class="form-label fw-semibold">Teléfono</label>
+                <input 
+                  type="tel" 
+                  class="form-control" 
+                  id="telefono"
+                  [(ngModel)]="datosClienteNuevo.telefono"
+                  placeholder="4611234567"
+                  required>
+              </div>
+
+              <div class="col-12">
+                <label for="direccion" class="form-label fw-semibold">
+                  Dirección 
+                  <span class="text-muted fw-normal">(Opcional)</span>
+                </label>
+                <input 
+                  type="text" 
+                  class="form-control" 
+                  id="direccion"
+                  [(ngModel)]="datosClienteNuevo.direccion"
+                  placeholder="Calle Principal 123, Celaya">
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Tarjeta: Selección de Mascota (Solo para clientes existentes) -->
+        <div class="card border-0 shadow-sm mb-4" 
+             *ngIf="esClienteExistente && clienteValidado && clienteValidado.mascotas && clienteValidado.mascotas.length > 0">
+          <div class="card-body p-4 p-md-5">
+            <h4 class="fw-bold text-dark mb-3">Selecciona tu Mascota</h4>
+            <p class="text-muted mb-4">
+              ¿Traerás una mascota que ya tienes registrada o es una mascota nueva?
+            </p>
+
+            <div class="row g-3">
+              <div class="col-md-6 col-lg-4" *ngFor="let mascota of clienteValidado.mascotas">
+                <div class="mascota-card" 
+                     (click)="seleccionarMascota(mascota.id)"
+                     [class.selected]="datosCita.mascota_id === mascota.id">
+                  <div class="card-body text-center p-4">
+                    <div class="mascota-icon mb-3">
+                      <i class="bi bi-heart-fill"></i>
+                    </div>
+                    <h5 class="fw-bold mb-2">{{ mascota.nombre }}</h5>
+                    <p class="text-muted small mb-0">{{ mascota.tipo_animal }}</p>
+                    <div class="selected-indicator mt-3">
+                      <i class="bi bi-check-circle-fill"></i>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <div class="col-md-6 col-lg-4">
+                <div class="mascota-card mascota-nueva" 
+                     (click)="mascotaNueva()"
+                     [class.selected]="datosCita.mascota_id === null">
+                  <div class="card-body text-center p-4">
+                    <div class="mascota-icon mb-3">
+                      <i class="bi bi-plus-circle"></i>
+                    </div>
+                    <h5 class="fw-bold mb-2">Mascota Nueva</h5>
+                    <p class="text-muted small mb-0">Registrar nueva mascota</p>
+                    <div class="selected-indicator mt-3">
+                      <i class="bi bi-check-circle-fill"></i>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+
+        <!-- Tarjeta: Datos de la Cita -->
+<!-- Tarjeta: Datos de la Cita -->
+<div class="card border-0 shadow-sm mb-4">
+  <div class="card-body p-4 p-md-5">
+    <div class="d-flex align-items-center mb-4">
+      <div class="flex-shrink-0">
+        <div class="avatar-circle bg-warning text-white">
+          <i class="bi bi-calendar-check-fill"></i>
+        </div>
+      </div>
+      <div class="flex-grow-1 ms-3">
+        <h4 class="mb-1 fw-bold text-dark">Información de la Cita</h4>
+        <p class="mb-0 text-muted">Completa los detalles de la consulta</p>
+      </div>
+    </div>
+
+    <!-- Calendario Integrado -->
+    <div class="mb-4" *ngIf="calendarVisible">
+      <h5 class="fw-semibold text-dark mb-3">
+        <i class="bi bi-calendar3 me-2"></i>
+        Selecciona Fecha y Hora en el Calendario
+      </h5>
+      <div class="calendar-container-form">
+        <full-calendar [options]="calendarOptions"></full-calendar>
+      </div>
+      <div class="alert alert-info d-flex align-items-start mt-3 mb-0">
+        <i class="bi bi-info-circle-fill me-2 mt-1"></i>
+        <div>
+          <strong>Instrucciones:</strong>
+          <ul class="mb-0 mt-2 ps-3">
+            <li>Vista Mes: Haz clic en un día para seleccionarlo</li>
+            <li>Vista Semana/Día: Haz clic y arrastra para seleccionar fecha y hora (30 min)</li>
+            <li>Horario: Lunes a Sábado, 8:00 AM - 6:00 PM</li>
+            <li>Los espacios en rojo/amarillo/azul están ocupados</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+
+    <!-- Campos manuales -->
+    <div class="row g-3">
+      <div class="col-md-6">
+        <label for="fecha" class="form-label fw-semibold">
+          <i class="bi bi-calendar-date me-1"></i>
+          Fecha de la Cita
+        </label>
+        <input 
+          type="date" 
+          class="form-control" 
+          id="fecha"
+          [(ngModel)]="datosCita.fecha_cita"
+          (change)="onFechaChange()"
+          required>
+        <small class="form-text text-muted">
+          También puedes seleccionar en el calendario
+        </small>
+      </div>
+
+      <div class="col-md-6">
+        <label for="hora" class="form-label fw-semibold">
+          <i class="bi bi-clock me-1"></i>
+          Hora de la Cita
+        </label>
+        <select 
+          class="form-select" 
+          id="hora"
+          [(ngModel)]="datosCita.hora_cita"
+          (change)="onHoraChange()"
+          required>
+          <option value="">Seleccione una hora</option>
+          <option value="08:00">08:00 AM</option>
+          <option value="08:30">08:30 AM</option>
+          <option value="09:00">09:00 AM</option>
+          <option value="09:30">09:30 AM</option>
+          <option value="10:00">10:00 AM</option>
+          <option value="10:30">10:30 AM</option>
+          <option value="11:00">11:00 AM</option>
+          <option value="11:30">11:30 AM</option>
+          <option value="12:00">12:00 PM</option>
+          <option value="12:30">12:30 PM</option>
+          <option value="13:00">01:00 PM</option>
+          <option value="13:30">01:30 PM</option>
+          <option value="14:00">02:00 PM</option>
+          <option value="14:30">02:30 PM</option>
+          <option value="15:00">03:00 PM</option>
+          <option value="15:30">03:30 PM</option>
+          <option value="16:00">04:00 PM</option>
+          <option value="16:30">04:30 PM</option>
+          <option value="17:00">05:00 PM</option>
+          <option value="17:30">05:30 PM</option>
+        </select>
+        <small class="form-text text-muted">
+          Horario: 8:00 AM - 5:30 PM (intervalos de 30 min)
+        </small>
+      </div>
+
+      <div class="col-12">
+        <label for="animal" class="form-label fw-semibold">
+          <i class="bi bi-tag me-1"></i>
+          Tipo de Animal
+        </label>
+        <select 
+          class="form-select" 
+          id="animal" 
+          [(ngModel)]="datosCita.animal_id" 
+          [disabled]="mascotaSeleccionadaInfo !== null"
+          required>
+          <option value="0">Seleccione el tipo de animal</option>
+          <option *ngFor="let animal of animales" [value]="animal.id">
+            {{ animal.nombre }}
+          </option>
+        </select>
+        <small class="form-text text-muted" *ngIf="mascotaSeleccionadaInfo">
+          <i class="bi bi-lock-fill me-1"></i>
+          Auto-seleccionado según la mascota elegida
+        </small>
+      </div>
+
+      <div class="col-12">
+        <label for="motivo" class="form-label fw-semibold">
+          <i class="bi bi-file-text me-1"></i>
+          Motivo de la Consulta
+        </label>
+        <textarea 
+          class="form-control" 
+          id="motivo"
+          [(ngModel)]="datosCita.motivo"
+          rows="4"
+          placeholder="Ej: Vacunación anual, revisión general, síntomas específicos..."
+          required></textarea>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+
+
+
+        <!-- Botones de acción -->
+        <div class="d-flex gap-3 justify-content-between">
+          <button 
+            type="button"
+            class="btn btn-outline-secondary btn-lg"
+            (click)="volverPaso1()" 
+            [disabled]="cargando">
+            <i class="bi bi-arrow-left me-2"></i>Volver
+          </button>
+          
+          <button 
+            type="button"
+            class="btn btn-primary btn-lg flex-grow-1"
+            (click)="registrarCita()" 
+            [disabled]="cargando">
+            <span *ngIf="!cargando">
+              <i class="bi bi-check-circle me-2"></i>Registrar Cita
+            </span>
+            <span *ngIf="cargando">
+              <span class="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>
+              Registrando...
+            </span>
+          </button>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</div>

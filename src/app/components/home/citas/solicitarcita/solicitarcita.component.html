@@ -1,0 +1,86 @@
+<!-- /home/agus/Documentos/VetHealth/VetFront/src/app/home/citas/solicitarcita/solicitarcita.component.html -->
+<div class="container-fluid bg-light min-vh-100 py-5">
+  <div class="row justify-content-center">
+    <div class="col-12 col-xl-10">
+      
+      <!-- Encabezado -->
+      <div class="text-center mb-5">
+        <h1 class="display-5 fw-bold text-dark mb-3">
+          Solicitar Cita Veterinaria
+        </h1>
+        <p class="lead text-muted">
+          Selecciona una fecha disponible para agendar tu cita
+        </p>
+      </div>
+
+      <!-- Leyenda del calendario -->
+      <div class="card border-0 shadow-sm mb-4">
+        <div class="card-body">
+          <div class="d-flex flex-wrap justify-content-center gap-3">
+            <div class="legend-item">
+              <span class="legend-color bg-success"></span>
+              <span class="legend-text">Disponible</span>
+            </div>
+            <div class="legend-item">
+              <span class="legend-color bg-warning"></span>
+              <span class="legend-text">Ocupado - Pendiente</span>
+            </div>
+            <div class="legend-item">
+              <span class="legend-color bg-info"></span>
+              <span class="legend-text">Ocupado - Confirmado</span>
+            </div>
+            <div class="legend-item">
+              <span class="legend-color bg-danger"></span>
+              <span class="legend-text">No Disponible</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Calendario -->
+      <div class="card border-0 shadow-sm mb-4">
+        <div class="card-body p-4">
+          <div *ngIf="!calendarVisible" class="text-center py-5">
+            <div class="spinner-border text-primary" role="status">
+              <span class="visually-hidden">Cargando...</span>
+            </div>
+            <p class="text-muted mt-3">Cargando calendario de disponibilidad...</p>
+          </div>
+
+          <div *ngIf="calendarVisible" class="calendar-wrapper">
+            <full-calendar [options]="calendarOptions"></full-calendar>
+          </div>
+        </div>
+      </div>
+
+      <!-- Información de fecha seleccionada -->
+      <div class="card border-0 shadow-sm" *ngIf="fechaSeleccionada">
+        <div class="card-body p-4 text-center">
+          <h5 class="fw-bold text-dark mb-3">Fecha Seleccionada</h5>
+          <p class="lead mb-4">
+            <i class="bi bi-calendar-check text-primary me-2"></i>
+            <span class="fw-bold text-primary">{{ fechaSeleccionada }}</span>
+          </p>
+          <button 
+            class="btn btn-primary btn-lg px-5 fw-semibold"
+            (click)="solicitarFormulario()">
+            <i class="bi bi-arrow-right-circle me-2"></i>
+            Continuar al Formulario
+          </button>
+          <p class="text-muted small mt-3 mb-0">
+            Se verificará la disponibilidad final al registrar la cita
+          </p>
+        </div>
+      </div>
+
+      <!-- Mensaje cuando no hay fecha seleccionada -->
+      <div class="alert alert-info d-flex align-items-center" *ngIf="!fechaSeleccionada">
+        <i class="bi bi-info-circle-fill me-3 fs-4"></i>
+        <div>
+          <strong>Instrucciones:</strong> Haz clic en una fecha disponible en el calendario para continuar
+        </div>
+      </div>
+
+    </div>
+  </div>
+</div>
