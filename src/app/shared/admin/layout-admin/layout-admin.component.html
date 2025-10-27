@@ -1,0 +1,10 @@
+<div class="admin-layout">
+  <app-sidebar-admin></app-sidebar-admin>
+
+  <div class="admin-main" [class.collapsed]="isCollapsed">
+    <div class="admin-content">
+      <router-outlet></router-outlet>
+    </div>
+    <app-footer-admin></app-footer-admin>
+  </div>
+</div>

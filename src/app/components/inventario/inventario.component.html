@@ -1,0 +1,223 @@
+<div class="container-fluid inventario-container">
+  <div class="header-filtros-card">
+    <div class="row align-items-center mb-4">
+      <div class="col-md-6">
+        <h1 class="titulo-principal">
+          <i class="bi bi-box-seam"></i>
+          Inventario de Productos
+        </h1>
+      </div>
+      <div class="col-md-6 text-end">
+        <button class="btn btn-registrar" (click)="registrarProducto()">
+          <i class="bi bi-plus-circle"></i>
+          Registrar Producto
+        </button>
+      </div>
+    </div>
+
+    <div class="filtros-toggle-wrapper">
+      <button class="btn-toggle-filtros" (click)="toggleFiltros()">
+        <i class="bi bi-funnel"></i>
+        <span>Filtros de Búsqueda</span>
+        <i class="bi ms-auto" [class.bi-chevron-down]="!filtrosVisible" [class.bi-chevron-up]="filtrosVisible"></i>
+      </button>
+    </div>
+
+    <div class="filtros-body" *ngIf="filtrosVisible">
+      <div class="row g-3">
+        <div class="col-md-4 col-lg-2">
+          <label class="form-label">Nombre</label>
+          <input
+            type="text"
+            class="form-control"
+            placeholder="Buscar por nombre"
+            [(ngModel)]="filtros.nombre"
+            (input)="aplicarFiltros()">
+        </div>
+        <div class="col-md-4 col-lg-2">
+          <label class="form-label">Categoría</label>
+          <select
+            class="form-select"
+            [(ngModel)]="filtros.categoria"
+            (change)="aplicarFiltros()">
+            <option value="">Todas</option>
+            <option *ngFor="let cat of categorias" [value]="cat">{{cat}}</option>
+          </select>
+        </div>
+        <div class="col-md-4 col-lg-2">
+          <label class="form-label">Proveedor</label>
+          <select
+            class="form-select"
+            [(ngModel)]="filtros.proveedor"
+            (change)="aplicarFiltros()">
+            <option value="">Todos</option>
+            <option *ngFor="let prov of proveedores" [value]="prov">{{prov}}</option>
+          </select>
+        </div>
+        <div class="col-md-4 col-lg-2">
+          <label class="form-label">Lote</label>
+          <input
+            type="text"
+            class="form-control"
+            placeholder="Número de lote"
+            [(ngModel)]="filtros.lote"
+            (input)="aplicarFiltros()">
+        </div>
+        <div class="col-md-4 col-lg-2">
+          <label class="form-label">Fecha Vencimiento</label>
+          <input
+            type="date"
+            class="form-control"
+            [(ngModel)]="filtros.fechaVencimiento"
+            (change)="aplicarFiltros()">
+        </div>
+        <div class="col-md-4 col-lg-2 d-flex align-items-end">
+          <button class="btn btn-limpiar w-100" (click)="limpiarFiltros()">
+            <i class="bi bi-x-circle"></i>
+            Limpiar
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="tabla-card">
+    <div class="table-responsive">
+      <table class="table table-hover">
+        <thead>
+          <tr>
+            <th>ID</th>
+            <th>PRODUCTO</th>
+            <th>CATEGORÍA</th>
+            <th>NÚMERO DE LOTE</th>
+            <th>PROVEEDOR</th>
+            <th>CANTIDAD</th>
+            <th>PRECIO</th>
+            <th>FECHA INGRESO</th>
+            <th>FECHA CADUCIDAD</th>
+            <th>ESTADO</th>
+            <th class="text-center">ACCIONES</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let lote of lotesFiltrados"
+              [class.fila-edicion]="loteEnEdicion === lote.id">
+            <td>{{lote.id}}</td>
+            <td>
+              <div class="producto-info">
+                <strong>{{lote.producto?.nombre}}</strong>
+                <small class="text-muted d-block">{{lote.producto?.unidad_medida}}</small>
+              </div>
+            </td>
+            <td>
+              <span class="badge badge-categoria">{{lote.categoria}}</span>
+            </td>
+            <td>
+              <code class="lote-codigo">{{lote.num_lote}}</code>
+            </td>
+            <td>{{lote.proveedor_nombre}}</td>
+            <td>
+              <div class="cantidad-wrapper">
+                <span class="badge bg-{{getColorStock(lote.cantidad_disponible, lote.cantidad_inicial)}}">
+                  {{lote.cantidad_disponible}} / {{lote.cantidad_inicial}}
+                </span>
+                <div class="progress progress-sm mt-1">
+                  <div class="progress-bar bg-{{getColorStock(lote.cantidad_disponible, lote.cantidad_inicial)}}"
+                       [style.width.%]="(lote.cantidad_disponible / lote.cantidad_inicial) * 100">
+                  </div>
+                </div>
+              </div>
+            </td>
+            <td>
+              <strong>${{lote.producto?.precio_venta | number:'1.2-2'}}</strong>
+            </td>
+            <td>
+              <small>{{lote.fecha_ingreso | date:'dd/MM/yyyy'}}</small>
+            </td>
+            <td>
+              <div class="fecha-caducidad">
+                <small>{{lote.fecha_caducidad | date:'dd/MM/yyyy'}}</small>
+                <span class="badge badge-vencimiento badge-{{getAlertaVencimiento(lote.fecha_caducidad)}}"
+                      *ngIf="getDiasParaVencer(lote.fecha_caducidad) <= 90">
+                  <i class="bi bi-exclamation-triangle"></i>
+                  {{getDiasParaVencer(lote.fecha_caducidad)}} días
+                </span>
+              </div>
+            </td>
+            <td>
+              <span class="badge badge-stock-{{getEstadoStock(lote.cantidad_disponible, lote.cantidad_inicial)}}">
+                {{getEstadoStock(lote.cantidad_disponible, lote.cantidad_inicial) | titlecase}}
+              </span>
+            </td>
+            <td class="text-center">
+              <div class="acciones-wrapper">
+                <button
+                  class="btn btn-accion"
+                  [class.btn-accion-activo]="loteEnEdicion === lote.id"
+                  (click)="toggleEdicion(lote.id)"
+                  [title]="loteEnEdicion === lote.id ? 'Guardar' : 'Editar'">
+                  <i class="bi"
+                     [class.bi-pencil]="loteEnEdicion !== lote.id"
+                     [class.bi-check-lg]="loteEnEdicion === lote.id"></i>
+                </button>
+                <span class="badge badge-toggle ms-2"
+                      [class.badge-toggle-activo]="loteEnEdicion === lote.id">
+                  {{loteEnEdicion === lote.id ? 'Guardando' : 'Editar'}}
+                </span>
+              </div>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+
+      <div *ngIf="lotesFiltrados.length === 0" class="no-resultados">
+        <i class="bi bi-inbox"></i>
+        <p>No se encontraron productos con los filtros aplicados</p>
+        <button class="btn btn-outline-primary" (click)="limpiarFiltros()">
+          Limpiar filtros
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <div class="info-footer">
+    <div class="row">
+      <div class="col-md-3">
+        <div class="stat-card">
+          <i class="bi bi-box-seam"></i>
+          <div>
+            <h3>{{lotes.length}}</h3>
+            <p>Total Lotes</p>
+          </div>
+        </div>
+      </div>
+      <div class="col-md-3">
+        <div class="stat-card">
+          <i class="bi bi-check-circle text-success"></i>
+          <div>
+            <h3>{{lotesFiltrados.length}}</h3>
+            <p>Lotes Filtrados</p>
+          </div>
+        </div>
+      </div>
+      <div class="col-md-3">
+        <div class="stat-card">
+          <i class="bi bi-exclamation-triangle text-warning"></i>
+          <div>
+            <h3>{{contarStockBajo()}}</h3>
+            <p>Stock Bajo</p>
+          </div>
+        </div>
+      </div>
+      <div class="col-md-3">
+        <div class="stat-card">
+          <i class="bi bi-calendar-x text-danger"></i>
+          <div>
+            <h3>{{contarPorVencer()}}</h3>
+            <p>Por Vencer</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
