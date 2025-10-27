@@ -5,6 +5,8 @@ import { ErrorComponent } from './components/error/error.component';
 import { CitaFormComponent } from './components/home/citas/cita-form/cita-form.component';
 import { AgendaViewComponent } from './components/home/citas/agenda-view/agenda-view.component';
 import { SolicitarcitaComponent } from './components/home/citas/solicitarcita/solicitarcita.component';
+import { InventarioComponent } from './components/inventario/inventario.component';
+import { LayoutAdminComponent } from './shared/admin/layout-admin/layout-admin.component';
 
 export const routes: Routes = [
   {
@@ -27,6 +29,36 @@ export const routes: Routes = [
   { path: 'agenda', component: AgendaViewComponent },
   { path: 'solicitar-cita', component: SolicitarcitaComponent },
 
+
+  {
+    path: 'admin',
+    component: LayoutAdminComponent,
+    children: [
+      {
+        path: '',
+        redirectTo: 'inventario',
+        pathMatch: 'full'
+      },
+
+      {
+        path: 'inventario',
+        component: InventarioComponent,
+        title: 'Inventario | Pet Health+ Admin'
+      },
+
+      {
+        path: 'registrar-cita',
+        component: CitaFormComponent,
+        title: 'Registrar Cita | Pet Health+ Admin'
+      },
+      {
+        path: 'agenda',
+        component: AgendaViewComponent,
+        title: 'Agenda de Citas | Pet Health+ Admin'
+      },
+
+    ]
+  },
   {
     path: '**',
     component: ErrorComponent,
