@@ -1,2 +1,78 @@
 /* You can add global styles to this file, and also import other style files */
-@use "bootstrap/scss/bootstrap" as *;
+@use "bootstrap/scss/bootstrap";
+
+:root {
+  --primary-color: #FFD95A;
+  --secondary-color: #FFC040;
+  --text-dark: #333333;
+  --light-bg: #FFFBF5;
+  --recipe-surface: #ffffff;
+  --recipe-border: rgba(234, 88, 12, 0.24);
+  --recipe-header: rgba(236, 163, 74, 0.85);
+  --recipe-header-text: #111827;
+  --recipe-muted: #6b7280;
+  --recipe-strong: #1c1917;
+  --recipe-accent: #ea580c;
+  --recipe-accent-soft: #fb923c;
+  --recipe-row-alt: rgba(254, 243, 199, 0.6);
+  --recipe-row-hover: rgba(251, 146, 60, 0.18);
+}
+
+.titulo-principal {
+  font-weight: 700;
+  color: var(--recipe-strong);
+  margin-bottom: 1.5rem;
+}
+
+.btn-primary-si {
+  background: var(--primary-color);
+  border-color: var(--primary-color);
+  color: var(--text-dark);
+  transition: all .2s ease;
+  box-shadow: 0 4px 12px rgba(255, 217, 90, .4);
+}
+
+.btn-primary-si:hover {
+  background: var(--secondary-color);
+  border-color: var(--secondary-color);
+  color: var(--text-dark);
+}
+
+.card {
+  border: 1px solid #e5e7eb;
+  background: white;
+}
+
+.shadow-sm {
+  box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px -1px rgba(0, 0, 0, 0.1) !important;
+}
+
+.rounded-4 {
+  border-radius: 0.5rem !important;
+}
+
+.btn-icon {
+  width: 38px;
+  height: 38px;
+  border-radius: 50%;
+  border: 1px solid rgba(255, 217, 90, 0.5);
+  background: rgba(255, 217, 90, 0.15);
+  color: var(--primary-color);                           
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all 0.25s ease;
+
+  i {
+    font-size: 1.1rem;
+  }
+
+  &:hover {
+    background: rgba(255, 217, 90, 0.3);
+    transform: translateY(-2px);
+    box-shadow: 0 4px 10px rgba(255, 217, 90, 0.3);
+  }
+
+}
+

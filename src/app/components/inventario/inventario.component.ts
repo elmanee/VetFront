@@ -2,221 +2,216 @@ import { CommonModule } from '@angular/common';
 import { Component, OnInit } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { Lote } from '../../interfaces/lote';
+import { InventarioFormComponent } from './inventario-form/inventario-form.component';
+import { Producto } from '../../interfaces/producto';
+import { InventarioService } from '../../services/inventario.service';
+import { InventarioLoteFormComponent } from './inventario-lote-form/inventario-lote-form.component';
+import { InventarioDetalleComponent } from './inventario-detalle/inventario-detalle.component';
 
 @Component({
   selector: 'app-inventario',
   imports: [
-    CommonModule, FormsModule
+    CommonModule, FormsModule,
+    InventarioFormComponent, InventarioLoteFormComponent,
+    InventarioDetalleComponent
   ],
   templateUrl: './inventario.component.html',
   styleUrl: './inventario.component.scss'
 })
 export class InventarioComponent implements OnInit {
-  lotes: Lote[] = [
-    {
-      id: 1,
-      producto_id: 1,
-      num_lote: 'P-KG-LOTE-001',
-      cantidad_inicial: 150,
-      cantidad_disponible: 140,
-      fecha_caducidad: '2027-11-30',
-      fecha_ingreso: '2025-10-19',
-      proveedor_id: 45,
-      producto: {
-        id: 1,
-        nombre: 'Pastillas Desparasitante (Kg)',
-        descripcion: 'Desparasitante interno de amplio espectro para perros, dosis por peso (kilogramo).',
-        precio_venta: 85.00,
-        unidad_medida: 'Tableta'
-      },
-      proveedor_nombre: 'Proveedor ABC',
-      categoria: 'Medicamentos'
-    },
-    {
-      id: 2,
-      producto_id: 1,
-      num_lote: 'P-KG-LOTE-002',
-      cantidad_inicial: 200,
-      cantidad_disponible: 200,
-      fecha_caducidad: '2028-02-15',
-      fecha_ingreso: '2025-10-19',
-      proveedor_id: 99,
-      producto: {
-        id: 1,
-        nombre: 'Pastillas Desparasitante (Kg)',
-        descripcion: 'Desparasitante interno de amplio espectro para perros, dosis por peso (kilogramo).',
-        precio_venta: 85.00,
-        unidad_medida: 'Tableta'
-      },
-      proveedor_nombre: 'Proveedor XYZ',
-      categoria: 'Medicamentos'
-    },
-    {
-      id: 3,
-      producto_id: 2,
-      num_lote: 'VAC-FEL-001',
-      cantidad_inicial: 50,
-      cantidad_disponible: 35,
-      fecha_caducidad: '2026-12-31',
-      fecha_ingreso: '2025-10-20',
-      proveedor_id: 45,
-      producto: {
-        id: 2,
-        nombre: 'Vacuna Antirrábica Felina',
-        descripcion: 'Vacuna de prevención anual contra la rabia para gatos. Presentación de 1 dosis.',
-        precio_venta: 250.00,
-        unidad_medida: 'Dosis'
-      },
-      proveedor_nombre: 'Proveedor ABC',
-      categoria: 'Vacunas'
-    },
-    {
-      id: 4,
-      producto_id: 3,
-      num_lote: 'AMX-500-001',
-      cantidad_inicial: 100,
-      cantidad_disponible: 75,
-      fecha_caducidad: '2027-06-30',
-      fecha_ingreso: '2025-10-15',
-      proveedor_id: 99,
-      producto: {
-        id: 3,
-        nombre: 'Amoxicilina + Ácido Clavulánico 500mg',
-        descripcion: 'Antibiótico de amplio espectro para inyección intramuscular. Indicado para infecciones de piel y tejidos blandos.',
-        precio_venta: 180.00,
-        unidad_medida: 'Frasco 10ml'
-      },
-      proveedor_nombre: 'Proveedor XYZ',
-      categoria: 'Antibióticos'
-    }
-  ];
+  productos: Producto[] = [];
+  productosFiltrados: Producto[] = [];
 
-  lotesFiltrados: Lote[] = [];
+  openForm = false;
+  mostrarFormLote = false;
+  mostrarDetalle = false;
+  loading = false;
+  errorMsg = '';
 
-  filtros = {
-    nombre: '',
-    categoria: '',
-    proveedor: '',
-    lote: '',
-    fechaVencimiento: ''
-  };
+  selectedProducto: Producto | null = null;
+  productoSeleccionado: any = null;
+  detalleProducto: any = null;
 
+  filtrosVisible = true;
+  filtros = { nombre: '', categoria: '', proveedor: '' };
   categorias: string[] = [];
   proveedores: string[] = [];
 
-  loteEnEdicion: number | null = null;
+  page = 1;
+  pageSize = 10;
+  pageSizeOptions = [5, 10, 20, 50];
+  maxPageLinks = 5;
 
-  filtrosVisible: boolean = true;
-
-  constructor() { }
+  constructor(private inventarioSev: InventarioService) {}
 
   ngOnInit(): void {
-    this.lotesFiltrados = [...this.lotes];
-    this.cargarCategorias();
-    this.cargarProveedores();
+    this.cargarProductos();
+  }
+
+
+  cargarProductos(): void {
+    this.loading = true;
+    this.errorMsg = '';
+
+    this.inventarioSev.getProductos().subscribe({
+      next: (res) => {
+        if (res.status === 'OK' && res.data) {
+          this.productos = res.data.sort((a, b) => a.id - b.id);
+          this.productosFiltrados = [...this.productos];
+        } else {
+          this.errorMsg = res.message || 'No se pudo obtener la lista de productos.';
+          this.productos = [];
+          this.productosFiltrados = [];
+        }
+        this.loading = false;
+      },
+      error: (err) => {
+        console.error('Error al obtener productos:', err);
+        this.errorMsg = 'Error al cargar los productos.';
+        this.loading = false;
+      }
+    });
+  }
+
+
+  abrirForm(): void {
+    this.resetPanels();
+    this.openForm = true;
+  }
+
+  editarProducto(prod: Producto): void {
+    this.resetPanels();
+    this.selectedProducto = prod;
+    this.openForm = true;
+  }
+
+  handleGuardar(producto?: Producto): void {
+    if (!producto) return;
+    this.productoSeleccionado = producto;
+    this.mostrarFormLote = true;
+  }
+
+  closeForm(): void {
+    this.openForm = false;
+    this.selectedProducto = null;
+  }
+
+  cerrarFormLote(): void {
+    this.mostrarFormLote = false;
+    this.productoSeleccionado = null;
+    this.cargarProductos();
+  }
+
+verDetalle(producto: any): void {
+
+  this.resetPanels();
+
+  this.inventarioSev.getDetalleProductoYLote(producto.id).subscribe({
+    next: (res) => {
+
+      if (res.status === 'OK' && res.data && res.data.length > 0) {
+        this.detalleProducto = res.data[0];
+        this.mostrarDetalle = true;
+      } else {
+
+      }
+    },
+    error: (err) => console.error('error:', err)
+  });
+}
+
+
+  cerrarDetalle(): void {
+    this.mostrarDetalle = false;
+    this.detalleProducto = null;
+  }
+
+
+  aplicarFiltros(): void {
+    const nombre = this.filtros.nombre.toLowerCase();
+    const categoria = this.filtros.categoria;
+    const proveedor = this.filtros.proveedor;
+
+    this.productosFiltrados = this.productos.filter((p) => {
+      const matchNombre = p.nombre.toLowerCase().includes(nombre);
+      const matchCategoria = !categoria || (p as any).categoria === categoria;
+      const matchProveedor = !proveedor || (p as any).proveedor === proveedor;
+      return matchNombre && matchCategoria && matchProveedor;
+    });
+
+    this.goToPage(1);
+  }
+
+  limpiarFiltros(): void {
+    this.filtros = { nombre: '', categoria: '', proveedor: '' };
+    this.productosFiltrados = [...this.productos];
+    this.goToPage(1);
   }
 
   toggleFiltros(): void {
     this.filtrosVisible = !this.filtrosVisible;
   }
 
-  cargarCategorias(): void {
-    const categoriasSet = new Set(this.lotes.map(l => l.categoria || ''));
-    this.categorias = Array.from(categoriasSet).filter(c => c !== '');
+
+  get totalItems(): number {
+    return this.productosFiltrados.length;
   }
 
-  cargarProveedores(): void {
-    const proveedoresSet = new Set(this.lotes.map(l => l.proveedor_nombre || ''));
-    this.proveedores = Array.from(proveedoresSet).filter(p => p !== '');
+  get totalPages(): number {
+    return Math.max(1, Math.ceil(this.totalItems / this.pageSize));
   }
 
-  aplicarFiltros(): void {
-    this.lotesFiltrados = this.lotes.filter(lote => {
-      const cumpleNombre = !this.filtros.nombre ||
-        lote.producto?.nombre.toLowerCase().includes(this.filtros.nombre.toLowerCase());
-
-      const cumpleCategoria = !this.filtros.categoria ||
-        lote.categoria === this.filtros.categoria;
-
-      const cumpleProveedor = !this.filtros.proveedor ||
-        lote.proveedor_nombre === this.filtros.proveedor;
-
-      const cumpleLote = !this.filtros.lote ||
-        lote.num_lote.toLowerCase().includes(this.filtros.lote.toLowerCase());
-
-      const cumpleFecha = !this.filtros.fechaVencimiento ||
-        lote.fecha_caducidad === this.filtros.fechaVencimiento;
-
-      return cumpleNombre && cumpleCategoria && cumpleProveedor && cumpleLote && cumpleFecha;
-    });
+  get displayedProductos(): Producto[] {
+    const start = (this.page - 1) * this.pageSize;
+    const end = start + this.pageSize;
+    return this.productosFiltrados.slice(start, end);
   }
 
-  limpiarFiltros(): void {
-    this.filtros = {
-      nombre: '',
-      categoria: '',
-      proveedor: '',
-      lote: '',
-      fechaVencimiento: ''
-    };
-    this.lotesFiltrados = [...this.lotes];
+  get rangeStart(): number {
+    return this.totalItems === 0 ? 0 : (this.page - 1) * this.pageSize + 1;
   }
 
-  toggleEdicion(loteId: number): void {
-    if (this.loteEnEdicion === loteId) {
-      this.loteEnEdicion = null;
-    } else {
-      this.loteEnEdicion = loteId;
+  get rangeEnd(): number {
+    return Math.min(this.page * this.pageSize, this.totalItems);
+  }
+
+  get visiblePages(): number[] {
+    const total = this.totalPages;
+    const half = Math.floor(this.maxPageLinks / 2);
+    let start = Math.max(1, this.page - half);
+    let end = Math.min(total, start + this.maxPageLinks - 1);
+
+    if (end - start + 1 < this.maxPageLinks) {
+      start = Math.max(1, end - this.maxPageLinks + 1);
     }
+
+    const pages: number[] = [];
+    for (let p = start; p <= end; p++) pages.push(p);
+    return pages;
   }
 
-  registrarProducto(): void {
-    console.log('Registrar nuevo producto');
+  goToPage(p: number) {
+    const target = Math.min(Math.max(1, p), this.totalPages);
+    this.page = target;
   }
 
-  getEstadoStock(cantidad: number, cantidadInicial: number): string {
-    const porcentaje = (cantidad / cantidadInicial) * 100;
-    if (porcentaje <= 10) return 'critico';
-    if (porcentaje <= 30) return 'bajo';
-    if (porcentaje <= 70) return 'medio';
-    return 'alto';
+  nextPage() {
+    this.goToPage(this.page + 1);
   }
 
-  getColorStock(cantidad: number, cantidadInicial: number): string {
-    const estado = this.getEstadoStock(cantidad, cantidadInicial);
-    switch(estado) {
-      case 'critico': return 'danger';
-      case 'bajo': return 'warning';
-      case 'medio': return 'info';
-      default: return 'success';
-    }
+  prevPage() {
+    this.goToPage(this.page - 1);
   }
 
-  getDiasParaVencer(fechaCaducidad: string): number {
-    const hoy = new Date();
-    const fecha = new Date(fechaCaducidad);
-    const diferencia = fecha.getTime() - hoy.getTime();
-    return Math.ceil(diferencia / (1000 * 3600 * 24));
+
+  resetPanels(): void {
+    this.openForm = false;
+    this.mostrarFormLote = false;
+    this.mostrarDetalle = false;
+    this.selectedProducto = null;
+    this.productoSeleccionado = null;
+    this.detalleProducto = null;
   }
 
-  getAlertaVencimiento(fechaCaducidad: string): string {
-    const dias = this.getDiasParaVencer(fechaCaducidad);
-    if (dias < 0) return 'vencido';
-    if (dias <= 30) return 'proximo';
-    if (dias <= 90) return 'cercano';
-    return 'normal';
-  }
-
-  contarStockBajo(): number {
-    return this.lotes.filter(lote => {
-      const color = this.getColorStock(lote.cantidad_disponible, lote.cantidad_inicial);
-      return color === 'warning' || color === 'danger';
-    }).length;
-  }
-
-  contarPorVencer(): number {
-    return this.lotes.filter(lote => {
-      return this.getDiasParaVencer(lote.fecha_caducidad) <= 30;
-    }).length;
-  }
+  eliminarProducto(prod: Producto) {}
 }
