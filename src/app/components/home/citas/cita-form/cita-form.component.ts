@@ -1,6 +1,3 @@
-// /home/agus/Documentos/VetHealth/VetFront/src/app/home/citas/cita-form/cita-form.component.ts
-import { Component, OnInit } from '@angular/core';
-import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { ActivatedRoute } from '@angular/router';
 import { FullCalendarModule } from '@fullcalendar/angular';
@@ -9,16 +6,10 @@ import dayGridPlugin from '@fullcalendar/daygrid';
 import timeGridPlugin from '@fullcalendar/timegrid';
 import interactionPlugin from '@fullcalendar/interaction';
 import esLocale from '@fullcalendar/core/locales/es';
-
-import { 
-  CitasService, 
-  DatosCliente, 
-  DatosCita, 
-  ValidacionCliente, 
-  Mascota,
-  RegistroCitaRequest,
-  Cita
-} from '../../../../services/citas.service';
+import { CommonModule } from '@angular/common';
+import { CitasService, DatosCliente,DatosCita,ValidacionCliente,Mascota,RegistroCitaRequest,Cita} from '../../../../services/citas.service';
+import { Component, OnInit } from '@angular/core';
+import Swal from 'sweetalert2'
 
 @Component({
   selector: 'app-cita-form',
@@ -116,7 +107,8 @@ export class CitaFormComponent implements OnInit {
     events: [],
     dateClick: this.handleCalendarDateClick.bind(this),
     select: this.handleCalendarSelect.bind(this),
-    eventClick: this.handleEventClick.bind(this)
+    eventClick: this.handleEventClick.bind(this),
+    dayCellClassNames: this.obtenerClasesDia.bind(this)
   };
 
   constructor(
@@ -177,6 +169,36 @@ export class CitaFormComponent implements OnInit {
     });
   }
 
+  obtenerClasesDia(arg: any): string[] {
+  const fechaDia = arg.date.toISOString().split('T')[0]; // "2025-01-08"
+  const hoy = new Date();
+  hoy.setHours(0, 0, 0, 0); //resetea las horas
+  
+  const diaActual = new Date(fechaDia + 'T00:00:00');
+  
+  const clases: string[] = [];
+  
+  if (diaActual < hoy) {
+    clases.push('dia-pasado');
+  }
+  
+  return clases;
+}
+
+personalizarDiasPasados(arg: any): void {
+  const fechaDia = arg.date.toISOString().split('T')[0];
+  const hoy = new Date();
+  hoy.setHours(0, 0, 0, 0);
+  
+  const diaActual = new Date(fechaDia + 'T00:00:00');
+  
+  if (diaActual < hoy) {
+    arg.el.style.backgroundColor = 'rgba(54, 52, 52, 1)'; // Rojo claro
+    
+    arg.el.style.opacity = '0.6';
+  }
+}
+
   cargarCitasParaCalendario(): void {
     console.log('[CITA FORM] Cargando citas para el calendario...');
     
@@ -200,19 +222,22 @@ export class CitaFormComponent implements OnInit {
     if (!Array.isArray(this.citasExistentes)) return;
 
     const eventos: EventInput[] = this.citasExistentes.map(cita => {
-      let backgroundColor = '#dc3545';
-      let borderColor = '#dc3545';
+      let backgroundColor = '#520000'; // Rojo oscuro para Ocupado
+      let borderColor = '#520000';
       let textColor = '#ffffff';
       let title = 'Ocupado';
       
       if (cita.estado === 'Confirmada') {
-        backgroundColor = '#ffc107';
-        borderColor = '#ffc107';
-        textColor = '#000000';
+        // AMARILLO FUERTE para Confirmada
+        backgroundColor = '#FFC040'; 
+        borderColor = '#FFC040';
+        textColor = '#5c5c5cff'; // Texto oscuro para contraste
         title = 'Confirmada';
       } else if (cita.estado === 'Pendiente') {
-        backgroundColor = '#17a2b8';
-        borderColor = '#17a2b8';
+        // NEGRO/GRIS OSCURO para Pendiente
+        backgroundColor = '#505050ff'; 
+        borderColor = '#585858ff';
+        textColor = '#FFD95A'; // Texto Amarillo para contraste
         title = 'Pendiente';
       }
 
@@ -256,10 +281,15 @@ export class CitaFormComponent implements OnInit {
     const fechaSeleccionadaObj = new Date(fechaClickeada);
     
     if (fechaSeleccionadaObj < hoy) {
-      this.mensaje = 'No puedes seleccionar fechas pasadas';
-      this.mensajeClase = 'error';
-      return;
-    }
+  Swal.fire({
+    icon: 'error',
+    title: 'Fecha no válida',
+    text: 'No puedes seleccionar fechas pasadas',
+    confirmButtonText: 'Entendido',
+    confirmButtonColor: 'rgba(56, 56, 48, 1)'
+  });
+  return;
+}
     
     this.datosCita.fecha_cita = fechaClickeada;
     this.mensaje = `Fecha seleccionada: ${fechaClickeada}. Ahora selecciona una hora.`;
@@ -293,16 +323,33 @@ export class CitaFormComponent implements OnInit {
     const citaConflicto = this.citasExistentes.find(cita => {
       let fechaCitaISO = cita.fecha_cita;
       if (fechaCitaISO.includes('T')) {
-        fechaCitaISO = fechaCitaISO.split('T')[0];
+            fechaCitaISO = fechaCitaISO.split('T')[0];
       }
       return fechaCitaISO === fechaISO && cita.hora_cita === horaFormateada;
     });
 
     if (citaConflicto) {
-      this.mensaje = 'Este horario ya está ocupado. Selecciona otro horario.';
-      this.mensajeClase = 'error';
+      // Muestra la advertencia pero NO actualiza la cita, solo deselecciona el calendario.
+      Swal.fire({
+        icon: 'warning',
+        title: '¡Conflicto de Horario Detectado!',
+        html: `
+          <p class="text-secondary fw-bold">El veterinario ya tiene una cita agendada a esta hora.</p>
+          <p class="mt-3 text-muted">
+            **Aviso Importante:** Si elige un horario inmediatamente después de una cita ya tomada, existe la posibilidad de que la consulta anterior se extienda.
+          </p>
+          <p class="fw-bold text-danger">
+            Su turno podría empezar tarde o no ser atendido en el horario exacto seleccionado.
+          </p>
+          <p class="mt-3">
+            Por favor, seleccione un horario con un margen de tiempo adecuado para asegurar un servicio oportuno.
+          </p>
+        `,
+        confirmButtonText: 'Entendido, elegiré otro',
+        confirmButtonColor: 'rgba(56, 56, 48, 1)',
+      });
       selectInfo.view.calendar.unselect();
-      return;
+      return; // Retorna sin actualizar this.datosCita
     }
 
     this.datosCita.fecha_cita = fechaISO;
@@ -324,6 +371,9 @@ export class CitaFormComponent implements OnInit {
   onFechaChange(): void {
     console.log('[CITA FORM] Fecha cambiada manualmente:', this.datosCita.fecha_cita);
     
+    // Al cambiar la fecha, limpiamos la hora por seguridad, ya que la validación depende de ambos campos
+    this.datosCita.hora_cita = ''; 
+
     if (this.datosCita.fecha_cita) {
       const calendarApi = document.querySelector('full-calendar');
       if (calendarApi) {
@@ -360,9 +410,27 @@ export class CitaFormComponent implements OnInit {
         });
 
         if (citaConflicto) {
-          this.mensaje = 'Este horario ya está ocupado. Selecciona otro horario.';
-          this.mensajeClase = 'error';
-          this.datosCita.hora_cita = '';
+          // Muestra la advertencia y limpia la hora
+          Swal.fire({
+            icon: 'warning',
+            title: '¡Conflicto de Horario Detectado!',
+            html: `
+              <p class="text-secondary fw-bold">El veterinario ya tiene una cita agendada a esta hora.</p>
+              <p class="mt-3 text-muted">
+                **Aviso Importante:** Si elige un horario inmediatamente después de una cita ya tomada, existe la posibilidad de que la consulta anterior se extienda.
+              </p>
+              <p class="fw-bold text-danger">
+                Su turno podría empezar tarde o no ser atendido en el horario exacto seleccionado.
+              </p>
+              <p class="mt-3">
+                Por favor, seleccione un horario con un margen de tiempo adecuado para asegurar un servicio oportuno.
+              </p>
+            `,
+            confirmButtonText: 'Entendido, elegiré otro',
+            confirmButtonColor: 'rgba(56, 56, 48, 1)',
+          });
+          this.datosCita.hora_cita = ''; // Limpia la hora inválida
+          return;
         }
       }
     }
@@ -383,6 +451,34 @@ export class CitaFormComponent implements OnInit {
       }
     }
 
+    const citaConflicto = this.citasExistentes.find(cita => {
+        let fechaCitaISO = cita.fecha_cita;
+        if (fechaCitaISO.includes('T')) {
+            fechaCitaISO = cita.fecha_cita.split('T')[0];
+        }
+        return fechaCitaISO === this.datosCita.fecha_cita && 
+               cita.hora_cita === this.datosCita.hora_cita;
+    });
+
+    if (citaConflicto) {
+        Swal.fire({
+            icon: 'error', 
+            title: 'No se puede registrar la cita',
+            html: `
+                <p class="text-danger fw-bold">¡Conflicto de Horario Insalvable!</p>
+                <p class="mt-3 text-muted">
+                    Ya existe una cita confirmada o pendiente exactamente a las **${this.datosCita.hora_cita}** el día **${this.datosCita.fecha_cita}**.
+                </p>
+                <p class="fw-bold text-dark">
+                    Por favor, verifique el calendario o seleccione manualmente un horario libre.
+                </p>
+            `,
+            confirmButtonText: 'Entendido',
+            confirmButtonColor: 'rgba(220, 53, 69, 1)',
+        });
+        return; 
+    }
+
     this.cargando = true;
     this.mensaje = 'Registrando cita...';
     this.mensajeClase = 'info';
@@ -394,25 +490,79 @@ export class CitaFormComponent implements OnInit {
       cita: this.datosCita
     };
 
-    console.log('[CITA FORM] Request a enviar:', request);
+    console.log('CITA FORM Request a enviar:', request);
 
     this.citasService.registrarCita(request).subscribe({
       next: (response) => {
+
         this.cargando = false;
-        this.mensaje = `¡Cita registrada exitosamente! La confirmación fue enviada.`;
-        this.mensajeClase = 'success';
-        
+
+        const fechaCita = this.datosCita.fecha_cita;
+        const horaCita = this.datosCita.hora_cita;
+        const mascota = this.mascotaSeleccionadaInfo?.nombre || 'Mascota Nueva';
+
+        Swal.fire({
+          icon: 'success',
+          title: '¡Cita Registrada!',
+          html: `
+            <p class="text-secondary">Tu cita para ${mascota} ha sido agendada con éxito.</p>
+            <p class="mb-1 fw-bold text-dark">Día: ${fechaCita}</p>
+            <p class="fw-bold text-dark">Hora: ${horaCita}</p>
+            <hr>
+            <small class="text-muted">
+              Recibirás una confirmación por correo electrónico con todos los detalles de la consulta.
+            </small>
+          `,
+          confirmButtonText: 'Aceptar',
+          confirmButtonColor: '#FFD95A', 
+          customClass: {
+            confirmButton: 'text-dark fw-bold'
+          }
+        });        
+
+
         setTimeout(() => {
           this.resetFormulario();
-        }, 3000);
+        }, 5000);
+
+
       },
       error: (err: Error) => {
         this.cargando = false;
-        this.mensaje = `Error: ${err.message}`;
-        this.mensajeClase = 'error';
+        
+        // >>> INICIO: LÓGICA SweetAlert2 para errores del servicio (ej. 409 Conflict)
+        if (err.message && err.message.includes('Conflicto de Horario')) {
+             Swal.fire({
+                icon: 'error',
+                title: 'Error de Servidor: Horario Ocupado',
+                html: `
+                    <p class="text-danger fw-bold">El servidor ha rechazado el registro:</p>
+                    <p class="mt-2 text-dark">${err.message.replace('Error: ', '')}</p>
+                    <p class="mt-3 text-muted">
+                        Esto confirma que la hora ${this.datosCita.hora_cita} el día ${this.datosCita.fecha_cita} no está disponible.
+                    </p>
+                    <p class="fw-bold text-dark">
+                        Por favor, elija un horario que esté libre en el calendario.
+                    </p>
+                `,
+                confirmButtonText: 'Seleccionar otro horario',
+                confirmButtonColor: '#dcc335ff',
+            });
+        } else {
+            // Manejo de otros errores del servicio (ej. 400, 500)
+            Swal.fire({
+                icon: 'error',
+                title: 'Error de Registro',
+                text: err.message,
+                confirmButtonText: 'Aceptar',
+                confirmButtonColor: 'rgba(220, 53, 69, 1)',
+            });
+        }
+        // <<< FIN: LÓGICA SweetAlert2 para errores del servicio
       }
     });
   }
+
 
   seleccionarMascota(mascotaId: number): void {
     this.datosCita.mascota_id = mascotaId;

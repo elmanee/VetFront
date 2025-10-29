@@ -94,16 +94,16 @@ $warning-color: #ffc107;
 
 // Cards
 .card {
-  border-radius: 1rem;
-  transition: transform 0.2s ease, box-shadow 0.2s ease;
+  // border-radius: 2rem;
+  transition: transform 2s ease, box-shadow 0.6s ease;
 
-  &:hover {
-    transform: translateY(-2px);
-  }
+  // &:hover {
+  //   transform: translateY(-2px);
+  // }
 }
 
 .shadow-sm {
-  box-shadow: 0 0.125rem 0.5rem rgba(0, 0, 0, 0.075) !important;
+  box-shadow: 0 0.125rem 0.5rem #00000013 !important;
 }
 
 // Avatar circle
@@ -154,7 +154,7 @@ $warning-color: #ffc107;
   &:hover:not(:disabled) {
     background-color: $secondary-color;
     border-color: $secondary-color;
-    transform: translateY(-2px);
+    // transform: translateY(-2px);
     box-shadow: 0 4px 12px rgba(255, 217, 90, 0.4);
   }
 
@@ -176,9 +176,9 @@ $warning-color: #ffc107;
   border-width: 2px;
   font-weight: 600;
 
-  &:hover:not(:disabled) {
-    transform: translateY(-2px);
-  }
+  // &:hover:not(:disabled) {
+  //   transform: translateY(-2px);
+  // }
 }
 
 // Tarjetas de mascotas
@@ -186,14 +186,14 @@ $warning-color: #ffc107;
   border: 2px solid #dee2e6;
   border-radius: 1rem;
   cursor: pointer;
-  transition: all 0.3s ease;
+  // transition: all 0.1s ease;
   position: relative;
   overflow: hidden;
 
   &:hover {
     border-color: $primary-color;
-    transform: translateY(-4px);
-    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.1);
+    // transform: translateY(-2px);
+    box-shadow: 0 8px 16px #0000001a;
   }
 
   .mascota-icon {
@@ -212,7 +212,7 @@ $warning-color: #ffc107;
   &.selected {
     border-color: $primary-color;
     background-color: rgba(255, 217, 90, 0.1);
-    box-shadow: 0 4px 12px rgba(255, 217, 90, 0.3);
+    box-shadow: 0 4px 12px #ffd95a4d;
 
     .mascota-icon {
       color: $primary-color;
@@ -319,7 +319,7 @@ $warning-color: #ffc107;
       }
 
       &:focus {
-        box-shadow: 0 0 0 0.2rem rgba(255, 217, 90, 0.5) !important;
+        box-shadow: 0 0 0 0.2rem #ffd95a80 !important;
       }
     }
 
@@ -332,10 +332,10 @@ $warning-color: #ffc107;
       background-color: rgba(255, 217, 90, 0.15) !important;
     }
 
-    .fc-daygrid-day:hover {
-      background-color: rgba(255, 217, 90, 0.08);
-      cursor: pointer;
-    }
+    // .fc-daygrid-day:hover {
+    //   background-color: rgba(255, 217, 90, 0.08);
+    //   cursor: pointer;
+    // }
 
     .fc-event {
       border-radius: 0.25rem;
@@ -387,12 +387,6 @@ $warning-color: #ffc107;
 }
 
 
-
-
-
-
-
-
 // Calendario en formulario de citas
 .calendar-container-form {
   border: 2px solid #dee2e6;
@@ -412,10 +406,11 @@ $warning-color: #ffc107;
       color: #333333;
     }
 
+    /* Modificación de botones y colores primarios */
     .fc-button {
-      background-color: $primary-color !important;
+      background-color: $primary-color !important; /* Amarillo fuerte */
       border-color: $primary-color !important;
-      color: #333333 !important;
+      color: $text-dark !important; /* Texto oscuro */
       font-weight: 600;
       font-size: 0.9rem;
       padding: 0.4rem 0.8rem;
@@ -427,7 +422,7 @@ $warning-color: #ffc107;
       }
 
       &:focus {
-        box-shadow: 0 0 0 0.2rem rgba(255, 217, 90, 0.5) !important;
+        box-shadow: 0 0 0 0.2rem #ffaa00 !important; 
       }
     }
 
@@ -438,12 +433,17 @@ $warning-color: #ffc107;
     }
 
     .fc-day-today {
-      background-color: rgba(255, 217, 90, 0.15) !important;
+      background-color: #ffc0404d !important; 
+    }
+
+    .fc-daygrid-day, 
+    .fc-timegrid-slot {
+      cursor: pointer !important;
     }
 
     .fc-daygrid-day:hover,
     .fc-timegrid-slot:hover {
-      background-color: rgba(255, 217, 90, 0.1);
+      background-color: rgba(255, 192, 64, 0.2); 
       cursor: pointer;
     }
 
@@ -457,7 +457,7 @@ $warning-color: #ffc107;
     }
 
     .fc-non-business {
-      background-color: rgba(220, 53, 69, 0.1) !important;
+      background-color: #f8f9fa !important; 
     }
 
     .fc-event {
@@ -465,11 +465,12 @@ $warning-color: #ffc107;
       padding: 0.25rem;
       font-size: 0.8rem;
       font-weight: 600;
-      cursor: not-allowed;
+      // cursor: not-allowed;
     }
 
     .fc-col-header-cell {
-      background-color: #f8f9fa;
+      background-color: #333333; 
+      color: white; 
       font-weight: 700;
       text-transform: uppercase;
       font-size: 0.8rem;
@@ -487,8 +488,9 @@ $warning-color: #ffc107;
       border-radius: 0.5rem;
     }
 
+    /* Resaltado de selección (al hacer clic y arrastrar) */
     .fc-highlight {
-      background-color: rgba(40, 167, 69, 0.2) !important;
+      background-color: #ffc04080 !important; /* Resaltado amarillo semi-transparente */
     }
 
     .fc-timegrid-event {
@@ -522,3 +524,36 @@ $warning-color: #ffc107;
   }
 }
 
+// Estilos para días pasados (Gris oscuro/inactivo)
+::ng-deep {
+  .fc-daygrid-day.dia-pasado {
+    background-color: #e9ecef !important;
+    // cursor: default !important;
+    opacity: 0.8; 
+    pointer-events: none; /* Deshabilita clics en el día */
+    
+    &:hover {
+      transform: none !important;
+      box-shadow: none !important;
+      background-color: #e9ecef !important; 
+    }
+    
+    .fc-daygrid-day-number {
+      color: #6c757d !important; 
+      text-decoration: none;
+      font-weight: 400;
+    }
+
+    .fc-daygrid-event {
+      display: none; 
+    }
+  }
+
+  // Estilo para la vista de horarios (Semana/Día) - Fondo gris oscuro en el slot
+  .fc-timegrid-slot.dia-pasado {
+    background-color: #36333333 !important; /* Un gris oscuro con transparencia */
+    opacity: 1;
+    pointer-events: none;
+    cursor: default;
+  }
+}

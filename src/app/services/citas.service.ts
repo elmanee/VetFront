@@ -1,4 +1,3 @@
-// /home/agus/Documentos/VetHealth/VetFront/src/app/home/services/citas.service.ts
 import { Injectable } from '@angular/core';
 import { HttpClient, HttpErrorResponse } from '@angular/common/http';
 import { Observable, throwError } from 'rxjs';
@@ -65,7 +64,6 @@ export interface RespuestaBackend {
   status?: string;
 }
 
-// NUEVA INTERFAZ para reprogramar
 export interface ActualizarCitaRequest {
   fecha_cita: string;
   hora_cita: string;
@@ -75,6 +73,7 @@ export interface ActualizarCitaRequest {
 @Injectable({
   providedIn: 'root'
 })
+
 export class CitasService {
   private API_URL = `${environment.apiUrl}/citas`;
   private CLIENTES_URL = `${environment.apiUrl}/clientes`;
@@ -122,7 +121,6 @@ export class CitasService {
       );
   }
 
-  // NUEVO: Reprogramar una cita
   reprogramarCita(idCita: number, datos: ActualizarCitaRequest): Observable<RespuestaBackend> {
     console.log(`[SERVICIO] Reprogramando cita ID: ${idCita}`, datos);
     
@@ -135,7 +133,6 @@ export class CitasService {
       );
   }
 
-  // NUEVO: Cancelar una cita
   cancelarCita(idCita: number): Observable<RespuestaBackend> {
     console.log(`[SERVICIO] Cancelando cita ID: ${idCita}`);
     
