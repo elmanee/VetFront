@@ -31,31 +31,16 @@
         </div>
       </div>
 
-      <!-- Mensajes de estado -->
-      <div *ngIf="mensaje" class="alert alert-dismissible fade show mb-4" 
-           [ngClass]="{
-             'alert-success': mensajeClase === 'success',
-             'alert-danger': mensajeClase === 'error',
-             'alert-info': mensajeClase === 'info'
-           }"
-           role="alert">
-        <div class="d-flex align-items-center">
-          <i class="bi me-2" 
-             [ngClass]="{
-               'bi-check-circle-fill': mensajeClase === 'success',
-               'bi-exclamation-triangle-fill': mensajeClase === 'error',
-               'bi-info-circle-fill': mensajeClase === 'info'
-             }"></i>
-          <span>{{ mensaje }}</span>
-        </div>
-        <button type="button" class="btn-close" (click)="mensaje = ''" aria-label="Close"></button>
-      </div>
+
 
       <!-- PASO 1: Validar Cliente -->
       <div *ngIf="paso === 1" class="card border-0 shadow-sm">
         <div class="card-body p-4 p-md-5">
           <h3 class="h4 fw-bold text-dark mb-4">Paso 1: Ingresa tu correo electrónico</h3>
-          
+          <small class="form-text text-muted">
+                Verificaremos si ya tienes mascotas registradas con nosotros
+              </small>
+              <hr class="my-3">
           <form (ngSubmit)="validarCliente()">
             <div class="mb-4">
               <label for="correo" class="form-label fw-semibold text-dark">
@@ -71,13 +56,11 @@
                   id="correo"
                   [(ngModel)]="correoCliente"
                   name="correo"
-                  placeholder="ejemplo@correo.com"
+                  placeholder="tucorreo@correo.com"
                   [disabled]="cargando"
                   required>
               </div>
-              <small class="form-text text-muted">
-                Verificaremos si ya tienes mascotas registradas con nosotros
-              </small>
+
             </div>
 
             <div class="d-grid">
@@ -143,7 +126,7 @@
                   class="form-control" 
                   id="nombre_completo"
                   [(ngModel)]="datosClienteNuevo.nombre_completo"
-                  placeholder="Juan Pérez García"
+                  placeholder="Nombre Completo"
                   required>
               </div>
 
@@ -164,7 +147,7 @@
                   class="form-control" 
                   id="telefono"
                   [(ngModel)]="datosClienteNuevo.telefono"
-                  placeholder="4611234567"
+                  placeholder="XXXXXXXXXX"
                   required>
               </div>
 
@@ -178,7 +161,7 @@
                   class="form-control" 
                   id="direccion"
                   [(ngModel)]="datosClienteNuevo.direccion"
-                  placeholder="Calle Principal 123, Celaya">
+                  placeholder="Ingresa tu domicilio(Calle, Numero, Colonia y CP)">
               </div>
             </div>
           </div>
@@ -254,10 +237,7 @@
         <i class="bi bi-calendar3 me-2"></i>
         Selecciona Fecha y Hora en el Calendario
       </h5>
-      <div class="calendar-container-form">
-        <full-calendar [options]="calendarOptions"></full-calendar>
-      </div>
-      <div class="alert alert-info d-flex align-items-start mt-3 mb-0">
+      <div class="alert alert-info d-flex align-items-start mt-3 mb-0 me-2 border-bottom">
         <i class="bi bi-info-circle-fill me-2 mt-1"></i>
         <div>
           <strong>Instrucciones:</strong>
@@ -265,11 +245,36 @@
             <li>Vista Mes: Haz clic en un día para seleccionarlo</li>
             <li>Vista Semana/Día: Haz clic y arrastra para seleccionar fecha y hora (30 min)</li>
             <li>Horario: Lunes a Sábado, 8:00 AM - 6:00 PM</li>
-            <li>Los espacios en rojo/amarillo/azul están ocupados</li>
           </ul>
         </div>
       </div>
+      <hr class="my-3">
+      <div class="calendar-container-form">
+            
+        <full-calendar [options]="calendarOptions"></full-calendar>
+      </div>
+      
     </div>
+
+          <!-- Mensajes de estado -->
+      <div *ngIf="mensaje" class="alert alert-dismissible fade show mb-4" 
+           [ngClass]="{
+             'alert-success': mensajeClase === 'success',
+             'alert-danger': mensajeClase === 'error',
+             'alert-info': mensajeClase === 'info'
+           }"
+           role="alert">
+        <div class="d-flex align-items-center">
+          <i class="bi me-2" 
+             [ngClass]="{
+               'bi-check-circle-fill': mensajeClase === 'success',
+               'bi-exclamation-triangle-fill': mensajeClase === 'error',
+               'bi-info-circle-fill': mensajeClase === 'info'
+             }"></i>
+          <span>{{ mensaje }}</span>
+        </div>
+        <button type="button" class="btn-close" (click)="mensaje = ''" aria-label="Close"></button>
+      </div>
 
     <!-- Campos manuales -->
     <div class="row g-3">
