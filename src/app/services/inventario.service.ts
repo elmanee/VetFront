@@ -37,4 +37,8 @@ export class InventarioService {
   getDetalleProductoYLote(productoId: number): Observable<ResponseDTO<any>> {
     return this.http.get<ResponseDTO<any>>(`${this.API_URL}/api/lotes/detalle/${productoId}`);
   }
+
+  updateProducto(id: number, data: any) {
+    return this.http.patch<any>(`${this.API_URL}/api/productos/${id}`, data);
+  }
 }

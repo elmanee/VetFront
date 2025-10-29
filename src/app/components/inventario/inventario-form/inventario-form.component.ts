@@ -18,8 +18,14 @@ export class InventarioFormComponent {
   @Output() closeEvent = new EventEmitter<void>();
 
   isClosing = false;
-  productoData: any = {};
 
+  productoData: any = {
+    nombre: '',
+    descripcion: '',
+    precio_venta: '',
+    unidad_medida: '',
+    categoria: ''
+  };
 
 
   constructor(
@@ -35,28 +41,51 @@ export class InventarioFormComponent {
   }
 
   guardarProducto() {
-  if (this.productoData.id) {
-    console.log('Editar producto', this.productoData);
-    this.onGuardar.emit(this.productoData);
-    this.triggerClose();
-  } else {
-    this.inventarioSrv.postProducto(this.productoData).subscribe({
-      next: (res) => {
-        console.log('Producto registrado:', res);
-        this.alertServ.showSuccessAlert(
-          'Éxito',
-          'Producto registrado correctamente'
-        )
-        this.onGuardar.emit(res.data);
-        this.triggerClose();
-      },
-      error: (err) => {
-        console.error('Error al registrar producto', err);
-        alert('Error al registrar producto ❌');
-      }
-    });
+    if (this.producto && this.producto.id) {
+      this.inventarioSrv.updateProducto(this.producto.id, this.productoData).subscribe({
+        next: (res) => {
+          if (res.status === 'OK'){
+            console.log(res);
+            this.alertServ.showSuccessAlert(
+              'Éxito',
+              'Producto actualizado con exito'
+            )
+            this.onGuardar.emit(res.data);
+            this.triggerClose();
+          }else{
+            this.alertServ.showErrorAlert(
+              'Error',
+              'Error al actualizar, revisada todos los campos'
+            )
+          }
+          
+        },
+        error: (err) => {
+          console.error('Error al actualizar producto:', err)
+          this.alertServ.showErrorAlert(
+            'Error',
+            'Error interno, intenta más tade'
+          )
+        }
+      });
+    } else {
+      this.inventarioSrv.postProducto(this.productoData).subscribe({
+        next: (res) => {
+          console.log('Producto registrado:', res);
+          this.alertServ.showSuccessAlert(
+            'Éxito',
+            'Producto registrado correctamente'
+          )
+          this.onGuardar.emit(res.data);
+          this.triggerClose();
+        },
+        error: (err) => {
+          console.error('Error al registrar producto', err);
+          alert('Error al registrar producto ❌');
+        }
+      });
+    }
   }
-}
 
 
   triggerClose() {
