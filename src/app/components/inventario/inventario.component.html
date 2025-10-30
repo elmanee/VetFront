@@ -61,6 +61,15 @@
 
     <div class="card shadow rounded-4">
       <div class="card-body">
+        <div class="d-flex justify-content-end mb-3">
+              <button class="btn btn-outline-success me-2" (click)="exportarExcel()">
+                <i class="ri-file-excel-2-line me-1"></i> Exportar Excel
+              </button>
+
+              <button class="btn btn-outline-danger" (click)="exportarPDF()">
+                <i class="ri-file-pdf-2-line me-1"></i> Exportar PDF
+              </button>
+            </div>
         <div class="table-responsive rounded-2">
           <table class="table table-hover align-middle mb-0">
             <thead class="table-light">

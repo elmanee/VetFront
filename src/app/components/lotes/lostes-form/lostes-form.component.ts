@@ -42,9 +42,16 @@ export class LostesFormComponent implements OnInit {
 
     if (this.lote) {
       this.loteData = { ...this.lote };
+
+      if (this.loteData.fecha_ingreso) {
+        this.loteData.fecha_ingreso = this.loteData.fecha_ingreso.split('T')[0];
+      }
+
+      if (this.loteData.fecha_caducidad) {
+        this.loteData.fecha_caducidad = this.loteData.fecha_caducidad.split('T')[0];
+      }
     }
   }
-
   cargarProductos(): void {
     this.inventarioSrv.getProductos().subscribe({
       next: (res) => {
@@ -73,53 +80,54 @@ export class LostesFormComponent implements OnInit {
     });
   }
 
-  // guardarLote(): void {
-  //   if (!this.loteData.producto_id) {
-  //     this.alertSrv.showErrorAlert('Faltan datos', 'Debes seleccionar un producto.');
-  //     return;
-  //   }
+  guardarLote(): void {
+    if (!this.loteData.producto_id) {
+      this.alertSrv.showErrorAlert('Faltan datos', 'Debes seleccionar un producto.');
+      return;
+    }
 
-  //   if (!this.loteData.num_lote) {
-  //     this.alertSrv.showErrorAlert('Faltan datos', 'Debes ingresar el número de lote.');
-  //     return;
-  //   }
+    if (!this.loteData.num_lote) {
+      this.alertSrv.showErrorAlert('Faltan datos', 'Debes ingresar el número de lote.');
+      return;
+    }
 
-  //   const payload = { ...this.loteData };
+    const payload = { ...this.loteData };
 
-  //   if (this.lote) {
-  //     // Actualización
-  //     this.inventarioSrv.updateLote(this.lote.id, payload).subscribe({
-  //       next: (res) => {
-  //         if (res.status === 'OK') {
-  //           this.alertSrv.showSuccessAlert('Actualizado', 'Lote actualizado correctamente.');
-  //           this.onGuardar.emit(res.data);
-  //           this.triggerClose();
-  //         }
-  //       },
-  //       error: (err) => {
-  //         console.error(err);
-  //         this.alertSrv.showErrorAlert('Error', 'No se pudo actualizar el lote.');
-  //       }
-  //     });
-  //   } else {
-  //     // Creación
-  //     this.inventarioSrv.createLote(payload).subscribe({
-  //       next: (res) => {
-  //         if (res.status === 'OK') {
-  //           this.alertSrv.showSuccessAlert('Registrado', 'Lote registrado correctamente.');
-  //           this.onGuardar.emit(res.data);
-  //           this.triggerClose();
-  //         }
-  //       },
-  //       error: (err) => {
-  //         console.error(err);
-  //         this.alertSrv.showErrorAlert('Error', 'No se pudo registrar el lote.');
-  //       }
-  //     });
-  //   }
-  // }
+    if (this.lote && this.lote.id) {
+      this.inventarioSrv.updateLote(this.lote.id, payload).subscribe({
+        next: (res) => {
+          if (res.status === 'OK') {
+            this.alertSrv.showSuccessAlert('Actualizado', 'Lote actualizado correctamente.');
+            this.onGuardar.emit(res.data);
+            this.triggerClose();
+          } else {
+            this.alertSrv.showErrorAlert('Error', 'No se pudo actualizar el lote.');
+          }
+        },
+        error: (err) => {
+          console.error('error al actualizar lote:', err);
+          this.alertSrv.showErrorAlert('Error', 'No se pudo actualizar el lote.');
+        }
+      });
+    } else {
+      this.inventarioSrv.postLote(payload).subscribe({
+        next: (res) => {
+          if (res.status === 'OK') {
+            this.alertSrv.showSuccessAlert('Registrado', 'Lote registrado correctamente.');
+            this.onGuardar.emit(res.data);
+            this.triggerClose();
+          } else {
+            this.alertSrv.showErrorAlert('Error', 'No se pudo registrar el lote.');
+          }
+        },
+        error: (err) => {
+          console.error('error al registrar lote:', err);
+          this.alertSrv.showErrorAlert('Error', 'No se pudo registrar el lote.');
+        }
+      });
+    }
+  }
 
-  guardarLote(): void {}
 
   triggerClose(): void {
     this.isClosing = true;

@@ -52,6 +52,23 @@
         <span class="nav-text">Lotes</span>
       </a>
 
+      <a
+        routerLink="/admin/movimientos"
+        routerLinkActive="active"
+        class="nav-item d-flex align-items-center rounded mb-1"
+        [title]="isCollapsed ? 'Movimientos de Inventario' : ''">
+        <i class="ri-arrow-left-right-line me-3"></i>
+        <span class="nav-text">Movimientos</span>
+      </a>
+      
+      <a routerLink="/admin/reportes"
+         routerLinkActive="active"
+         class="nav-item d-flex align-items-center rounded mb-1"
+         [title]="isCollapsed ? 'Reportes' : ''">
+        <i class="ri-bar-chart-box-line me-3"></i>
+        <span class="nav-text">Reportes</span>
+      </a>
+
       <a routerLink="/admin/agenda"
          routerLinkActive="active"
          class="nav-item d-flex align-items-center rounded mb-1"
@@ -66,22 +83,6 @@
          [title]="isCollapsed ? 'Registrar Cita' : ''">
         <i class="ri-add-circle-line me-3"></i>
         <span class="nav-text">Registrar Cita</span>
-      </a>
-
-      <a routerLink="/admin/mis-citas"
-         routerLinkActive="active"
-         class="nav-item d-flex align-items-center rounded mb-1"
-         [title]="isCollapsed ? 'Mis Citas' : ''">
-        <i class="ri-calendar-check-line me-3"></i>
-        <span class="nav-text">Mis Citas</span>
-      </a>
-
-      <a routerLink="/admin/reportes"
-         routerLinkActive="active"
-         class="nav-item d-flex align-items-center rounded mb-1"
-         [title]="isCollapsed ? 'Reportes' : ''">
-        <i class="ri-bar-chart-box-line me-3"></i>
-        <span class="nav-text">Reportes</span>
       </a>
 
       <a routerLink="/admin/pacientes"

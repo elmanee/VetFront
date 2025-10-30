@@ -13,6 +13,8 @@ import { BuscarExpedienteComponent } from './components/expedientes/buscar-exped
 import { ExpedienteViewComponent } from './components/expedientes/expediente-view/expediente-view.component';
 import { DashboardAdminComponent } from './components/dashboard-admin/dashboard-admin.component';
 import { AuthGuard } from '../guards/auth.guard';
+import { LotesComponent } from './components/lotes/lotes.component';
+import { MovimientosComponent } from './components/movimientos/movimientos.component';
 
 export const routes: Routes = [
   // Rutas públicas
@@ -85,7 +87,7 @@ export const routes: Routes = [
       },
       {
         path: 'das-admin',
-        component: DashboardAdminComponent 
+        component: DashboardAdminComponent
       },
       {
         path: 'inventario',
@@ -121,6 +123,16 @@ export const routes: Routes = [
         path: 'expediente/registrar-consulta',
         component: ExpedienteFormComponent,
         title: 'Registrar Consulta | Pet Health+ Admin'
+      },
+      {
+        path: 'lotes',
+        component: LotesComponent,
+        title: 'Lotes | Pet Health+ Admin'
+      },
+      {
+        path: 'movimientos',
+        component: MovimientosComponent,
+        title: 'Moviemintos | El Morralito'
       }
     ]
   },

@@ -4,6 +4,7 @@ import { FormsModule } from '@angular/forms';
 import { InventarioService } from '../../services/inventario.service';
 import { AlertsService } from '../../shared/services/alerts.service';
 import { LostesFormComponent } from './lostes-form/lostes-form.component';
+import { ExportService } from '../../shared/services/export.service';
 
 @Component({
   selector: 'app-lotes',
@@ -38,15 +39,65 @@ export class LotesComponent implements OnInit {
   filtroProveedor: string = '';
   filtroFechaInicio: string = '';
   filtroFechaFin: string = '';
-  filtrosVisible = false;
+  filtrosVisible = true;
 
   constructor(
     private inventarioSrv: InventarioService,
-    private alertSrv: AlertsService
+    private alertSrv: AlertsService,
+    private exportSrv: ExportService,
   ) {}
 
   ngOnInit(): void {
     this.cargarLotes();
+  }
+
+  exportarExcel(): void {
+    if (!this.lotes.length) {
+      this.alertSrv.showInfoAlert('Sin datos', 'No hay lotes para exportar.');
+      return;
+    }
+
+    const datosExportar = this.lotes.map(l => ({
+      'Número de Lote': l.num_lote || 'N/A',
+      'Producto': l.producto_nombre || 'N/A',
+      'Cantidad Inicial': l.cantidad_inicial,
+      'Cantidad Disponible': l.cantidad_disponible,
+      'Fecha de Ingreso': new Date(l.fecha_ingreso).toLocaleDateString('es-MX'),
+      'Fecha de Caducidad': new Date(l.fecha_caducidad).toLocaleDateString('es-MX'),
+      'Proveedor': l.proveedor_nombre || 'No registrado'
+    }));
+
+    this.exportSrv.exportToExcel(datosExportar, 'lotes', 'Gestión de Lotes');
+    this.alertSrv.showSuccessAlert('Exportado', `Excel generado con ${datosExportar.length} registros`);
+  }
+
+  exportarPDF(): void {
+    if (!this.lotes.length) {
+      this.alertSrv.showInfoAlert('Sin datos', 'No hay lotes para exportar.');
+      return;
+    }
+
+    const headers = ['Número de Lote', 'Producto', 'Cant. Inicial', 'Disponible', 'Ingreso', 'Caducidad', 'Proveedor'];
+
+    const data = this.lotes.map(l => [
+      l.num_lote || 'N/A',
+      l.producto_nombre || 'N/A',
+      l.cantidad_inicial.toString(),
+      l.cantidad_disponible.toString(),
+      new Date(l.fecha_ingreso).toLocaleDateString('es-MX'),
+      new Date(l.fecha_caducidad).toLocaleDateString('es-MX'),
+      l.proveedor_nombre || 'No registrado'
+    ]);
+
+    this.exportSrv.exportToPDF(
+      headers,
+      data,
+      'Gestión de Lotes',
+      'lotes',
+      'landscape'
+    );
+
+    this.alertSrv.showSuccessAlert('Exportado', `PDF generado con ${data.length} registros`);
   }
 
   cargarLotes(): void {
@@ -70,13 +121,14 @@ export class LotesComponent implements OnInit {
   }
 
   aplicarFiltro(): void {
-    const texto = this.filtro.toLowerCase();
+    const texto = this.filtro.toLowerCase().trim();
     const proveedor = this.filtroProveedor;
     const inicio = this.filtroFechaInicio ? new Date(this.filtroFechaInicio) : null;
     const fin = this.filtroFechaFin ? new Date(this.filtroFechaFin) : null;
 
     this.lotesFiltrados = this.lotes.filter((l) => {
       const coincideTexto =
+        !texto ||
         l.producto_nombre?.toLowerCase().includes(texto) ||
         l.num_lote?.toLowerCase().includes(texto);
 
@@ -90,8 +142,10 @@ export class LotesComponent implements OnInit {
     });
 
     this.totalItems = this.lotesFiltrados.length;
-    this.calcularPaginacion();
+    this.totalPages = Math.ceil(this.totalItems / this.pageSize);
+    this.goToPage(1);
   }
+
 
   obtenerProveedoresUnicos(): any[] {
     const unique = new Map();
@@ -118,16 +172,29 @@ export class LotesComponent implements OnInit {
 
     this.visiblePages = this.getVisiblePages();
 
-    this.lotesFiltrados = [...this.lotes]
+    this.lotesFiltrados = this.lotes
       .filter((l) => {
-        const texto = this.filtro.toLowerCase();
+        const texto = this.filtro.toLowerCase().trim();
+        const proveedor = this.filtroProveedor;
+        const inicio = this.filtroFechaInicio ? new Date(this.filtroFechaInicio) : null;
+        const fin = this.filtroFechaFin ? new Date(this.filtroFechaFin) : null;
+
         const coincideTexto =
+          !texto ||
           l.producto_nombre?.toLowerCase().includes(texto) ||
           l.num_lote?.toLowerCase().includes(texto);
-        return coincideTexto;
+
+        const coincideProveedor = !proveedor || l.proveedor_nombre === proveedor;
+
+        const fechaIngreso = new Date(l.fecha_ingreso);
+        const coincideFecha =
+          (!inicio || fechaIngreso >= inicio) && (!fin || fechaIngreso <= fin);
+
+        return coincideTexto && coincideProveedor && coincideFecha;
       })
       .slice(startIndex, endIndex);
   }
+
 
   prevPage(): void {
     if (this.page > 1) this.goToPage(this.page - 1);
@@ -158,7 +225,8 @@ export class LotesComponent implements OnInit {
     this.filtroFechaFin = '';
     this.lotesFiltrados = [...this.lotes];
     this.totalItems = this.lotesFiltrados.length;
-    this.calcularPaginacion();
+    this.totalPages = Math.ceil(this.totalItems / this.pageSize);
+    this.goToPage(1);
   }
 
   toggleFiltros(): void {
@@ -166,16 +234,39 @@ export class LotesComponent implements OnInit {
   }
 
   editarLote(lote: any): void {
-    console.log('Editar lote:', lote);
-    this.alertSrv.showInfoAlert('Editar', `Lote ${lote.num_lote} seleccionado para edición.`);
+    this.selectedLote = { ...lote };
+    this.openForm = true;
   }
 
   eliminarLote(id: number): void {
-    console.log('Eliminar lote con ID:', id);
+    this.alertSrv.showConfirmAlert(
+      'Eliminar lote',
+      '¿Estás seguro de que deseas eliminar este lote?',
+      'warning'
+    ).then((result) => {
+      if (result.isConfirmed) {
+        this.inventarioSrv.deleteLote(id).subscribe({
+          next: (res) => {
+            if (res.status === 'OK') {
+              this.alertSrv.showSuccessAlert('Lote eliminado', res.message);
+              this.cargarLotes();
+            } else {
+              this.alertSrv.showErrorAlert('Error', res.message);
+            }
+          },
+          error: (err) => {
+            const msg = err.error?.message || 'No se pudo eliminar el lote.';
+            this.alertSrv.showErrorAlert('No se puede eliminar', msg);
+          }
+        });
+      }
+    });
   }
 
-    handleGuardar(event: any): void {
 
+  handleGuardar(event: any): void {
+    this.closeForm();
+    this.cargarLotes();
   }
 
   abrirForm(): void {

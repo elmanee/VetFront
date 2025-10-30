@@ -23,6 +23,7 @@
               class="form-select"
               [(ngModel)]="loteData.producto_id"
               name="producto_id"
+              [disabled]="!!lote"
               required
             >
               <option [ngValue]="null">Seleccione...</option>
@@ -39,6 +40,7 @@
               class="form-control"
               [(ngModel)]="loteData.num_lote"
               name="num_lote"
+              [readonly]="!!lote"
               required
             />
           </div>
@@ -50,6 +52,7 @@
               class="form-control"
               [(ngModel)]="loteData.cantidad_inicial"
               name="cantidad_inicial"
+              [readonly]="!!lote"
               required
             />
           </div>
@@ -61,6 +64,7 @@
               class="form-control"
               [(ngModel)]="loteData.cantidad_disponible"
               name="cantidad_disponible"
+              [readonly]="false"
             />
           </div>
 
@@ -71,6 +75,7 @@
               class="form-control"
               [(ngModel)]="loteData.fecha_ingreso"
               name="fecha_ingreso"
+              [readonly]="!!lote"
             />
           </div>
 
