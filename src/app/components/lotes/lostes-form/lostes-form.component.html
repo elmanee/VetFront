@@ -1,0 +1,114 @@
+<div class="row w-100" [ngClass]="{ 'slide-out': isClosing, 'slide-in': !isClosing }">
+  <div class="col-xl-12">
+    <div class="card custom-card shadow-sm border-0">
+      <div class="d-flex justify-content-between align-items-center mb-4">
+        <div class="d-flex align-items-center gap-3">
+          <button type="button" class="breadcrumb-back" (click)="triggerClose()">
+            <i class="ri-arrow-left-line"></i>
+          </button>
+          <div class="d-flex align-items-center flex-wrap gap-2">
+            <h2 class="page-title cursor-pointer mb-0">
+              {{ lote ? 'Editar Lote' : 'Nuevo Lote' }}
+            </h2>
+            <span class="breadcrumb-separator">/ Lotes</span>
+          </div>
+        </div>
+      </div>
+
+      <form #formLote="ngForm" (ngSubmit)="guardarLote()">
+        <div class="row g-3">
+          <div class="col-md-6">
+            <label class="form-label">Producto</label>
+            <select
+              class="form-select"
+              [(ngModel)]="loteData.producto_id"
+              name="producto_id"
+              required
+            >
+              <option [ngValue]="null">Seleccione...</option>
+              <option *ngFor="let p of productos" [ngValue]="p.id">
+                {{ p.nombre }}
+              </option>
+            </select>
+          </div>
+
+          <div class="col-md-6">
+            <label class="form-label">Número de Lote</label>
+            <input
+              type="text"
+              class="form-control"
+              [(ngModel)]="loteData.num_lote"
+              name="num_lote"
+              required
+            />
+          </div>
+
+          <div class="col-md-6">
+            <label class="form-label">Cantidad Inicial</label>
+            <input
+              type="number"
+              class="form-control"
+              [(ngModel)]="loteData.cantidad_inicial"
+              name="cantidad_inicial"
+              required
+            />
+          </div>
+
+          <div class="col-md-6">
+            <label class="form-label">Cantidad Disponible</label>
+            <input
+              type="number"
+              class="form-control"
+              [(ngModel)]="loteData.cantidad_disponible"
+              name="cantidad_disponible"
+            />
+          </div>
+
+          <div class="col-md-6">
+            <label class="form-label">Fecha de Ingreso</label>
+            <input
+              type="date"
+              class="form-control"
+              [(ngModel)]="loteData.fecha_ingreso"
+              name="fecha_ingreso"
+            />
+          </div>
+
+          <div class="col-md-6">
+            <label class="form-label">Fecha de Caducidad</label>
+            <input
+              type="date"
+              class="form-control"
+              [(ngModel)]="loteData.fecha_caducidad"
+              name="fecha_caducidad"
+            />
+          </div>
+
+          <div class="col-md-6">
+            <label class="form-label">Proveedor</label>
+            <select
+              class="form-select"
+              [(ngModel)]="loteData.proveedor_id"
+              name="proveedor_id"
+              required
+            >
+              <option [ngValue]="null">Seleccione...</option>
+              <option *ngFor="let prov of proveedores" [ngValue]="prov.id">
+                {{ prov.nombre }}
+              </option>
+            </select>
+          </div>
+        </div>
+
+        <div class="mt-4 d-flex justify-content-end gap-2">
+          <button type="button" class="btn btn-outline-secondary" (click)="triggerClose()">
+            <i class="ri-close-line me-1"></i> Cancelar
+          </button>
+          <button type="submit" class="btn btn-primary-si">
+            <i class="ri-save-3-line me-1"></i> Guardar Lote
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>

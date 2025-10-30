@@ -8,7 +8,7 @@ import { ResponseDTO } from '../interfaces/response.interface';
   providedIn: 'root'
 })
 export class InventarioService {
-  API_URL = environment.apiUrl
+  API_URL = environment.apiUrlDos
 
   constructor( private http : HttpClient){}
 
@@ -24,6 +24,12 @@ export class InventarioService {
     )
   }
 
+  getLotes(): Observable<ResponseDTO<any>> {
+    return this.http.get<ResponseDTO<any>>(
+      `${this.API_URL}/api/lotes`
+    );
+  }
+
   postLote(payload :any) :Observable<ResponseDTO<any>> {
     return this.http.post<ResponseDTO<any>>(
       `${this.API_URL}/api/lotes`, payload
@@ -36,5 +42,9 @@ export class InventarioService {
 
   getDetalleProductoYLote(productoId: number): Observable<ResponseDTO<any>> {
     return this.http.get<ResponseDTO<any>>(`${this.API_URL}/api/lotes/detalle/${productoId}`);
+  }
+
+  updateProducto(id: number, data: any) {
+    return this.http.patch<any>(`${this.API_URL}/api/productos/${id}`, data);
   }
 }

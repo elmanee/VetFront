@@ -1,31 +1,141 @@
-@keyframes slideOut {
-  from {
-    transform: translateX(0);
-    opacity: 1;
+:host {
+  display: block;
+  padding: 0.5rem;
+}
+
+.page-title {
+  font-weight: 700;
+  font-size: 1.5rem;
+  color: var(--color-primary);
+}
+
+.breadcrumb-back {
+  border: none;
+  background: rgba(242, 124, 43, 0.1);
+  color: var(--color-primary);
+  border-radius: 50%;
+  width: 38px;
+  height: 38px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.2s ease;
+
+  i {
+    font-size: 1.2rem;
   }
 
-  to {
-    transform: translateX(100%);
-    opacity: 0;
+  &:hover {
+    background: rgba(242, 124, 43, 0.2);
+    transform: translateX(-2px);
   }
 }
 
-@keyframes slideIn {
-  from {
-    transform: translateX(100%);
-    opacity: 0;
-  }
+.breadcrumb-separator {
+  font-size: 0.9rem;
+  color: var(--recipe-muted);
+}
 
+.custom-card {
+  background: #fff;
+  border-radius: 14px;
+  padding: 1.5rem;
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.05);
+  animation: fadeIn 0.4s ease;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
   to {
-    transform: translateX(0);
     opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.form-label {
+  font-weight: 600;
+  color: var(--text-dark);
+}
+
+.form-control,
+.form-select,
+textarea {
+  border: 1px solid #e5e7eb;
+  border-radius: 8px;
+  padding: 0.6rem 0.8rem;
+  font-size: 0.95rem;
+  transition: all 0.25s ease;
+  box-shadow: none;
+
+  &:focus {
+    border-color: var(--color-primary);
+    box-shadow: 0 0 0 3px rgba(242, 124, 43, 0.2);
+  }
+}
+
+textarea {
+  resize: none;
+}
+
+.btn-primary-si {
+  background: var(--color-primary);
+  border: none;
+  color: #fff;
+  font-weight: 600;
+  padding: 0.55rem 1.3rem;
+  border-radius: 8px;
+  transition: all 0.25s ease;
+  box-shadow: 0 3px 10px rgba(242, 124, 43, 0.25);
+
+  &:hover {
+    background: #f07120;
+    box-shadow: 0 4px 12px rgba(242, 124, 43, 0.35);
+  }
+}
+
+.btn-outline-secondary {
+  border-radius: 8px;
+  font-weight: 500;
+  transition: all 0.25s ease;
+
+  &:hover {
+    background: rgba(242, 124, 43, 0.08);
+    border-color: var(--color-primary);
+    color: var(--color-primary);
   }
 }
 
 .slide-in {
-  animation: slideIn 0.5s ease-out;
+  animation: slideIn 0.35s ease forwards;
 }
 
 .slide-out {
-  animation: slideOut 0.5s ease-in;
+  animation: slideOut 0.35s ease forwards;
 }
+
+@keyframes slideIn {
+  from {
+    opacity: 0;
+    transform: translateX(30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+@keyframes slideOut {
+  from {
+    opacity: 1;
+    transform: translateX(0);
+  }
+  to {
+    opacity: 0;
+    transform: translateX(30px);
+  }
+}
+
+

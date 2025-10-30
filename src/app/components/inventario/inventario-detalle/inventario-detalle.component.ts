@@ -17,6 +17,11 @@ export class InventarioDetalleComponent {
 
 
   cerrar() {
-    this.close.emit();
+    this.isClosing = true;
+    setTimeout(() => {
+      this.isClosing = false;
+      this.close.emit();
+    }, 500);
+
   }
 }

@@ -11,6 +11,7 @@ import { CitasAtenderComponent } from './components/home/citas/citas-atender/cit
 import { ExpedienteFormComponent } from './components/expedientes/expediente-form/expediente-form.component';
 import { BuscarExpedienteComponent } from './components/expedientes/buscar-expediente/buscar-expediente.component';
 import { ExpedienteViewComponent } from './components/expedientes/expediente-view/expediente-view.component';
+import { DashboardAdminComponent } from './components/dashboard-admin/dashboard-admin.component';
 
 export const routes: Routes = [
   // Rutas públicas
@@ -77,8 +78,12 @@ export const routes: Routes = [
     children: [
       {
         path: '',
-        redirectTo: 'inventario',
+        redirectTo: 'das-admin',
         pathMatch: 'full'
+      },
+      {
+        path: 'das-admin', // Asegúrate de que esta ruta coincida con el redirectTo
+        component: DashboardAdminComponent // Asumo que tienes un DashboardComponent
       },
       {
         path: 'inventario',
