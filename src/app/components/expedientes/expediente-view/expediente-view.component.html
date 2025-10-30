@@ -1,0 +1,371 @@
+<div class="container-fluid min-vh-100 bg-light py-5">
+  <div class="row justify-content-center">
+    <div class="col-12 col-xl-10">
+      
+      <!-- Loading -->
+      <div *ngIf="cargando && !expediente" class="text-center py-5">
+        <div class="spinner-border text-primary" style="width: 3rem; height: 3rem;"></div>
+        <p class="text-muted mt-3">Cargando expediente...</p>
+      </div>
+
+      <div *ngIf="expediente">
+        
+        <!-- Encabezado -->
+        <div class="text-center mb-4">
+          <h1 class="display-6 fw-bold text-dark mb-2">
+            <i class="bi bi-file-medical me-2"></i>
+            Expediente Médico
+          </h1>
+          <h3 class="text-primary">{{ expediente.numero_expediente }}</h3>
+        </div>
+
+        <!-- Mensajes -->
+        <div *ngIf="mensaje" class="alert alert-dismissible fade show" 
+             [ngClass]="{'alert-success': mensajeClase === 'success', 'alert-danger': mensajeClase === 'error'}">
+          {{ mensaje }}
+          <button type="button" class="btn-close" (click)="mensaje = ''" aria-label="Close"></button>
+        </div>
+
+        <!-- Acciones rápidas -->
+        <div class="card border-0 shadow-sm mb-4">
+          <div class="card-body p-3">
+            <div class="d-flex gap-2 justify-content-between flex-wrap">
+              <button class="btn btn-outline-secondary" (click)="volver()">
+                <i class="bi bi-arrow-left me-1"></i> Volver
+              </button>
+              
+              <div class="d-flex gap-2">
+                <button class="btn btn-success" (click)="generarReporte()" [disabled]="cargando">
+                  <i class="bi bi-file-pdf me-1"></i> Reporte PDF
+                </button>
+                <button class="btn btn-warning" (click)="generarCertificado()" [disabled]="cargando">
+                  <i class="bi bi-award me-1"></i> Certificado
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Información del expediente -->
+        <div class="card border-0 shadow-sm mb-4">
+          <div class="card-header bg-primary text-white py-3">
+            <h5 class="mb-0 fw-bold">
+              <i class="bi bi-info-circle me-2"></i>
+              Información General
+            </h5>
+          </div>
+          <div class="card-body p-4">
+            <div class="row">
+              <!-- Datos de la mascota -->
+              <div class="col-md-6 mb-3">
+                <h6 class="fw-bold text-primary mb-3">
+                  <i class="bi bi-heart-fill me-2"></i>
+                  Datos de la Mascota
+                </h6>
+                <table class="table table-sm table-borderless">
+                  <tbody>
+                    <tr>
+                      <td class="fw-semibold">Nombre:</td>
+                      <td>{{ expediente.mascota_nombre }}</td>
+                    </tr>
+                    <tr>
+                      <td class="fw-semibold">Tipo:</td>
+                      <td><span class="badge bg-secondary">{{ expediente.tipo_animal }}</span></td>
+                    </tr>
+                    <tr *ngIf="expediente.raza">
+                      <td class="fw-semibold">Raza:</td>
+                      <td>{{ expediente.raza }}</td>
+                    </tr>
+                    <tr *ngIf="expediente.edad">
+                      <td class="fw-semibold">Edad:</td>
+                      <td>{{ expediente.edad }} años</td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+
+              <!-- Datos del propietario -->
+              <div class="col-md-6 mb-3">
+                <h6 class="fw-bold text-primary mb-3">
+                  <i class="bi bi-person-fill me-2"></i>
+                  Datos del Propietario
+                </h6>
+                <table class="table table-sm table-borderless">
+                  <tbody>
+                    <tr>
+                      <td class="fw-semibold">Nombre:</td>
+                      <td>{{ expediente.propietario }}</td>
+                    </tr>
+                    <tr>
+                      <td class="fw-semibold">Correo:</td>
+                      <td>{{ expediente.propietario_correo }}</td>
+                    </tr>
+                    <tr>
+                      <td class="fw-semibold">Teléfono:</td>
+                      <td>{{ expediente.propietario_telefono }}</td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+
+              <!-- Datos del expediente -->
+              <div class="col-12">
+                <hr>
+                <div class="row">
+                  <div class="col-md-4">
+                    <strong>Fecha de Apertura:</strong>
+                    <p>{{ formatearFecha(expediente.fecha_apertura) }}</p>
+                  </div>
+                  <div class="col-md-4">
+                    <strong>Estado:</strong>
+                    <p>
+                      <span class="badge" 
+                            [ngClass]="expediente.estado === 'Activo' ? 'bg-success' : 'bg-secondary'">
+                        {{ expediente.estado }}
+                      </span>
+                    </p>
+                  </div>
+                  <div class="col-md-4">
+                    <strong>Total de Consultas:</strong>
+                    <p><span class="badge bg-info">{{ historial.length }}</span></p>
+                  </div>
+                </div>
+                
+                <div *ngIf="expediente.observaciones_generales" class="mt-3">
+                  <strong>Observaciones Generales:</strong>
+                  <p class="mb-0">{{ expediente.observaciones_generales }}</p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Historial de consultas -->
+        <div class="card border-0 shadow-sm mb-4">
+          <div class="card-header bg-success text-white py-3">
+            <h5 class="mb-0 fw-bold">
+              <i class="bi bi-clock-history me-2"></i>
+              Historial de Consultas
+              <span class="badge bg-light text-success ms-2">{{ historial.length }}</span>
+            </h5>
+          </div>
+          <div class="card-body p-4">
+            
+            <!-- Sin consultas -->
+            <div *ngIf="historial.length === 0" class="text-center py-5">
+              <i class="bi bi-clipboard-x display-3 text-muted"></i>
+              <h5 class="mt-3 text-muted">No hay consultas registradas</h5>
+              <p class="text-muted">Este expediente aún no tiene consultas médicas.</p>
+            </div>
+
+            <!-- Timeline de consultas -->
+            <div *ngIf="historial.length > 0" class="timeline">
+              <div *ngFor="let consulta of historial; let i = index" class="timeline-item mb-4">
+                
+                <!-- Indicador de timeline -->
+                <div class="timeline-marker bg-success"></div>
+                
+                <!-- Card de consulta -->
+                <div class="card border-0 shadow-sm">
+                  <div class="card-header bg-light" 
+                       (click)="toggleConsulta(i)" 
+                       style="cursor: pointer;">
+                    <div class="d-flex justify-content-between align-items-center">
+                      <div>
+                        <h6 class="mb-0 fw-bold">
+                          <i class="bi bi-calendar3 me-2"></i>
+                          {{ formatearFecha(consulta.fecha_consulta) }}
+                          <span class="text-muted ms-2">{{ consulta.hora_cita }}</span>
+                        </h6>
+                        <small class="text-muted">
+                          <i class="bi bi-person-badge me-1"></i>
+                          {{ consulta.veterinario }}
+                        </small>
+                      </div>
+                      <i class="bi" 
+                         [ngClass]="isConsultaExpandida(i) ? 'bi-chevron-up' : 'bi-chevron-down'"></i>
+                    </div>
+                  </div>
+                  
+                  <!-- Contenido expandible -->
+                  <div class="card-body" *ngIf="isConsultaExpandida(i)">
+                    
+                    <!-- Signos vitales -->
+                    <div *ngIf="consulta.peso_actual || consulta.temperatura || consulta.frecuencia_cardiaca" 
+                         class="mb-4">
+                      <h6 class="fw-bold text-danger">
+                        <i class="bi bi-heart-pulse me-2"></i>
+                        Signos Vitales
+                      </h6>
+                      <div class="row g-3">
+                        <div class="col-md-3" *ngIf="consulta.peso_actual">
+                          <small class="text-muted">Peso</small>
+                          <p class="mb-0 fw-semibold">{{ consulta.peso_actual }} kg</p>
+                        </div>
+                        <div class="col-md-3" *ngIf="consulta.temperatura">
+                          <small class="text-muted">Temperatura</small>
+                          <p class="mb-0 fw-semibold">{{ consulta.temperatura }}°C</p>
+                        </div>
+                        <div class="col-md-3" *ngIf="consulta.frecuencia_cardiaca">
+                          <small class="text-muted">FC</small>
+                          <p class="mb-0 fw-semibold">{{ consulta.frecuencia_cardiaca }} lpm</p>
+                        </div>
+                        <div class="col-md-3" *ngIf="consulta.frecuencia_respiratoria">
+                          <small class="text-muted">FR</small>
+                          <p class="mb-0 fw-semibold">{{ consulta.frecuencia_respiratoria }} rpm</p>
+                        </div>
+                      </div>
+                    </div>
+
+                    <!-- Motivo y síntomas -->
+                    <div class="mb-4">
+                      <h6 class="fw-bold">
+                        <i class="bi bi-file-text me-2"></i>
+                        Motivo de Consulta
+                      </h6>
+                      <p>{{ consulta.motivo_consulta }}</p>
+                      
+                      <div *ngIf="consulta.sintomas">
+                        <h6 class="fw-bold">Síntomas</h6>
+                        <p>{{ consulta.sintomas }}</p>
+                      </div>
+                    </div>
+
+                    <!-- Diagnósticos -->
+                    <div *ngIf="consulta.diagnosticos && consulta.diagnosticos.length > 0" class="mb-4">
+                      <h6 class="fw-bold text-success">
+                        <i class="bi bi-clipboard-check me-2"></i>
+                        Diagnósticos
+                      </h6>
+                      <ul class="list-group">
+                        <li *ngFor="let diag of consulta.diagnosticos" class="list-group-item">
+                          <strong>{{ diag.tipo }}:</strong> {{ diag.descripcion }}
+                          <span *ngIf="diag.codigo_cie" class="badge bg-secondary ms-2">CIE: {{ diag.codigo_cie }}</span>
+                        </li>
+                      </ul>
+                    </div>
+
+                    <!-- Tratamientos -->
+                    <div *ngIf="consulta.tratamientos && consulta.tratamientos.length > 0" class="mb-4">
+                      <h6 class="fw-bold text-info">
+                        <i class="bi bi-capsule me-2"></i>
+                        Tratamientos
+                      </h6>
+                      <ul class="list-group">
+                        <li *ngFor="let trat of consulta.tratamientos" class="list-group-item">
+                          <strong>{{ trat.medicamento }}</strong> - {{ trat.dosis }}, {{ trat.frecuencia }}
+                          <span *ngIf="trat.duracion_dias"> ({{ trat.duracion_dias }} días)</span>
+                          <br><small class="text-muted">Vía: {{ trat.via_administracion }}</small>
+                          <div *ngIf="trat.indicaciones">
+                            <small><strong>Indicaciones:</strong> {{ trat.indicaciones }}</small>
+                          </div>
+                        </li>
+                      </ul>
+                    </div>
+
+                    <!-- Vacunas -->
+                    <div *ngIf="consulta.vacunas && consulta.vacunas.length > 0" class="mb-4">
+                      <h6 class="fw-bold text-warning">
+                        <i class="bi bi-shield-check me-2"></i>
+                        Vacunas
+                      </h6>
+                      <ul class="list-group">
+                        <li *ngFor="let vac of consulta.vacunas" class="list-group-item">
+                          <strong>{{ vac.nombre_vacuna }}</strong> - {{ formatearFecha(vac.fecha_aplicacion) }}
+                          <span *ngIf="vac.lote" class="badge bg-secondary ms-2">Lote: {{ vac.lote }}</span>
+                          <br *ngIf="vac.proxima_dosis">
+                          <small *ngIf="vac.proxima_dosis">
+                            Próxima dosis: {{ formatearFecha(vac.proxima_dosis) }}
+                          </small>
+                        </li>
+                      </ul>
+                    </div>
+
+                    <!-- Procedimientos -->
+                    <div *ngIf="consulta.procedimientos && consulta.procedimientos.length > 0" class="mb-4">
+                      <h6 class="fw-bold text-danger">
+                        <i class="bi bi-scissors me-2"></i>
+                        Procedimientos
+                      </h6>
+                      <ul class="list-group">
+                        <li *ngFor="let proc of consulta.procedimientos" class="list-group-item">
+                          <strong>{{ proc.nombre }}</strong> ({{ proc.tipo }})
+                          <br><small>{{ proc.descripcion }}</small>
+                        </li>
+                      </ul>
+                    </div>
+
+                    <!-- Imágenes -->
+                    <div *ngIf="consulta.imagenes && consulta.imagenes.length > 0" class="mb-4">
+                      <h6 class="fw-bold text-primary">
+                        <i class="bi bi-image me-2"></i>
+                        Imágenes Médicas
+                      </h6>
+                      <div class="row g-2">
+                        <div *ngFor="let img of consulta.imagenes" class="col-md-4">
+                          <div class="card">
+                            <div class="card-body">
+                              <p class="mb-1"><strong>{{ img.tipo }}</strong></p>
+                              <small class="text-muted d-block text-truncate">{{ img.url }}</small>
+                              <small *ngIf="img.descripcion">{{ img.descripcion }}</small>
+                              <a [href]="img.url" target="_blank" class="btn btn-sm btn-outline-primary mt-2">
+                                <i class="bi bi-box-arrow-up-right me-1"></i>
+                                Ver Imagen
+                              </a>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+
+                    <!-- Observaciones -->
+                    <div *ngIf="consulta.observaciones">
+                      <h6 class="fw-bold">
+                        <i class="bi bi-pencil-square me-2"></i>
+                        Observaciones
+                      </h6>
+                      <p>{{ consulta.observaciones }}</p>
+                    </div>
+                    
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </div>
+</div>
+
+<style>
+.timeline {
+  position: relative;
+  padding-left: 30px;
+}
+
+.timeline::before {
+  content: '';
+  position: absolute;
+  left: 10px;
+  top: 0;
+  bottom: 0;
+  width: 2px;
+  background: #198754;
+}
+
+.timeline-item {
+  position: relative;
+}
+
+.timeline-marker {
+  position: absolute;
+  left: -24px;
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  border: 3px solid #fff;
+  box-shadow: 0 0 0 3px #198754;
+}
+</style>
