@@ -4,7 +4,6 @@ import { Observable, throwError } from 'rxjs';
 import { catchError, tap, map } from 'rxjs/operators';
 import { environment } from '../../environments/environment';
 
-// Interfaces existentes...
 export interface Cita {
   id_cita?: number;
   fecha_cita: string;

@@ -13,9 +13,21 @@ $dark-bg: #1a1a1a;
 }
 
 .footer-brand {
+  // Alinea la imagen y el texto juntos
+  align-items: center; 
+
+  // Estilos del logo (usa los mismos que en el header)
+  .app-logo {
+    width: 40px; 
+    height: 40px;
+    object-fit: cover;
+    border: 2px solid $primary-color; 
+  }
+
   h3 {
     font-size: 1.75rem;
     letter-spacing: -0.5px;
+    margin-bottom: 0; // Remueve el margen inferior del h3 para el d-flex
   }
 }
 
@@ -55,6 +67,10 @@ $dark-bg: #1a1a1a;
 
     i {
       font-size: 1rem;
+      // Usar text-app-primary para los iconos de contacto para la coherencia de color
+      &.text-app-primary { 
+        color: $primary-color !important;
+      }
     }
   }
 }
@@ -87,6 +103,11 @@ $dark-bg: #1a1a1a;
 @media (max-width: 768px) {
   .footer-main {
     text-align: center;
+
+    .footer-brand {
+      // Centrar el logo y el texto de la marca en móvil
+      justify-content: center;
+    }
 
     .footer-links,
     .contact-info {

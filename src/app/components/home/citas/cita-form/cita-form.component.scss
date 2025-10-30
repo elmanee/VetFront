@@ -557,3 +557,59 @@ $warning-color: #ffc107;
     cursor: default;
   }
 }
+
+
+// --- ESTILOS PARA EL BOTÓN DE REGRESO ---
+.go-home-button {
+  position: fixed; // Permite que el botón se quede en su lugar al hacer scroll
+  top: 1rem;       // 1rem de margen superior
+  left: 1rem;      // 1rem de margen izquierdo
+  z-index: 1050;   // Asegura que esté por encima de otros elementos (como el Navbar si existiera)
+  
+  // Ajuste para el botón en pantallas grandes
+  @media (min-width: 1200px) { 
+    left: calc(50% - 400px - 50px); /* Aproximadamente fuera del contenedor de 800px centrado */
+  }
+
+  @media (max-width: 768px) {
+    top: 0.5rem;
+    left: 0.5rem;
+  }
+}
+
+// Estilo para el botón circular grande
+.btn-circle-lg {
+  width: 3.5rem; 
+  height: 3.5rem;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0;
+  font-size: 1.75rem; 
+  line-height: 1;
+  transition: all 0.2s ease-in-out;
+  border: none; 
+
+  i {
+    // Para centrar el icono de la flecha
+    display: block; 
+    transform: translateX(-1px); // Pequeño ajuste visual para la flecha
+  }
+
+  &:hover {
+    transform: scale(1.05) translateY(-1px);
+    box-shadow: 0 6px 15px rgba(255, 193, 7, 0.6) !important; // Sombra más fuerte
+  }
+
+  &:focus {
+    box-shadow: 0 0 0 0.25rem rgba(255, 193, 7, 0.5) !important;
+  }
+}
+
+// Sobrescribe el color warning para usar el amarillo fuerte de tu tema
+.btn-warning {
+  background-color: $primary-color !important;
+  color: $text-dark !important; 
+  border-color: $secondary-color !important;
+}
