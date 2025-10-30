@@ -7,6 +7,8 @@ import { Producto } from '../../interfaces/producto';
 import { InventarioService } from '../../services/inventario.service';
 import { InventarioLoteFormComponent } from './inventario-lote-form/inventario-lote-form.component';
 import { InventarioDetalleComponent } from './inventario-detalle/inventario-detalle.component';
+import { ExportService } from '../../shared/services/export.service';
+import { AlertsService } from '../../shared/services/alerts.service';
 
 @Component({
   selector: 'app-inventario',
@@ -42,12 +44,62 @@ export class InventarioComponent implements OnInit {
   pageSizeOptions = [5, 10, 20, 50];
   maxPageLinks = 5;
 
-  constructor(private inventarioSev: InventarioService) {}
+  constructor(
+    private inventarioSev: InventarioService,
+    private exportSrv: ExportService,
+    private alertSrv: AlertsService,
+  ) {}
 
   ngOnInit(): void {
     this.cargarProductos();
   }
 
+  exportarExcel(): void {
+    if (!this.productos.length) {
+      this.alertSrv.showInfoAlert('Sin datos', 'No hay productos para exportar.');
+      return;
+    }
+
+    const datosExportar = this.productos.map(p => ({
+      'ID': p.id,
+      'Producto': p.nombre || 'N/A',
+      'Descripción': p.descripcion || 'N/A',
+      'Precio de Venta': `$${p.precio_venta}`,
+      'Unidad de Medida': p.unidad_medida || 'N/A',
+      'Categoría': p.categoria || 'N/A'
+    }));
+
+    this.exportSrv.exportToExcel(datosExportar, 'inventario_productos', 'Inventario de Productos');
+    this.alertSrv.showSuccessAlert('Exportado', `Excel generado con ${datosExportar.length} registros`);
+  }
+
+  exportarPDF(): void {
+    if (!this.productos.length) {
+      this.alertSrv.showInfoAlert('Sin datos', 'No hay productos para exportar.');
+      return;
+    }
+
+    const headers = ['ID', 'Producto', 'Descripción', 'Precio', 'Unidad', 'Categoría'];
+
+    const data = this.productos.map(p => [
+      p.id.toString(),
+      p.nombre || 'N/A',
+      this.limitarTexto(p.descripcion, 8),
+      `$${p.precio_venta}`,
+      p.unidad_medida || 'N/A',
+      p.categoria || 'N/A'
+    ]);
+
+    this.exportSrv.exportToPDF(
+      headers,
+      data,
+      'Inventario de Productos',
+      'inventario_productos',
+      'landscape'
+    );
+
+    this.alertSrv.showSuccessAlert('Exportado', `PDF generado con ${data.length} registros`);
+  }
 
   cargarProductos(): void {
     this.loading = true;

@@ -1,0 +1,125 @@
+table {
+  border-collapse: separate;
+  border-spacing: 0;
+  width: 100%;
+  background: white;
+  border-radius: 10px;
+  overflow: hidden;
+
+  thead.table-light {
+    background-color: #f8b160;
+    color: #fff !important;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.02em;
+
+    th {
+      border: none !important;
+      padding: 14px 16px;
+      font-size: 0.85rem;
+      color: #fff !important;
+      background: transparent !important;
+    }
+  }
+
+  tbody {
+    tr {
+      transition: background 0.25s ease;
+
+      &:nth-child(even) {
+        background: #fffaf5;
+      }
+
+      &:hover {
+        background: rgba(242, 124, 43, 0.08);
+      }
+
+      td {
+        padding: 12px 16px;
+        color: var(--text-dark);
+        vertical-align: middle;
+      }
+
+      td strong {
+        color: var(--color-primary);
+      }
+    }
+  }
+}
+
+.form-control,
+.form-select,
+textarea {
+  border: 1px solid #e5e7eb;
+  border-radius: 8px;
+  padding: 0.6rem 0.8rem;
+  font-size: 0.95rem;
+  transition: all 0.25s ease;
+  box-shadow: none;
+
+  &:focus {
+    border-color: var(--color-primary);
+    box-shadow: 0 0 0 3px rgba(242, 124, 43, 0.2);
+  }
+}
+
+.btn-outline-clean {
+  background: #fff;
+  border: 1.5px solid rgba(242, 124, 43, 0.35);
+  color: var(--color-primary);
+  font-weight: 600;
+  font-size: 0.92rem;
+  padding: 0.45rem 1.1rem;
+  border-radius: 8px;
+  transition: all 0.25s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.4rem;
+
+  i {
+    font-size: 1.1rem;
+    transition: transform 0.2s ease;
+  }
+
+  &:hover {
+    background: rgba(242, 124, 43, 0.08);
+    border-color: var(--color-primary);
+    color: var(--color-primary);
+    transform: translateY(-1px);
+
+    i {
+      transform: rotate(180deg);
+    }
+  }
+
+  &:active {
+    transform: scale(0.97);
+  }
+}
+
+.pagination .page-link {
+  border-radius: 8px !important;
+  color: var(--color-primary, #f27c2b);
+  border: 1px solid rgba(242, 124, 43, 0.25);
+  transition: all 0.25s ease;
+
+  &:hover {
+    background: rgba(242, 124, 43, 0.1);
+  }
+}
+
+.pagination .active .page-link {
+  background: var(--color-primary, #f27c2b);
+  color: #fff;
+  border-color: var(--color-primary, #f27c2b);
+}
+
+.export-btn {
+  border-radius: 12px;
+  font-weight: 600;
+  transition: 0.3s ease;
+  &:hover {
+    transform: scale(1.05);
+  }
+}

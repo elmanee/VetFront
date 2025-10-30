@@ -36,6 +36,18 @@ export class InventarioService {
     )
   }
 
+  updateLote(id: number, payload: any): Observable<ResponseDTO<any>> {
+    return this.http.patch<ResponseDTO<any>>(
+      `${this.API_URL}/api/lotes/${id}`, payload
+    );
+  }
+
+  deleteLote(id: number): Observable<ResponseDTO<any>> {
+    return this.http.delete<ResponseDTO<any>>(
+      `${this.API_URL}/api/lotes/${id}`
+    );
+  }
+
   getProveedores(): Observable<ResponseDTO<any>> {
     return this.http.get<ResponseDTO<any>>(`${this.API_URL}/api/proveedores`);
   }
