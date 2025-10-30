@@ -13,6 +13,7 @@ import { BuscarExpedienteComponent } from './components/expedientes/buscar-exped
 import { ExpedienteViewComponent } from './components/expedientes/expediente-view/expediente-view.component';
 import { DashboardAdminComponent } from './components/dashboard-admin/dashboard-admin.component';
 import { AuthGuard } from '../guards/auth.guard';
+import { RegistroPersonalComponent } from './authentication/registro-personal/registro-personal.component';
 
 export const routes: Routes = [
   // Rutas públicas
@@ -25,6 +26,11 @@ export const routes: Routes = [
     path: 'login',
     component: LoginComponent,
     title: 'Iniciar Sesión | Pet Health+'
+  },
+  {
+    path: 'registro-personal',
+    component: RegistroPersonalComponent,
+    title: 'Registro de Personal | Veterinaria "El Morralito"'
   },
   {
     path: 'dashboard',

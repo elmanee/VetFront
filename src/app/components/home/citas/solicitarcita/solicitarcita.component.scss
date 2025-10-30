@@ -4,11 +4,24 @@
   display: block;
 }
 
+// ARMONIZACIÓN DE COLORES con cita-form.component.scss
 $primary-color: #FFD95A;
+$secondary-color: #FFC040;
+$text-dark: #333333;
 $light-bg: #FFFBF5;
 
+$color-success: #5CC689;
+$color-danger: #E74C3C;
+$color-warning: #FFC107;
+
+
+// Utilidades de color específicas para este componente
 .bg-light {
   background-color: $light-bg !important;
+}
+
+.bg-warning-subtle {
+  background-color: rgba($color-warning, 0.1) !important; // Fondo muy suave
 }
 
 .legend-item {
@@ -42,48 +55,103 @@ $light-bg: #FFFBF5;
   .fc-toolbar-title {
     font-size: 1.5rem;
     font-weight: 700;
-    color: #333333;
+    color: $text-dark;
   }
 
+  /* Modificación de botones y colores primarios */
   .fc-button {
     background-color: $primary-color !important;
     border-color: $primary-color !important;
-    color: #333333 !important;
+    color: $text-dark !important; /* Texto oscuro para contraste en amarillo */
     font-weight: 600;
     text-transform: capitalize;
+    font-size: 0.9rem;
+    padding: 0.4rem 0.8rem;
 
     &:hover {
-      background-color: #FFC040 !important;
-      border-color: #FFC040 !important;
+      background-color: $secondary-color !important;
+      border-color: $secondary-color !important;
+      transform: translateY(-1px);
     }
 
     &:focus {
-      box-shadow: 0 0 0 0.2rem rgba(255, 217, 90, 0.5) !important;
+      box-shadow: 0 0 0 0.2rem rgba($primary-color, 0.5) !important;
     }
   }
 
   .fc-button-active {
-    background-color: #FFC040 !important;
-    border-color: #FFC040 !important;
+    background-color: $secondary-color !important;
+    border-color: $secondary-color !important;
+    font-weight: 700;
   }
 
   .fc-day-today {
-    background-color: rgba(255, 217, 90, 0.1) !important;
+    background-color: rgba($secondary-color, 0.1) !important;
   }
 
-  .fc-daygrid-day:hover {
-    background-color: rgba(255, 217, 90, 0.05);
+  /* SOLO PERMITIR HOVER EN DIAS DISPONIBLES */
+  .fc-daygrid-day {
     cursor: pointer;
+    
+    // El hover debe aplicarse solo si no tiene clase de bloqueo/pasado
+    &:not(.dia-pasado-oscuro):not(.estado-no-disponible):hover {
+      background-color: rgba($primary-color, 0.05) !important;
+    }
   }
 
-  .fc-event {
-    border-radius: 0.25rem;
-    padding: 0.25rem;
-    font-size: 0.85rem;
-    font-weight: 500;
-    cursor: pointer;
+  /* Estilo para los nuevos eventos de disponibilidad (fondo) */
+  .fc-daygrid-event {
+    display: none !important;
+  }
+  
+  .fc-event-main-frame {
+    display: none !important; 
   }
 
+  /* --- Estados de Disponibilidad (COLORES PASTEL) --- */
+  
+  /* Verde - Amplia Disponibilidad */
+  .fc-daygrid-day.estado-disponible {
+    background-color: rgba($color-success, 0.1) !important;
+  }
+
+  /* Amarillo/Naranja - Limitado / Ocupación Alta */
+  .fc-daygrid-day.estado-limitado {
+    background-color: rgba($color-warning, 0.3) !important;
+  }
+
+  /* Rojo - No Disponible / Lleno / Bloqueado (Días Festivos/Domingos) */
+  .fc-daygrid-day.estado-no-disponible {
+    background-color: rgba($color-danger, 0.2) !important;
+    pointer-events: none; /* Deshabilita clics */
+    cursor: not-allowed;
+    
+    &:hover {
+      background-color: rgba($color-danger, 0.2) !important;
+    }
+    .fc-daygrid-day-number {
+      color: $color-danger !important;
+    }
+  }
+
+
+  /* --- Días Pasados (Gris Claro Armónico) --- */
+  .fc-daygrid-day.dia-pasado-oscuro {
+    background-color: #EAEAEA !important; /* Gris claro suave */
+    cursor: default !important;
+    pointer-events: none; /* Deshabilita clics */
+    
+    &:hover {
+      background-color: #EAEAEA !important; 
+    }
+    
+    .fc-daygrid-day-number {
+      color: #6B6B6B !important; /* Gris del texto muted */
+      font-weight: 500;
+      opacity: 0.7;
+    }
+  }
+  
   .fc-col-header-cell {
     background-color: #f8f9fa;
     font-weight: 600;
@@ -96,6 +164,14 @@ $light-bg: #FFFBF5;
     padding: 0.5rem;
     font-weight: 600;
   }
+
+  /* Eliminamos estilos de TimeGrid (No usados en esta vista) */
+  .fc-timegrid-slot, 
+  .fc-timegrid-slot-label,
+  .fc-timegrid-event {
+    display: none !important;
+  }
+
 }
 
 .card {
@@ -109,14 +185,14 @@ $light-bg: #FFFBF5;
 .btn-primary {
   background-color: $primary-color;
   border-color: $primary-color;
-  color: #333333;
+  color: $text-dark;
   transition: all 0.2s ease;
 
   &:hover {
-    background-color: #FFC040;
-    border-color: #FFC040;
+    background-color: $secondary-color;
+    border-color: $secondary-color;
     transform: translateY(-2px);
-    box-shadow: 0 4px 12px rgba(255, 217, 90, 0.4);
+    box-shadow: 0 4px 12px rgba($primary-color, 0.4);
   }
 }
 
@@ -141,4 +217,158 @@ $light-bg: #FFFBF5;
       font-size: 1.25rem;
     }
   }
+}
+
+// --- Botón de Regreso (Nuevo) ---
+.go-home-button-relative {
+  position: relative; 
+  text-align: left;
+  
+  // Posicionamiento para que quede a la izquierda del contenido principal
+  @media (min-width: 1200px) { 
+    margin-left: -50px; 
+    position: absolute;
+    top: 0;
+    left: 0;
+  }
+}
+
+.btn-action {
+  // Misma apariencia que el Primary en cita-form
+  background-color: $primary-color !important;
+  color: $text-dark !important; 
+  border: none;
+}
+
+.btn-circle-sm {
+  width: 2.5rem; 
+  height: 2.5rem;
+  border-radius: 50%;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0;
+  font-size: 1.25rem; 
+  line-height: 1;
+  transition: all 0.2s ease-in-out;
+  border: none; 
+
+  &:hover {
+    transform: scale(1.05) translateY(-1px);
+    background-color: $secondary-color !important;
+    box-shadow: 0 4px 10px rgba($primary-color, 0.6) !important;
+  }
+}
+
+// --- Indicador de Pasos (Adaptado de cita-form para Paso 1 Simple) ---
+.progress-steps-simple {
+  width: 100%;
+  max-width: 600px; 
+  margin: 0 auto;
+
+  .step-item {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 0.75rem;
+    
+    // Eliminamos el ::before ya que es un solo paso
+
+    .step-number {
+      // Usamos el tamaño grande de cita-form
+      width: 3.5rem; 
+      height: 3.5rem;
+      border-radius: 50%;
+      background-color: #e9ecef;
+      color: #6c757d;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.5rem;
+      font-weight: bold;
+      position: relative;
+      z-index: 1;
+      transition: all 0.3s ease;
+      border: 2px solid #dee2e6;
+    }
+
+    .step-text {
+      margin-top: 0.5rem;
+      font-size: 0.9rem; // Tamaño un poco más legible
+      font-weight: 600;
+      color: #6c757d;
+      text-align: center;
+    }
+
+    &.active {
+      .step-number {
+        background-color: $primary-color;
+        color: $text-dark; /* Texto oscuro para el Primary */
+        border-color: $secondary-color;
+        box-shadow: 0 4px 12px rgba($primary-color, 0.4);
+      }
+
+      .step-text {
+        color: $text-dark;
+      }
+    }
+  }
+}
+
+
+
+
+// --- ESTILOS PARA EL BOTÓN DE REGRESO ---
+.go-home-button {
+  position: fixed; // Permite que el botón se quede en su lugar al hacer scroll
+  top: 1rem;       // 1rem de margen superior
+  left: 1rem;      // 1rem de margen izquierdo
+  z-index: 1050;   // Asegura que esté por encima de otros elementos (como el Navbar si existiera)
+  
+  // Ajuste para el botón en pantallas grandes
+  @media (min-width: 1200px) { 
+    left: calc(50% - 400px - 50px); /* Aproximadamente fuera del contenedor de 800px centrado */
+  }
+
+  @media (max-width: 768px) {
+    top: 0.5rem;
+    left: 0.5rem;
+  }
+}
+
+// Estilo para el botón circular grande
+.btn-circle-lg {
+  width: 3.5rem; 
+  height: 3.5rem;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0;
+  font-size: 1.75rem; 
+  line-height: 1;
+  transition: all 0.2s ease-in-out;
+  border: none; 
+
+  i {
+    // Para centrar el icono de la flecha
+    display: block; 
+    transform: translateX(-1px); // Pequeño ajuste visual para la flecha
+  }
+
+  &:hover {
+    transform: scale(1.05) translateY(-1px);
+    box-shadow: 0 6px 15px rgba(255, 193, 7, 0.6) !important; // Sombra más fuerte
+  }
+
+  &:focus {
+    box-shadow: 0 0 0 0.25rem rgba(255, 193, 7, 0.5) !important;
+  }
+}
+
+// Sobrescribe el color warning para usar el amarillo fuerte de tu tema
+.btn-warning {
+  background-color: $primary-color !important;
+  color: $text-dark !important; 
+  border-color: $secondary-color !important;
 }

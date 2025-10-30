@@ -1,0 +1,160 @@
+<!-- Contenedor principal con el fondo crema de la web -->
+<div class="d-flex justify-content-center align-items-center min-vh-100 py-5 bg-warm-light animate__animated animate__fadeIn">
+  <!-- Contenedor principal: Ahora una tarjeta única, centrada y responsive -->
+  <!-- Usamos la clase main-registro-card para estilos de tarjeta única -->
+  <div class="main-registro-card card shadow-lg">
+    <div class="card-body w-100 p-lg-5 p-4">
+      
+      <div class="text-center mb-4">
+        <span class="material-symbols-outlined display-3 text-app-primary">
+          person_add
+        </span>
+        <h3 class="card-title fw-bold mt-2 text-dark">Registro de Nuevo Personal</h3>
+        <p class="text-muted">Ingresa los datos del nuevo miembro del equipo.</p>
+      </div>
+
+      <!-- Alerta de Éxito -->
+      <div *ngIf="successMsg" class="alert alert-success d-flex align-items-center mb-4" role="alert">
+        <span class="material-symbols-outlined me-2">check_circle</span>
+        <div>
+          {{ successMsg }}
+        </div>
+      </div>
+
+      <!-- Alerta de Error -->
+      <div *ngIf="errorMsg" class="alert alert-danger d-flex align-items-center mb-4" role="alert">
+        <span class="material-symbols-outlined me-2">error</span>
+        <div>
+          {{ errorMsg }}
+        </div>
+      </div>
+
+      <!-- Formulario de Registro -->
+      <form (ngSubmit)="registrarPersonal()" novalidate>
+        
+        <!-- Nombre Completo -->
+        <div class="mb-3">
+          <label for="inputNombre" class="form-label fw-semibold">Nombre Completo</label>
+          <div class="input-group input-group-lg">
+            <span class="input-group-text bg-white border-end-0">
+              <span class="material-symbols-outlined" style="font-size: 18px;">badge</span>
+            </span>
+            <input
+              type="text"
+              class="form-control"
+              id="inputNombre"
+              name="nombre_completo"
+              [(ngModel)]="usuario.nombre_completo"
+              placeholder="Ej: Laura Pérez Gómez"
+              required
+            />
+          </div>
+        </div>
+
+        <!-- Correo Electrónico -->
+        <div class="mb-3">
+          <label for="inputEmail" class="form-label fw-semibold">Correo Electrónico</label>
+          <div class="input-group input-group-lg">
+            <span class="input-group-text bg-white border-end-0">
+              <span class="material-symbols-outlined" style="font-size: 18px;">mail</span>
+            </span>
+            <input
+              type="email"
+              class="form-control"
+              id="inputEmail"
+              name="correo"
+              [(ngModel)]="usuario.correo"
+              placeholder="ejemplo@veterinaria.com"
+              required
+            />
+          </div>
+        </div>
+
+        <!-- Teléfono y Rol (en la misma fila para desktop) -->
+        <div class="row">
+          <!-- Teléfono -->
+          <div class="col-md-6 mb-3">
+            <label for="inputTelefono" class="form-label fw-semibold">Teléfono</label>
+            <div class="input-group input-group-lg">
+              <span class="input-group-text bg-white border-end-0">
+                <span class="material-symbols-outlined" style="font-size: 18px;">phone</span>
+              </span>
+              <input
+                type="tel"
+                class="form-control"
+                id="inputTelefono"
+                name="telefono"
+                [(ngModel)]="usuario.telefono"
+                placeholder="(+52) 55 1234 5678"
+              />
+            </div>
+          </div>
+
+          <!-- Rol -->
+          <div class="col-md-6 mb-3">
+            <label for="selectRol" class="form-label fw-semibold">Rol</label>
+            <div class="input-group input-group-lg">
+              <span class="input-group-text bg-white border-end-0">
+                <span class="material-symbols-outlined" style="font-size: 18px;">group</span>
+              </span>
+              <select
+                class="form-select form-control"
+                id="selectRol"
+                name="rol"
+                [(ngModel)]="usuario.rol"
+                required
+              >
+                <option *ngFor="let rol of roles" [ngValue]="rol">{{ rol }}</option>
+              </select>
+            </div>
+          </div>
+        </div>
+
+        <!-- Contraseña -->
+        <div class="mb-3">
+          <label for="inputPassword" class="form-label fw-semibold">Contraseña</label>
+          <div class="input-group input-group-lg">
+            <span class="input-group-text bg-white border-end-0">
+              <span class="material-symbols-outlined" style="font-size: 18px;">vpn_key</span>
+            </span>
+            <input
+              type="password"
+              class="form-control"
+              id="inputPassword"
+              name="password"
+              [(ngModel)]="usuario.password"
+              placeholder="Crea una contraseña segura"
+              required
+            />
+          </div>
+        </div>
+
+        <!-- Confirmar Contraseña -->
+        <div class="mb-4">
+          <label for="inputPasswordConfirm" class="form-label fw-semibold">Confirmar Contraseña</label>
+          <div class="input-group input-group-lg">
+            <span class="input-group-text bg-white border-end-0">
+              <span class="material-symbols-outlined" style="font-size: 18px;">lock_reset</span>
+            </span>
+            <input
+              type="password"
+              class="form-control"
+              id="inputPasswordConfirm"
+              name="password_confirm"
+              [(ngModel)]="usuario.password_confirm"
+              placeholder="Repite la contraseña"
+              required
+            />
+          </div>
+        </div>
+
+        <!-- Botón de Registro -->
+        <button type="submit" class="btn btn-primary btn-lg w-100">
+          <span class="material-symbols-outlined align-middle me-1">save</span>
+          Registrar Personal
+        </button>
+      </form>
+    </div>
+  </div>
+</div>
+<!-- El script de inicialización del carrusel ha sido eliminado -->

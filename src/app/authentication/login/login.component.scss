@@ -16,17 +16,57 @@ $light-bg: #FFFBF5; // Fondo principal del sitio
   color: $primary-color !important;
 }
 
-// ESTILOS DEL FORMULARIO DE LOGIN
-.login-card {
-  max-width: 420px;
+// --- ESTILOS DEL LOGO ---
+.app-logo {
+  width: 100px;
+  height: 100px;
+  object-fit: cover; /* Asegura que la imagen no se distorsione */
+  border: 4px solid var(--color-primary, #FFD95A); /* Borde para resaltarlo, usando la variable SCSS como fallback */
+  padding: 5px;
+}
+
+
+// --- ESTILOS DEL NUEVO CONTENEDOR DE DOS COLUMNAS ---
+.main-login-container {
+  max-width: 900px; /* Aumentamos el ancho máximo para la vista de dos columnas */
   width: 90%;
+  height: 600px; /* Establecemos una altura fija para que la imagen se vea bien */
   border-radius: 1.5rem; /* Bordes más redondeados */
   border: none;
-  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+  box-shadow: 0 15px 40px rgba(0, 0, 0, 0.15); /* Sombra más pronunciada */
+  background-color: white; /* Aseguramos fondo blanco en el contenedor principal */
+}
+
+/* Reemplazamos .login-card con .main-login-container */
+/* .login-card se elimina o se renombra a .main-login-container */
+// .login-card {
+//   max-width: 420px;
+//   width: 90%;
+//   border-radius: 1.5rem; /* Bordes más redondeados */
+//   border: none;
+//   box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+// }
+
+// Ajuste clave para estirar el formulario en desktop y que se vea simétrico con el carrusel
+@media (min-width: 992px) {
+  .main-login-container .row > .col-lg-6:last-child {
+    // Aseguramos que la columna de la derecha estire su contenido al 100% de la altura
+    height: 100%;
+    
+    // Aseguramos que el card-body interno también se estire
+    .card-body {
+      // Usamos padding generoso para que el contenido se separe de los bordes.
+      padding-top: 3.5rem !important;
+      padding-bottom: 3.5rem !important;
+      
+      // Añadimos altura mínima para garantizar que el formulario no se "encoga" demasiado
+      min-height: 100%;
+    }
+  }
 }
 
 .card-body {
-  padding: 2.5rem !important;
+  padding: 2.5rem !important; // Padding por defecto para móvil/tablet
 }
 
 // Estilo del Input Group
@@ -36,7 +76,7 @@ $light-bg: #FFFBF5; // Fondo principal del sitio
   border-top-left-radius: 0.5rem;
   border-bottom-left-radius: 0.5rem;
   border-color: #dee2e6;
-  
+
   span {
     color: #6c757d;
   }
@@ -47,7 +87,7 @@ $light-bg: #FFFBF5; // Fondo principal del sitio
   padding: 0.75rem 1rem;
   border-color: #dee2e6;
   border-left: 0;
-  
+
   // Foco
   &:focus {
     border-color: $primary-color;
@@ -89,15 +129,28 @@ $light-bg: #FFFBF5; // Fondo principal del sitio
   color: #721c24;
   border-radius: 0.75rem;
   font-weight: 500;
-  
+
   span {
     font-size: 1.25rem;
   }
 }
 
 // Responsive
+@media (max-width: 992px) { /* Breakpoint lg para ocultar la imagen */
+  .main-login-container {
+    height: auto;
+    max-width: 420px;
+    width: 90%;
+    border-radius: 1.5rem;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+  }
+  .card-body {
+    padding: 2.5rem !important;
+  }
+}
+
 @media (max-width: 576px) {
-  .login-card {
+  .main-login-container {
     border-radius: 0; /* Ocupa todo el ancho en móvil */
     box-shadow: none;
   }
