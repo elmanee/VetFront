@@ -8,7 +8,7 @@ import { ResponseDTO } from '../interfaces/response.interface';
   providedIn: 'root'
 })
 export class InventarioService {
-  API_URL = environment.apiUrl
+  API_URL = environment.apiUrlDos
 
   constructor( private http : HttpClient){}
 
@@ -22,6 +22,12 @@ export class InventarioService {
     return this.http.post<ResponseDTO<any>>(
       `${this.API_URL}/api/productos`, payload
     )
+  }
+
+  getLotes(): Observable<ResponseDTO<any>> {
+    return this.http.get<ResponseDTO<any>>(
+      `${this.API_URL}/api/lotes`
+    );
   }
 
   postLote(payload :any) :Observable<ResponseDTO<any>> {

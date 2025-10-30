@@ -21,7 +21,6 @@
 
 .admin-content {
   flex: 1;
-  padding: 24px;
   overflow-x: hidden;
   overflow-y: auto;
   background-color: #ffffff;
@@ -48,6 +47,6 @@
 
 @media (min-width: 769px) and (max-width: 1024px) {
   .admin-content {
-    padding: 20px; 
+    padding: 20px;
   }
 }

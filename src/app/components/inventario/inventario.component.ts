@@ -33,9 +33,9 @@ export class InventarioComponent implements OnInit {
   detalleProducto: any = null;
 
   filtrosVisible = true;
-  filtros = { nombre: '', categoria: '', proveedor: '' };
+  filtros = { nombre: '', unidad: '', categoria: '' };
   categorias: string[] = [];
-  proveedores: string[] = [];
+  unidades: string[] = [];
 
   page = 1;
   pageSize = 10;
@@ -58,6 +58,7 @@ export class InventarioComponent implements OnInit {
         if (res.status === 'OK' && res.data) {
           this.productos = res.data.sort((a, b) => a.id - b.id);
           this.productosFiltrados = [...this.productos];
+          this.generarListasFiltros();
         } else {
           this.errorMsg = res.message || 'No se pudo obtener la lista de productos.';
           this.productos = [];
@@ -85,11 +86,24 @@ export class InventarioComponent implements OnInit {
     this.openForm = true;
   }
 
-  handleGuardar(producto?: Producto): void {
-    if (!producto) return;
-    this.productoSeleccionado = producto;
-    this.mostrarFormLote = true;
+  handleGuardar(event: any): void {
+    if (!event || !event.data) return;
+
+    const { data, tipo } = event;
+
+    if (tipo === 'nuevo') {
+      this.productoSeleccionado = data;
+      this.mostrarFormLote = true;
+    }
+
+    if (tipo === 'editado') {
+      this.cargarProductos();
+    }
+
+    this.openForm = false;
+    this.selectedProducto = null;
   }
+
 
   closeForm(): void {
     this.openForm = false;
@@ -102,23 +116,23 @@ export class InventarioComponent implements OnInit {
     this.cargarProductos();
   }
 
-verDetalle(producto: any): void {
+  verDetalle(producto: any): void {
 
-  this.resetPanels();
+    this.resetPanels();
 
-  this.inventarioSev.getDetalleProductoYLote(producto.id).subscribe({
-    next: (res) => {
+    this.inventarioSev.getDetalleProductoYLote(producto.id).subscribe({
+      next: (res) => {
 
-      if (res.status === 'OK' && res.data && res.data.length > 0) {
-        this.detalleProducto = res.data[0];
-        this.mostrarDetalle = true;
-      } else {
+        if (res.status === 'OK' && res.data && res.data.length > 0) {
+          this.detalleProducto = res.data[0];
+          this.mostrarDetalle = true;
+        } else {
 
-      }
-    },
-    error: (err) => console.error('error:', err)
-  });
-}
+        }
+      },
+      error: (err) => console.error('error:', err)
+    });
+  }
 
 
   cerrarDetalle(): void {
@@ -130,26 +144,39 @@ verDetalle(producto: any): void {
   aplicarFiltros(): void {
     const nombre = this.filtros.nombre.toLowerCase();
     const categoria = this.filtros.categoria;
-    const proveedor = this.filtros.proveedor;
+    const unidad = this.filtros.unidad;
 
     this.productosFiltrados = this.productos.filter((p) => {
       const matchNombre = p.nombre.toLowerCase().includes(nombre);
-      const matchCategoria = !categoria || (p as any).categoria === categoria;
-      const matchProveedor = !proveedor || (p as any).proveedor === proveedor;
-      return matchNombre && matchCategoria && matchProveedor;
+      const matchCategoria = !categoria || p.categoria === categoria;
+      const matchUnidad = !unidad || p.unidad_medida === unidad;
+      return matchNombre && matchCategoria && matchUnidad;
     });
 
     this.goToPage(1);
   }
 
   limpiarFiltros(): void {
-    this.filtros = { nombre: '', categoria: '', proveedor: '' };
+    this.filtros = { nombre: '', unidad: '', categoria: '' };
     this.productosFiltrados = [...this.productos];
     this.goToPage(1);
   }
 
   toggleFiltros(): void {
     this.filtrosVisible = !this.filtrosVisible;
+  }
+
+  private generarListasFiltros(): void {
+    const categoriasSet = new Set<string>();
+    const unidadesSet = new Set<string>();
+
+    this.productos.forEach(p => {
+      if (p.categoria) categoriasSet.add(p.categoria);
+      if (p.unidad_medida) unidadesSet.add(p.unidad_medida);
+    });
+
+    this.categorias = Array.from(categoriasSet);
+    this.unidades = Array.from(unidadesSet);
   }
 
 
@@ -214,4 +241,12 @@ verDetalle(producto: any): void {
   }
 
   eliminarProducto(prod: Producto) {}
+
+  limitarTexto(texto: string, limite: number): string {
+    if (!texto) return '';
+    const palabras = texto.split(' ');
+    return palabras.length > limite
+      ? palabras.slice(0, limite).join(' ') + '...'
+      : texto;
+  }
 }

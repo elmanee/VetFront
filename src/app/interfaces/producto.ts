@@ -4,4 +4,6 @@ export interface Producto {
   descripcion: string;
   precio_venta: number;
   unidad_medida: string;
+  categoria?: string;
+  categoria_id?: number;
 }

@@ -7,6 +7,8 @@ import { AgendaViewComponent } from './components/home/citas/agenda-view/agenda-
 import { SolicitarcitaComponent } from './components/home/citas/solicitarcita/solicitarcita.component';
 import { InventarioComponent } from './components/inventario/inventario.component';
 import { LayoutAdminComponent } from './shared/admin/layout-admin/layout-admin.component';
+import { DashboardAdminComponent } from './components/dashboard-admin/dashboard-admin.component';
+import { LotesComponent } from './components/lotes/lotes.component';
 
 export const routes: Routes = [
   {
@@ -36,7 +38,7 @@ export const routes: Routes = [
     children: [
       {
         path: '',
-        redirectTo: 'inventario',
+        redirectTo: 'das-admin',
         pathMatch: 'full'
       },
 
@@ -55,6 +57,16 @@ export const routes: Routes = [
         path: 'agenda',
         component: AgendaViewComponent,
         title: 'Agenda de Citas | Pet Health+ Admin'
+      },
+      {
+        path: 'das-admin',
+        component: DashboardAdminComponent,
+        title: 'Dashboard | Pet Health+ Admin'
+      },
+      {
+        path: 'lotes',
+        component: LotesComponent,
+        title: 'Dashboard | Pet Health+ Admin'
       },
 
     ]

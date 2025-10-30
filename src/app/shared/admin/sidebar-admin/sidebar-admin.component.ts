@@ -1,10 +1,14 @@
 import { Component, OnInit } from '@angular/core';
-import { Router } from '@angular/router';
+import { Router, RouterLink, RouterLinkActive,  } from '@angular/router';
 import { SidebarService } from '../../services/sidebar.service';
+import { CommonModule } from '@angular/common';
 
 @Component({
   selector: 'app-sidebar-admin',
-  imports: [],
+  imports: [
+    CommonModule,
+    RouterLink, RouterLinkActive,
+  ],
   templateUrl: './sidebar-admin.component.html',
   styleUrl: './sidebar-admin.component.scss'
 })
