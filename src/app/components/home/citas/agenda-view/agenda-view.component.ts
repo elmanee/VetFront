@@ -2,13 +2,14 @@
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
+import { RouterModule } from '@angular/router'; 
 import { Cita, CitasService, ActualizarCitaRequest } from '../../../../services/citas.service';
 import Swal from 'sweetalert2';
 
 @Component({
   selector: 'app-agenda-view',
   standalone: true,
-  imports: [CommonModule, FormsModule],
+  imports: [CommonModule, FormsModule, RouterModule], 
   templateUrl: './agenda-view.component.html',
   styleUrl: './agenda-view.component.scss'
 })
@@ -134,51 +135,49 @@ export class AgendaViewComponent implements OnInit {
     this.nuevaHora = '';
   }
 
-  // ACTUALIZADO: Ahora hace la llamada REAL al backend
-confirmarCancelar(): void {
-  if (!this.citaSeleccionada || !this.citaSeleccionada.id_cita) return;
-  
-  Swal.fire({
-    title: '¿Cancelar cita?',
-    text: "Esta acción no se puede deshacer",
-    icon: 'warning',
-    showCancelButton: true,
-    confirmButtonColor: '#dc3545',
-    cancelButtonColor: '#6c757d',
-    confirmButtonText: 'Sí, cancelar',
-    cancelButtonText: 'No'
-  }).then((result) => {
-    if (result.isConfirmed) {
-      this.cargando = true;
-      
-      this.citasService.cancelarCita(this.citaSeleccionada!.id_cita!).subscribe({
-        next: (response) => {
-          this.cargando = false;
-          
-          Swal.fire({
-            title: '¡Cancelada!',
-            text: response.message,
-            icon: 'success',
-            timer: 2000
-          });
-          
-          this.cerrarModal();
-          this.cargarCitas();
-        },
-        error: (err: Error) => {
-          this.cargando = false;
-          Swal.fire({
-            title: 'Error',
-            text: err.message,
-            icon: 'error'
-          });
-        }
-      });
-    }
-  });
-}
+  confirmarCancelar(): void {
+    if (!this.citaSeleccionada || !this.citaSeleccionada.id_cita) return;
+    
+    Swal.fire({
+      title: '¿Cancelar cita?',
+      text: "Esta acción no se puede deshacer",
+      icon: 'warning',
+      showCancelButton: true,
+      confirmButtonColor: '#dc3545',
+      cancelButtonColor: '#6c757d',
+      confirmButtonText: 'Sí, cancelar',
+      cancelButtonText: 'No'
+    }).then((result) => {
+      if (result.isConfirmed) {
+        this.cargando = true;
+        
+        this.citasService.cancelarCita(this.citaSeleccionada!.id_cita!).subscribe({
+          next: (response) => {
+            this.cargando = false;
+            
+            Swal.fire({
+              title: '¡Cancelada!',
+              text: response.message,
+              icon: 'success',
+              timer: 2000
+            });
+            
+            this.cerrarModal();
+            this.cargarCitas();
+          },
+          error: (err: Error) => {
+            this.cargando = false;
+            Swal.fire({
+              title: 'Error',
+              text: err.message,
+              icon: 'error'
+            });
+          }
+        });
+      }
+    });
+  }
 
-  // ACTUALIZADO: Ahora hace la llamada REAL al backend
   confirmarReprogramar(): void {
     if (!this.citaSeleccionada || !this.citaSeleccionada.id_cita || !this.nuevaFecha || !this.nuevaHora) {
       this.mensaje = 'Completa la nueva fecha y hora';
@@ -218,10 +217,10 @@ confirmarCancelar(): void {
 
   getEstadoBadgeClass(estado: string): string {
     switch(estado) {
-      case 'Confirmada': return 'badge-success';
-      case 'Pendiente': return 'badge-warning';
-      case 'Cancelada': return 'badge-danger';
-      default: return 'badge-secondary';
+      case 'Confirmada': return 'bg-success';
+      case 'Pendiente': return 'bg-warning';
+      case 'Cancelada': return 'bg-danger';
+      default: return 'bg-secondary';
     }
   }
 

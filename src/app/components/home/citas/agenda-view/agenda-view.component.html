@@ -1,17 +1,27 @@
 <!-- /home/agus/Documentos/VetHealth/VetFront/src/app/home/citas/agenda-view/agenda-view.component.html -->
+
 <div class="container-fluid min-vh-100 bg-light py-5">
   <div class="row justify-content-center">
     <div class="col-12 col-xl-11">
       
-      <!-- Encabezado -->
-      <div class="text-center mb-5">
-        <h1 class="display-5 fw-bold text-dark mb-3">
-          <i class="bi bi-calendar3 me-2"></i>
-          Agenda Veterinaria
-        </h1>
-        <p class="lead text-muted">
-          Gestiona y consulta todas las citas programadas
-        </p>
+      <div class="d-flex justify-content-between align-items-center mb-5 flex-wrap gap-3">
+        <div>
+          <h1 class="display-5 fw-bold text-dark mb-2">
+            <i class="bi bi-calendar3 me-2"></i>
+            Agenda Veterinaria
+          </h1>
+          <p class="lead text-muted mb-0">
+            Gestiona y consulta todas las citas programadas
+          </p>
+        </div>
+        
+        <!-- ✨ BOTÓN PARA ATENDER CITAS -->
+        <div>
+          <a routerLink="/citas-atender" class="btn btn-success btn-lg shadow-sm">
+            <i class="bi bi-clipboard2-pulse me-2"></i>
+            Atender Citas Confirmadas
+          </a>
+        </div>
       </div>
 
       <!-- Mensajes -->
@@ -185,7 +195,7 @@
         </div>
 
         <!-- Cards de citas -->
-        <div *ngFor="let cita of citasFiltradas; let i = index" class="col-lg-6 col-xl-4 mb-4">
+        <div *ngFor="let cita of citasFiltradas" class="col-lg-6 col-xl-4 mb-4">
           <div class="card h-100 border-0 shadow-sm cita-card" [ngClass]="getEstadoCardClass(cita.estado || '')">
             <div class="card-body p-4">
               
@@ -326,3 +336,5 @@
   </div>
 </div>
 <div class="modal-backdrop fade" [class.show]="mostrarModal" *ngIf="mostrarModal"></div>
+```
+
