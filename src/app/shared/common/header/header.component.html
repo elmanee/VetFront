@@ -3,13 +3,16 @@
   <nav class="navbar navbar-expand-lg navbar-light bg-white py-3">
     <div class="container-fluid px-4 px-lg-5">
       
-      <!-- Logo -->
+      <!-- Logo: Integración de la imagen en formato circular -->
       <a class="navbar-brand d-flex align-items-center" href="/">
-        <span class="paw-icon me-2">
-          <i class="bi bi-heart-fill text-primary"></i>
-        </span>
+        <!-- RUTA CORREGIDA: Apunta a la carpeta 'assets' -->
+        <img 
+          src="assets/logos/logoMorralito.png" 
+          alt="Logo Veterinaria El Morralito" 
+          class="app-logo rounded-circle me-3" 
+        />
         <span class="brand-text">
-          Pet Health<span class="text-primary fw-bold">+</span>
+          Veterinaria <span class="text-app-primary fw-bold" >"El Morralito"</span>
         </span>
       </a>
 
@@ -24,14 +27,18 @@
           <li class="nav-item">
             <a class="nav-link fw-semibold" href="/">Inicio</a>
           </li>
+          <!-- Enlace de Agendar Cita para Clientes -->
           <li class="nav-item">
             <a class="nav-link fw-semibold" href="/registrar-cita">Agendar Cita</a>
           </li>
           <li class="nav-item">
             <a class="nav-link fw-semibold" href="/agenda">Agenda</a>
           </li>
+          
+          <!-- Dropdown (Servicios) -->
           <li class="nav-item dropdown">
-            <a class="nav-link dropdown-toggle fw-semibold" href="#" role="button" data-bs-toggle="dropdown">
+            <!-- NOTA: Se mantiene la clase 'dropdown-toggle' para que el SCSS lo excluya del subrayado -->
+            <a class="nav-link dropdown-toggle fw-semibold" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
               Servicios
             </a>
             <ul class="dropdown-menu dropdown-menu-end shadow-sm border-0">
@@ -42,7 +49,16 @@
               <li><a class="dropdown-item" href="#">Ver Todos</a></li>
             </ul>
           </li>
+          
+          <!-- NUEVO: Botón de Login para Personal -->
           <li class="nav-item ms-lg-3">
+            <a class="btn btn-outline-secondary btn-sm px-4 fw-semibold" href="/login">
+              Acceso Personal
+            </a>
+          </li>
+
+          <!-- CTA Principal (Agendar Ahora) -->
+          <li class="nav-item ms-lg-2">
             <a class="btn btn-primary btn-sm px-4 fw-semibold" href="/solicitar-cita">
               Agendar Ahora
             </a>
