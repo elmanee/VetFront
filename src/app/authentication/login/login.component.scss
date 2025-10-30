@@ -1,3 +1,107 @@
 :host {
   display: block;
 }
+
+// Variables obtenidas de tu diseño (dashboard/cita-form)
+$primary-color: #FFD95A;
+$secondary-color: #FFC040;
+$text-dark: #333333;
+$light-bg: #FFFBF5; // Fondo principal del sitio
+
+// CLASES DE UTILIDAD
+.bg-warm-light {
+  background-color: $light-bg;
+}
+.text-app-primary {
+  color: $primary-color !important;
+}
+
+// ESTILOS DEL FORMULARIO DE LOGIN
+.login-card {
+  max-width: 420px;
+  width: 90%;
+  border-radius: 1.5rem; /* Bordes más redondeados */
+  border: none;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+}
+
+.card-body {
+  padding: 2.5rem !important;
+}
+
+// Estilo del Input Group
+.input-group-text {
+  background-color: #f8f9fa; /* Fondo gris claro en el addon */
+  border-right: 0;
+  border-top-left-radius: 0.5rem;
+  border-bottom-left-radius: 0.5rem;
+  border-color: #dee2e6;
+  
+  span {
+    color: #6c757d;
+  }
+}
+
+.form-control {
+  border-radius: 0.5rem;
+  padding: 0.75rem 1rem;
+  border-color: #dee2e6;
+  border-left: 0;
+  
+  // Foco
+  &:focus {
+    border-color: $primary-color;
+    box-shadow: 0 0 0 0.2rem rgba(255, 217, 90, 0.35); /* Sombra suave amarilla */
+  }
+}
+
+// Estilo del Botón Primario (Consistente con todo el sitio)
+.btn-primary {
+  background-color: $primary-color;
+  border-color: $primary-color;
+  color: $text-dark;
+  font-weight: 700;
+  border-radius: 0.75rem; /* Bordes redondeados del botón */
+  transition: all 0.2s ease;
+  box-shadow: 0 4px 12px rgba(255, 217, 90, 0.4);
+
+  &:hover:not(:disabled) {
+    background-color: $secondary-color;
+    border-color: $secondary-color;
+    transform: translateY(-2px);
+    box-shadow: 0 6px 15px rgba(255, 217, 90, 0.6);
+  }
+}
+
+// Checkbox
+.form-check-input:checked {
+  background-color: $primary-color;
+  border-color: $primary-color;
+}
+
+.form-check-input:focus {
+  box-shadow: 0 0 0 0.25rem rgba(255, 217, 90, 0.35);
+}
+
+// Alerta de error
+.alert-danger {
+  background-color: #f8d7da;
+  color: #721c24;
+  border-radius: 0.75rem;
+  font-weight: 500;
+  
+  span {
+    font-size: 1.25rem;
+  }
+}
+
+// Responsive
+@media (max-width: 576px) {
+  .login-card {
+    border-radius: 0; /* Ocupa todo el ancho en móvil */
+    box-shadow: none;
+  }
+  .card-body {
+    padding: 1.5rem !important;
+  }
+}
