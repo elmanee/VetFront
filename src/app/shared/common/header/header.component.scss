@@ -7,6 +7,11 @@
 $primary-color: #FFD95A;
 $text-dark: #333333;
 
+/* NUEVA CLASE DE UTILIDAD: text-app-primary */
+.text-app-primary {
+  color: $primary-color !important;
+}
+
 .header-main {
   background-color: #ffffff;
   z-index: 1030;
@@ -21,30 +26,23 @@ $text-dark: #333333;
   font-weight: 800;
   color: $text-dark;
   transition: all 0.2s ease;
+  align-items: center;
 
   &:hover {
-    opacity: 0.8;
+    opacity: 0.9;
   }
 
-  .paw-icon {
-    font-size: 1.75rem;
-    display: inline-block;
-    animation: pulse-subtle 3s infinite ease-in-out;
+  // Estilos para la imagen del logo
+  .app-logo {
+    width: 45px; /* Ligeramente más grande para que se aprecie el logo */
+    height: 45px;
+    object-fit: cover;
+    border: 2px solid $primary-color; /* Un borde sutil para destacar el círculo */
+    transition: all 0.2s ease;
   }
 
   .brand-text {
     letter-spacing: -0.5px;
-  }
-}
-
-@keyframes pulse-subtle {
-  0%, 100% { 
-    transform: scale(1); 
-    opacity: 0.9;
-  }
-  50% { 
-    transform: scale(1.05); 
-    opacity: 1;
   }
 }
 
@@ -59,7 +57,8 @@ $text-dark: #333333;
     color: $text-dark;
   }
 
-  &::after {
+  /* MODIFICACIÓN CLAVE: Aplicar el subrayado SOLAMENTE a los links que NO son dropdowns */
+  &:not(.dropdown-toggle)::after { 
     content: '';
     position: absolute;
     bottom: 0;
@@ -71,7 +70,8 @@ $text-dark: #333333;
     transform: translateX(-50%);
   }
 
-  &:hover::after {
+  /* Aplica la animación de crecimiento SOLO a los links que NO son dropdowns */
+  &:not(.dropdown-toggle):hover::after { 
     width: 80%;
   }
 }
@@ -88,7 +88,7 @@ $text-dark: #333333;
     transition: all 0.2s ease;
 
     &:hover {
-      background-color: rgba(255, 217, 90, 0.1);
+      background-color: rgba(255, 217, 90, 0.1); /* Fondo muy claro del primary color */
       color: $text-dark;
     }
   }
@@ -110,6 +110,20 @@ $text-dark: #333333;
   }
 }
 
+/* Estilo para el nuevo botón de acceso para personal */
+.btn-outline-secondary {
+    color: #6c757d;
+    border-color: #ced4da;
+    border-radius: 2rem;
+    transition: all 0.2s ease;
+
+    &:hover {
+        color: $text-dark;
+        background-color: #f8f9fa;
+        border-color: #adb5bd;
+    }
+}
+
 .navbar-toggler {
   &:focus {
     box-shadow: none;
@@ -121,8 +135,19 @@ $text-dark: #333333;
     padding: 0.75rem 1rem;
   }
 
-  .btn-primary {
+  .btn-primary, .btn-outline-secondary {
     width: 100%;
-    margin-top: 1rem;
+    margin-top: 0.5rem; /* Ajuste para separar los botones en móvil */
+  }
+  
+  .btn-primary {
+    margin-bottom: 0.5rem;
+  }
+
+  .navbar-brand {
+    .app-logo {
+      width: 40px; /* Ajustado para mejor visibilidad en móvil */
+      height: 40px;
+    }
   }
 }
