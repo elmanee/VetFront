@@ -60,7 +60,15 @@
             <span class="input-group-text">
               <span class="material-symbols-outlined" style="font-size: 18px;">mail</span>
             </span>
-            <input type="email" class="form-control" id="inputEmail" placeholder="nombre@ejemplo.com" required>
+            <input
+              type="email"
+              class="form-control"
+              id="inputEmail"
+              name="correo"
+              [(ngModel)]="correo"
+              placeholder="nombre@ejemplo.com"
+              required
+            />
           </div>
         </div>
 
@@ -71,13 +79,21 @@
             <span class="input-group-text">
               <span class="material-symbols-outlined" style="font-size: 18px;">vpn_key</span>
             </span>
-            <input type="password" class="form-control" id="inputPassword" placeholder="••••••••" required>
+            <input
+              type="password"
+              class="form-control"
+              id="inputPassword"
+              name="password"
+              [(ngModel)]="password"
+              placeholder="••••••••"
+              required
+            />
           </div>
         </div>
 
         <!-- Checkbox 'Recordarme' -->
         <div class="mb-4 form-check">
-          <input type="checkbox" class="form-check-input" id="checkRemember">
+          <input type="checkbox" class="form-check-input" id="checkRemember" />
           <label class="form-check-label" for="checkRemember">Recordarme</label>
         </div>
 
