@@ -1,87 +1,163 @@
-<!-- Contenedor principal con el fondo crema de la web -->
+<!-- Contenedor principal, ahora más grande para alojar las dos secciones -->
 <div class="d-flex justify-content-center align-items-center min-vh-100 py-5 bg-warm-light animate__animated animate__fadeIn">
-  <!-- Tarjeta de Login (Card de Bootstrap) -->
-  <div class="card login-card shadow-lg p-4">
-    <div class="card-body">
-      <!-- Icono y Título (Usando la clase de color primario) -->
-      <div class="text-center mb-4">
-        <span class="material-symbols-outlined display-3 text-app-primary">
-          lock
-        </span>
-        <h3 class="card-title fw-bold mt-2 text-dark">Acceso de Personal</h3>
-        <p class="text-muted">Ingresa tus credenciales para continuar.</p>
+  <!-- Contenedor principal con diseño de dos columnas (Flexbox con Bootstrap) -->
+  <div class="main-login-container card shadow-lg">
+    <div class="row g-0 h-100">
+
+      <!-- Columna Izquierda: Carrusel de Mascotas Felices (Solo visible en desktop) -->
+      <div class="col-lg-6 d-none d-lg-block p-0">
+        <!-- data-bs-ride="carousel" garantiza el autoplay, y rounded-start-4 asegura los bordes -->
+        <div id="petCarousel" class="carousel slide h-100 rounded-start-4 overflow-hidden" data-bs-ride="carousel" data-bs-interval="3000">
+
+          <!-- 1. INDICADORES (Puntitos de abajo) -->
+          <div class="carousel-indicators">
+            <button type="button" data-bs-target="#petCarousel" data-bs-slide-to="0" class="active" aria-current="true" aria-label="Slide 1"></button>
+            <button type="button" data-bs-target="#petCarousel" data-bs-slide-to="1" aria-label="Slide 2"></button>
+            <button type="button" data-bs-target="#petCarousel" data-bs-slide-to="2" aria-label="Slide 3"></button>
+            <button type="button" data-bs-target="#petCarousel" data-bs-slide-to="3" aria-label="Slide 4"></button>
+          </div>
+
+          <!-- 2. IMÁGENES DEL CARRUSEL (INNER) -->
+          <div class="carousel-inner h-100">
+            <!-- Imagen 1 (Activa) -->
+            <div class="carousel-item active h-100">
+              <img src="https://images.unsplash.com/photo-1756459079225-de222ba328a4?ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxzZWFyY2h8MTR8fGhhcHB5JTIwcGV0cyUyMHZlcnRpY2FsfGVufDB8fDB8fHww&auto=format&fit=crop&q=60&w=500"
+                   class="d-block w-100 h-100 object-fit-cover"
+                   alt="Perro feliz">
+            </div>
+            <!-- Imagen 2 -->
+            <div class="carousel-item h-100">
+              <img src="https://images.unsplash.com/photo-1685897777078-ab618e04f442?ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxzZWFyY2h8MTF8fGhhcHB5JTIwcGV0cyUyMHZlcnRpY2FsfGVufDB8fDB8fHww&auto=format&fit=crop&q=60&w=500"
+                   class="d-block w-100 h-100 object-fit-cover"
+                   alt="Gato y perro jugando">
+            </div>
+            <!-- Imagen 3 -->
+            <div class="carousel-item h-100">
+              <img src="https://images.unsplash.com/photo-1743611146557-fbfce7b9c399?ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxzZWFyY2h8Mnx8Z3JvdXAlMjBoYXBweSUyMHBldHMlMjB2ZXJ0aWNhbCUyMGFuaW1hbHMlMjBkb21lc3RpY3N8ZW58MHx8MHx8fDA%3D&auto=format&fit=crop&q=60&w=500"
+                   class="d-block w-100 h-100 object-fit-cover"
+                   alt="Grupo de mascotas">
+            </div>
+             <!-- Imagen 4 -->
+            <div class="carousel-item h-100">
+              <img src="https://images.unsplash.com/photo-1760204472157-6ddb2019a028?ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxzZWFyY2h8MTR8fGdyb3VwJTIwaGFwcHklMjBwZXRzJTIwdmVydGljYWwlMjBhbmltYWxzJTIwZG9tZXN0aWNzfGVufDB8fDB8fHww&auto=format&fit=crop&q=60&w=500"
+                   class="d-block w-100 h-100 object-fit-cover"
+                   alt="Gato peludo">
+            </div>
+          </div>
+
+          <!-- 3. CONTROLES DE NAVEGACIÓN (Flechas) -->
+          <button class="carousel-control-prev" type="button" data-bs-target="#petCarousel" data-bs-slide="prev">
+            <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+            <span class="visually-hidden">Previous</span>
+          </button>
+          <button class="carousel-control-next" type="button" data-bs-target="#petCarousel" data-bs-slide="next">
+            <span class="carousel-control-next-icon" aria-hidden="true"></span>
+            <span class="visually-hidden">Next</span>
+          </button>
+        </div>
       </div>
 
-      <!-- Alerta de Error (Funcionalidad mantenida, solo diseño adaptado) -->
-      <div *ngIf="errorMsg" class="alert alert-danger d-flex align-items-center mb-4" role="alert">
-        <span class="material-symbols-outlined me-2">error</span>
-        <div>
-          {{ errorMsg }}
+      <!-- Columna Derecha: Formulario de Login -->
+      <!-- Usa col-lg-6 para desktop y col-12 para móvil -->
+      <div class="col-lg-6 col-12 d-flex align-items-center">
+        <div class="card-body w-100 p-lg-5 p-4">
+          <!-- Contenido del formulario -->
+
+          <!-- Logo y Título (Usando la clase de color primario) -->
+          <div class="text-center mb-4">
+            <!-- Logo: Integración de la imagen en formato circular -->
+            <a class="navbar-brand d-block text-decoration-none" href="/">
+              <!-- La clase .app-logo hace la imagen circular y la escala a 100px -->
+              <img
+                src="assets/logos/logoMorralito.png"
+                alt="Logo Veterinaria El Morralito"
+                class="app-logo rounded-circle mb-3"
+              />
+              <span class="brand-text d-block fs-5 text-dark">
+                Veterinaria <span class="text-app-primary fw-bold" >"El Morralito"</span>
+              </span>
+            </a>
+
+            <h3 class="card-title fw-bold mt-2 text-dark">Acceso de Personal</h3>
+            <p class="text-muted">Ingresa tus credenciales para continuar.</p>
+          </div>
+
+          <!-- Alerta de Error -->
+          <div *ngIf="errorMsg" class="alert alert-danger d-flex align-items-center mb-4" role="alert">
+            <span class="material-symbols-outlined me-2">error</span>
+            <div>
+              {{ errorMsg }}
+            </div>
+          </div>
+
+          <!-- Formulario -->
+          <form (ngSubmit)="ingresar()" novalidate>
+            <!-- Campo Correo Electrónico -->
+            <div class="mb-3">
+              <label for="inputEmail" class="form-label fw-semibold">Correo Electrónico</label>
+              <div class="input-group input-group-lg">
+                <span class="input-group-text bg-white border-end-0">
+                  <span class="material-symbols-outlined" style="font-size: 18px;">mail</span>
+                </span>
+                <input
+                  type="email"
+                  class="form-control"
+                  id="inputEmail"
+                  name="correo"
+                  [(ngModel)]="correo"
+                  placeholder="correo@email.com"
+                  required
+                />
+              </div>
+            </div>
+
+            <!-- Campo Contraseña -->
+            <div class="mb-3">
+              <label for="inputPassword" class="form-label fw-semibold">Contraseña</label>
+              <div class="input-group input-group-lg">
+                <span class="input-group-text bg-white border-end-0">
+                  <span class="material-symbols-outlined" style="font-size: 18px;">vpn_key</span>
+                </span>
+                <input
+                  type="password"
+                  class="form-control"
+                  id="inputPassword"
+                  name="password"
+                  [(ngModel)]="password"
+                  placeholder="Ingresa tu contraseña"
+                  required
+                />
+              </div>
+            </div>
+
+            <!-- Botón de Acceso -->
+            <button type="submit" class="btn btn-primary btn-lg w-100 mb-4" (click)="ingresar()">
+              <span class="material-symbols-outlined align-middle me-1">login</span>
+              Ingresar
+            </button>
+
+            <!-- Enlace de regreso (Si aplica) -->
+            <p class="text-center small mb-0">
+              <a href="/" class="text-muted text-decoration-none">← Volver al inicio</a>
+            </p>
+          </form>
         </div>
       </div>
 
-      <!-- Formulario (Maquetado HTML puro) -->
-      <form (ngSubmit)="ingresar()" novalidate>
-        <!-- Campo Correo Electrónico -->
-        <div class="mb-3">
-          <label for="inputEmail" class="form-label fw-semibold">Correo Electrónico</label>
-          <div class="input-group input-group-lg">
-            <span class="input-group-text bg-white border-end-0">
-              <span class="material-symbols-outlined" style="font-size: 18px;">mail</span>
-            </span>
-            <input
-              type="email"
-              class="form-control"
-              id="inputEmail"
-              name="correo"
-              [(ngModel)]="correo"
-              placeholder="nombre@ejemplo.com"
-              required
-            />
-          </div>
-        </div>
-
-        <!-- Campo Contraseña -->
-        <div class="mb-3">
-          <label for="inputPassword" class="form-label fw-semibold">Contraseña</label>
-          <div class="input-group input-group-lg">
-            <span class="input-group-text bg-white border-end-0">
-              <span class="material-symbols-outlined" style="font-size: 18px;">vpn_key</span>
-            </span>
-            <input
-              type="password"
-              class="form-control"
-              id="inputPassword"
-              name="password"
-              [(ngModel)]="password"
-              placeholder="••••••••"
-              required
-            />
-          </div>
-        </div>
-
-        <!-- Checkbox 'Recordarme' y Olvidé Contraseña -->
-        <div class="d-flex justify-content-between align-items-center mb-4">
-          <div class="form-check">
-            <input type="checkbox" class="form-check-input" id="checkRemember" />
-            <label class="form-check-label" for="checkRemember">Recordarme</label>
-          </div>
-          <a href="#" class="text-app-primary fw-semibold text-decoration-none small">
-            ¿Olvidaste tu contraseña?
-          </a>
-        </div>
-
-        <!-- Botón de Acceso -->
-        <button type="submit" class="btn btn-primary btn-lg w-100 mb-4" (click)="ingresar()">
-          <span class="material-symbols-outlined align-middle me-1">login</span>
-          Ingresar
-        </button>
-
-        <!-- Enlace de regreso (Si aplica) -->
-        <p class="text-center small mb-0">
-          <a href="/" class="text-muted text-decoration-none">← Volver al inicio</a>
-        </p>
-      </form>
     </div>
   </div>
 </div>
+
+<!-- SCRIPT DE INICIALIZACIÓN: Intenta forzar la activación del carrusel si el JS de Bootstrap está cargado. -->
+<script>
+  document.addEventListener('DOMContentLoaded', function() {
+    const carouselElement = document.getElementById('petCarousel');
+    if (carouselElement && typeof bootstrap !== 'undefined' && bootstrap.Carousel) {
+      // Intenta inicializar el carrusel manualmente y darle un intervalo
+      new bootstrap.Carousel(carouselElement, {
+        interval: 5000,
+        ride: 'carousel'
+      });
+    }
+  });
+</script>

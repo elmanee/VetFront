@@ -3,39 +3,78 @@
   <div class="row justify-content-center">
     <div class="col-12 col-xl-10">
       
-      <!-- Encabezado -->
-      <div class="text-center mb-5">
-        <h1 class="display-5 fw-bold text-dark mb-3">
-          Solicitar Cita Veterinaria
-        </h1>
-        <p class="lead text-muted">
-          Selecciona una fecha disponible para agendar tu cita
-        </p>
+      <!-- Botón de regreso al Dashboard (CORREGIDO: Clase go-home-button y btn-circle-lg) -->
+      <div class="go-home-button">
+        <button type="button" class="btn btn-circle-lg btn-action shadow-lg" [routerLink]="['/dashboard']">
+          <i class="bi bi-arrow-left-short"></i>
+        </button>
       </div>
 
-      <!-- Leyenda del calendario -->
-      <div class="card border-0 shadow-sm mb-4">
-        <div class="card-body">
-          <div class="d-flex flex-wrap justify-content-center gap-3">
-            <div class="legend-item">
-              <span class="legend-color bg-success"></span>
-              <span class="legend-text">Disponible</span>
-            </div>
-            <div class="legend-item">
-              <span class="legend-color bg-warning"></span>
-              <span class="legend-text">Ocupado - Pendiente</span>
-            </div>
-            <div class="legend-item">
-              <span class="legend-color bg-info"></span>
-              <span class="legend-text">Ocupado - Confirmado</span>
-            </div>
-            <div class="legend-item">
-              <span class="legend-color bg-danger"></span>
-              <span class="legend-text">No Disponible</span>
-            </div>
+      <!-- Encabezado principal y Pasos -->
+      <div class="text-center mb-5">
+        <h1 class="display-5 fw-bold text-dark mb-2">
+          Solicitar Cita Veterinaria
+        </h1>
+        <p class="lead text-muted mb-4">
+          Agenda una consulta para tu mascota en solo 3 pasos.
+        </p>
+
+        <!-- Indicador de pasos (Solo Paso 1, con estilo más grande) -->
+        <div class="progress-steps-simple mb-5">
+          <div class="step-item active">
+            <div class="step-number">1</div>
+            <div class="step-text">Seleccionar Fecha</div>
           </div>
         </div>
       </div>
+
+      <!-- Leyenda del calendario (Coherencia Visual: Colores Pastel del Calendario) -->
+      <div class="card border-0 shadow-sm mb-4">
+        <div class="card-body">
+          <div class="d-flex flex-wrap justify-content-center gap-3">
+            
+            <!-- Estado Disponible (Verde Pastel) -->
+            <div class="legend-item">
+              <!-- Fondo del calendario: rgba(92, 198, 137, 0.1) -->
+              <span class="legend-color" style="background-color: rgba(92, 198, 137, 0.1);"></span>
+              <span class="legend-text"><i class="bi bi-check-circle-fill text-success me-1"></i> Amplia Disponibilidad</span>
+            </div>
+            
+            <!-- Estado Limitado (Naranja Pastel) -->
+            <div class="legend-item">
+              <!-- Fondo del calendario: rgba(255, 193, 7, 0.3) -->
+              <span class="legend-color" style="background-color: rgba(255, 193, 7, 0.3);"></span>
+              <span class="legend-text"><i class="bi bi-exclamation-triangle-fill text-warning me-1"></i> Ocupación Alta</span>
+            </div>
+            
+            <!-- Estado No Disponible (Rojo Pastel) -->
+            <div class="legend-item">
+              <!-- Fondo del calendario: rgba(231, 76, 60, 0.2) -->
+              <span class="legend-color" style="background-color: rgba(231, 76, 60, 0.2);"></span>
+              <span class="legend-text"><i class="bi bi-x-circle-fill text-danger me-1"></i> No Disponible / Festivo</span>
+            </div>
+
+            <!-- Estado Día Pasado (Gris Pastel) -->
+            <div class="legend-item">
+              <!-- Fondo del calendario: #EAEAEA -->
+              <span class="legend-color" style="background-color: #EAEAEA;"></span>
+              <span class="legend-text"><i class="bi bi-clock-history text-muted me-1"></i> Día Pasado</span>
+            </div>
+
+          </div>
+        </div>
+      </div>
+      
+      <!-- Nuevo Banner de Aclaración (Diseño Limpio y Minimalista - Card Sutil) -->
+      <div class="card bg-warning-subtle p-3 mb-4 border-0 shadow-sm">
+        <div class="d-flex align-items-center">
+          <i class="bi bi-info-circle-fill text-warning me-3 fs-5"></i>
+          <div class="small text-dark">
+            <strong>Aviso Importante:</strong> Si agendas en un día marcado con Ocupación Alta (en amarillo), se te solicitará confirmar que aceptas el riesgo de un posible <strong>reajuste de horario</strong> por parte de nuestro equipo médico.
+          </div>
+        </div>
+      </div>
+
 
       <!-- Calendario -->
       <div class="card border-0 shadow-sm mb-4">
@@ -56,7 +95,7 @@
       <!-- Información de fecha seleccionada -->
       <div class="card border-0 shadow-sm" *ngIf="fechaSeleccionada">
         <div class="card-body p-4 text-center">
-          <h5 class="fw-bold text-dark mb-3">Fecha Seleccionada</h5>
+          <h5 class="fw-bold text-dark mb-3">Paso 1 Completado: Fecha Seleccionada</h5>
           <p class="lead mb-4">
             <i class="bi bi-calendar-check text-primary me-2"></i>
             <span class="fw-bold text-primary">{{ fechaSeleccionada }}</span>
@@ -65,10 +104,10 @@
             class="btn btn-primary btn-lg px-5 fw-semibold"
             (click)="solicitarFormulario()">
             <i class="bi bi-arrow-right-circle me-2"></i>
-            Continuar al Formulario
+            Continuar al Paso 2
           </button>
           <p class="text-muted small mt-3 mb-0">
-            Se verificará la disponibilidad final al registrar la cita
+            Serás redirigido al formulario para validar tus datos.
           </p>
         </div>
       </div>

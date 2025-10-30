@@ -1,0 +1,113 @@
+:host {
+  display: block;
+}
+
+// Variables duplicadas para asegurar que los estilos compilen
+$primary-color: #FFD95A;
+$secondary-color: #FFC040;
+$text-dark: #333333;
+$light-bg: #FFFBF5; // Fondo principal del sitio
+
+// CLASES DE UTILIDAD
+.bg-warm-light {
+  background-color: $light-bg;
+}
+.text-app-primary {
+  color: $primary-color !important;
+}
+
+// --- ESTILOS DEL CONTENEDOR DE REGISTRO (Diseño de Tarjeta Única) ---
+// La clase main-registro-container es reemplazada por main-registro-card para reflejar el cambio.
+.main-registro-card {
+  max-width: 550px; /* Ancho cómodo para el formulario de registro largo */
+  width: 90%;
+  height: auto; /* Altura automática, ya no es fija */
+  border-radius: 1.5rem; /* Bordes redondeados */
+  border: none;
+  box-shadow: 0 15px 40px rgba(0, 0, 0, 0.15); /* Sombra consistente */
+  background-color: white; 
+}
+
+
+.card-body {
+  padding: 2.5rem !important;
+  height: auto; /* Altura automática */
+}
+
+// Eliminamos el ajuste de padding para desktop que era necesario para el carrusel.
+@media (min-width: 992px) {
+  /* No se necesitan ajustes de padding especiales para una sola columna */
+}
+
+// Estilos de Inputs (tomados del login.component.scss para consistencia)
+.input-group-text {
+  background-color: #f8f9fa; 
+  border-right: 0;
+  border-top-left-radius: 0.5rem;
+  border-bottom-left-radius: 0.5rem;
+  border-color: #dee2e6;
+
+  span {
+    color: #6c757d;
+  }
+}
+
+.form-control, .form-select {
+  border-radius: 0.5rem;
+  padding: 0.75rem 1rem;
+  border-color: #dee2e6;
+  border-left: 0;
+
+  // Foco
+  &:focus {
+    border-color: $primary-color;
+    box-shadow: 0 0 0 0.2rem rgba(255, 217, 90, 0.35);
+  }
+}
+
+// Estilo del Botón Primario (Consistente con todo el sitio)
+.btn-primary {
+  background-color: $primary-color;
+  border-color: $primary-color;
+  color: $text-dark;
+  font-weight: 700;
+  border-radius: 0.75rem;
+  transition: all 0.2s ease;
+  box-shadow: 0 4px 12px rgba(255, 217, 90, 0.4);
+
+  &:hover:not(:disabled) {
+    background-color: $secondary-color;
+    border-color: $secondary-color;
+    transform: translateY(-2px);
+    box-shadow: 0 6px 15px rgba(255, 217, 90, 0.6);
+  }
+}
+
+// Estilo de Alertas de Éxito y Error
+.alert-danger {
+  background-color: #f8d7da;
+  color: #721c24;
+  border-radius: 0.75rem;
+  font-weight: 500;
+  span { font-size: 1.25rem; }
+}
+
+.alert-success {
+  background-color: #d4edda;
+  color: #155724;
+  border-radius: 0.75rem;
+  font-weight: 500;
+  span { font-size: 1.25rem; }
+}
+
+// Responsive
+@media (max-width: 576px) {
+  .main-registro-card {
+    border-radius: 0; 
+    box-shadow: none;
+    width: 100%;
+  }
+  .card-body {
+    padding: 1.5rem !important;
+  }
+}
