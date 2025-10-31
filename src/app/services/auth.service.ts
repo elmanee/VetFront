@@ -17,6 +17,7 @@ export class AuthService {
       tap((res) => {
         if (res.token) {
           localStorage.setItem('token', res.token);
+          localStorage.setItem('rol', JSON.stringify(res.rol));
           localStorage.setItem('usuario', JSON.stringify(res.usuario));
         }
       }),
@@ -42,12 +43,11 @@ export class AuthService {
   }
 
   getUserRole(): string | null {
-    const user = localStorage.getItem('usuario');
-    return user ? JSON.parse(user).rol : null;
+    return localStorage.getItem('rol');
   }
 
-  getUsuarioActual() {
-    const user = localStorage.getItem('usuario');
-    return user ? JSON.parse(user) : null;
+  getUsuario(): any {
+    const data = localStorage.getItem('usuario');
+    return data ? JSON.parse(data) : null;
   }
 }
