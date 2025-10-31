@@ -36,9 +36,14 @@
         <span class="nav-text">Dashboard</span>
       </a>
 
-      <!-- aqui agregmas -->
-
-    </div>
+      <a routerLink="/veterinario/expedienbtes"
+         routerLinkActive="active"
+         class="nav-item d-flex align-items-center rounded mb-1"
+         [title]="isCollapsed ? 'Expedientes' : ''">
+        <i class="ri-file-list-3-line me-3"></i>
+        <span class="nav-text">Expedientes</span>
+      </a>
+      </div>
 
     <div class="nav-section mb-3">
       <h6 class="nav-title text-uppercase px-3 mb-2">App</h6>

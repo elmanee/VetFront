@@ -18,6 +18,8 @@ import { MovimientosComponent } from './components/movimientos/movimientos.compo
 import { RegistroPersonalComponent } from './authentication/registro-personal/registro-personal.component';
 import { MisCitasVetComponent } from './components/mis-citas-vet/mis-citas-vet.component';
 import { LayoutVeterinarioComponent } from './shared/veterinario/layout-veterinario/layout-veterinario.component';
+import { ExpedintesComponent } from './components/expedintes/expedintes.component';
+import { ExpedientesFormComponent } from './components/expedientes-form/expedientes-form.component';
 
 export const routes: Routes = [
   // Rutas públicas
@@ -96,6 +98,14 @@ export const routes: Routes = [
       {
         path: 'mis-citas',
         component: MisCitasVetComponent
+      },
+      {
+        path: 'expedienbtes',
+        component: ExpedintesComponent
+      },
+      {
+        path: 'expedienbtes-form',
+        component: ExpedientesFormComponent
       }
     ]
   },
