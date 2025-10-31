@@ -1,0 +1,82 @@
+<aside class="sidebar-admin d-flex flex-column" [class.collapsed]="isCollapsed">
+  <div class="sidebar-header">
+    @if (isCollapsed) {
+      <div class="logo-toggle-wrapper" (click)="toggleSidebar()">
+        <div class="logo-container">
+          <img src="favicon.png" alt="Pet Health+" class="logo-img">
+        </div>
+        <button class="btn-toggle btn-toggle-hover" title="Expandir">
+          <i class="ri-menu-unfold-line"></i>
+        </button>
+      </div>
+    }
+    @if (!isCollapsed) {
+      <div class="header-content">
+        <div class="d-flex align-items-center">
+          <div class="logo-container me-2">
+            <img src="favicon.png" alt="Pet Health+" class="logo-img">
+          </div>
+          <h5 class="mb-0 fw-bold sidebar-title">Pet Health+</h5>
+        </div>
+        <button class="btn-toggle" (click)="toggleSidebar()" title="Colapsar">
+          <i class="ri-menu-fold-line"></i>
+        </button>
+      </div>
+    }
+
+  </div>
+
+  <nav class="sidebar-nav flex-grow-1 px-2">
+    <div class="nav-section mb-4">
+      <a routerLink="/veterinario/mis-citas"
+         routerLinkActive="active"
+         class="nav-item d-flex align-items-center rounded mb-1"
+         [title]="isCollapsed ? 'Dashboard' : ''">
+        <i class="ri-dashboard-line me-3"></i>
+        <span class="nav-text">Dashboard</span>
+      </a>
+
+      <!-- aqui agregmas -->
+
+    </div>
+
+    <div class="nav-section mb-3">
+      <h6 class="nav-title text-uppercase px-3 mb-2">App</h6>
+
+      <a routerLink="/admin/perfil"
+         routerLinkActive="active"
+         class="nav-item d-flex align-items-center rounded mb-1"
+         [title]="isCollapsed ? 'Mi Perfil' : ''">
+        <i class="ri-user-line me-3"></i>
+        <span class="nav-text">Mi Perfil</span>
+      </a>
+
+      <a routerLink="/admin/configuracion"
+         routerLinkActive="active"
+         class="nav-item d-flex align-items-center rounded mb-1"
+         [title]="isCollapsed ? 'Configuración' : ''">
+        <i class="ri-settings-3-line me-3"></i>
+        <span class="nav-text">Configuración</span>
+      </a>
+    </div>
+  </nav>
+
+  <div class="sidebar-footer p-3">
+    <div class="user-profile d-flex align-items-center p-2 rounded">
+      <img [src]="userImage"
+           [alt]="userName"
+           class="rounded-circle me-3 user-avatar"
+           width="40"
+           height="40">
+      <div class="user-info flex-grow-1">
+        <div class="user-name fw-semibold">{{ userName }}</div>
+        <div class="user-role small text-muted">{{ userRole }}</div>
+      </div>
+      <button class="btn btn-link p-0 text-decoration-none btn-logout-icon"
+              (click)="logout()"
+              [title]="isCollapsed ? 'Cerrar sesión' : ''">
+        <i class="ri-logout-box-r-line fs-5"></i>
+      </button>
+    </div>
+  </div>
+</aside>
