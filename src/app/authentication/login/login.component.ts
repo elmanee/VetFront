@@ -22,11 +22,16 @@ export class LoginComponent {
     this.authService.login(this.correo, this.password).subscribe((res) => {
       if (res && res.token) {
         const rol = res.usuario.rol;
+        localStorage.setItem('rol', rol);
+        localStorage.setItem('token', res.token);
+        localStorage.setItem('usuario', JSON.stringify(res.usuario));
 
         if (rol === 'Admin') {
-          this.router.navigate(['/admin']);
+          this.router.navigate(['/admin/das-admin']);
+        } else if (rol === 'Veterinario') {
+          this.router.navigate(['/veterinario/mis-citas']);
         } else {
-          this.router.navigate(['/dashboard']);
+          this.router.navigate(['/login']);
         }
       } else {
         this.errorMsg = 'Credenciales inválidas.';

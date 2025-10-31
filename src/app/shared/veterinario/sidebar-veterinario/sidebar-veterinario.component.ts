@@ -1,19 +1,19 @@
 import { Component, OnInit } from '@angular/core';
-import { Router, RouterLink, RouterLinkActive,  } from '@angular/router';
+import { Router, RouterLink, RouterLinkActive } from '@angular/router';
+import { AuthService } from '../../../services/auth.service';
 import { SidebarService } from '../../services/sidebar.service';
 import { CommonModule } from '@angular/common';
-import { AuthService } from '../../../services/auth.service';
 
 @Component({
-  selector: 'app-sidebar-admin',
+  selector: 'app-sidebar-veterinario',
   imports: [
-    CommonModule,
-    RouterLink, RouterLinkActive,
+    CommonModule, RouterLink,
+    RouterLinkActive
   ],
-  templateUrl: './sidebar-admin.component.html',
-  styleUrl: './sidebar-admin.component.scss'
+  templateUrl: './sidebar-veterinario.component.html',
+  styleUrl: './sidebar-veterinario.component.scss'
 })
-export class SidebarAdminComponent implements OnInit {
+export class SidebarVeterinarioComponent implements OnInit {
 
   isCollapsed: boolean = false;
 

@@ -1,0 +1,10 @@
+<div class="admin-layout">
+  <app-sidebar-veterinario></app-sidebar-veterinario>
+
+  <div class="admin-main" [class.collapsed]="isCollapsed">
+    <div class="admin-content">
+      <router-outlet></router-outlet>
+    </div>
+    <app-footer-veterinario></app-footer-veterinario>
+  </div>
+</div>
