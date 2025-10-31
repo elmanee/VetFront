@@ -15,6 +15,17 @@ export interface Cita {
   motivo: string;
   estado?: string;
   created_at?: string;
+  // Campos añadidos desde el JOIN del backend
+  cliente_nombre?: string;
+  cliente_correo?: string;
+  mascota_nombre?: string;
+}
+
+export interface Veterinario {
+  id: number;
+  nombre_completo: string;
+  correo: string;
+  rol: string;
 }
 
 export interface DatosCliente {
@@ -76,6 +87,7 @@ export interface ActualizarCitaRequest {
 export class CitasService {
   private API_URL = `${environment.apiUrl}/citas`;
   private CLIENTES_URL = `${environment.apiUrl}/clientes`;
+private USUARIOS_URL = `${environment.apiUrl}/usuarios`; 
 
   constructor(private http: HttpClient) {
     console.log(`CitasService inicializado. API URL: ${this.API_URL}`);
@@ -119,6 +131,22 @@ export class CitasService {
         catchError(this.manejarError)
       );
   }
+
+    getVeterinarios(): Observable<Veterinario[]> {
+    console.log('[SERVICIO] Obteniendo lista de veterinarios...');
+    
+    // Asumimos que el token se inyecta automáticamente (Interceptor)
+    return this.http.get<RespuestaBackend>(`${this.USUARIOS_URL}/veterinarios`)
+      .pipe(
+        map(response => {
+          const veterinarios = response.data as Veterinario[];
+          console.log(`[SERVICIO] Se obtuvieron ${veterinarios?.length || 0} veterinarios`);
+          return veterinarios || [];
+        }),
+        catchError(this.manejarError)
+      );
+  }
+  
 
   reprogramarCita(idCita: number, datos: ActualizarCitaRequest): Observable<RespuestaBackend> {
     console.log(`[SERVICIO] Reprogramando cita ID: ${idCita}`, datos);

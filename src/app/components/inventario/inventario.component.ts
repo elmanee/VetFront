@@ -101,14 +101,15 @@ export class InventarioComponent implements OnInit {
     this.alertSrv.showSuccessAlert('Exportado', `PDF generado con ${data.length} registros`);
   }
 
-  cargarProductos(): void {
+cargarProductos(): void {
     this.loading = true;
     this.errorMsg = '';
 
     this.inventarioSev.getProductos().subscribe({
       next: (res) => {
         if (res.status === 'OK' && res.data) {
-          this.productos = res.data.sort((a, b) => a.id - b.id);
+          // CORRECCIÓN: Tipado explícito de 'a' y 'b' con la interfaz Producto
+          this.productos = res.data.sort((a: Producto, b: Producto) => a.id - b.id);
           this.productosFiltrados = [...this.productos];
           this.generarListasFiltros();
         } else {

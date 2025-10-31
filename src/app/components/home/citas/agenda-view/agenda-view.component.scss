@@ -1,101 +1,153 @@
-// /home/agus/Documentos/VetHealth/VetFront/src/app/home/citas/agenda-view/agenda-view.component.scss
+// Variables (asumiendo que :root está en styles.scss global)
 
 :host {
   display: block;
+  background-color: var(--bg-light); // Fondo crema
+  min-height: 100vh;
 }
 
-$primary-color: #FFD95A;
-$secondary-color: #FFC040;
-$text-dark: #333333;
-$light-bg: #FFFBF5;
+.agenda-page {
+  .form-label {
+    font-size: 0.85rem;
+    color: var(--text-muted);
+    margin-bottom: 0.25rem;
+  }
 
-.bg-light {
-  background-color: $light-bg !important;
+  // Estado vacío
+  .empty-state {
+    i {
+      color: var(--border-color);
+    }
+    h3 {
+      color: var(--text-dark);
+    }
+  }
 }
 
-// Tarjetas de citas
-.cita-card {
-  border-left: 4px solid $primary-color;
-  transition: all 0.3s ease;
+/*
+ * Tarjeta de Cita
+ */
+.card-cita {
+  background-color: var(--bg-surface); // Fondo blanco
+  border: 1px solid var(--border-color);
+  border-radius: 12px;
+  box-shadow: var(--shadow-sm);
+  transition: all 0.25s ease;
+  height: 100%;
+  // Borde lateral grueso para estado
+  border-left-width: 5px; 
 
   &:hover {
     transform: translateY(-4px);
-    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.15) !important;
+    box-shadow: 0 6px 16px rgba(0, 0, 0, 0.07);
   }
 
-  &.border-success {
-    border-left-color: #28a745;
+  // Clases de borde por estado (usando variables CSS)
+  &.border-success { border-left-color: var(--color-success); }
+  &.border-warning { border-left-color: var(--color-warning); }
+  &.border-danger { border-left-color: var(--color-danger); }
+  &.border-secondary { border-left-color: #adb5bd; } // Gris para completada
+
+  .cita-hora {
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: var(--text-dark);
   }
 
-  &.border-warning {
-    border-left-color: #ffc107;
+  // Estilos para la nueva sección de paciente
+  .cita-paciente {
+    border-left: 3px solid var(--color-primary); // Detalle amarillo
+    padding-left: 12px;
   }
-
-  &.border-danger {
-    border-left-color: #dc3545;
-  }
-
-  .info-item {
+  
+  .cita-paciente-nombre {
+    font-size: 1.1rem;
+    font-weight: 600;
+    color: var(--text-dark);
     display: flex;
     align-items: center;
-    margin-bottom: 0.5rem;
+  }
+
+  .cita-paciente-tutor {
+    font-size: 0.9rem;
+    color: var(--text-muted);
+    word-break: break-all; // Evita que correos largos rompan el layout
+    display: flex;
+    align-items: center;
+  }
+  
+  .cita-acciones {
+    // Para asegurar que los botones siempre estén al fondo
+    // La clase .mt-auto en el HTML hace el trabajo principal
   }
 }
 
-// Badges
-.badge-success {
-  background-color: #28a745;
-  color: white;
-}
-
-.badge-warning {
-  background-color: #ffc107;
-  color: #000;
-}
-
-.badge-danger {
-  background-color: #dc3545;
-  color: white;
-}
-
-.badge-secondary {
-  background-color: #6c757d;
-  color: white;
-}
-
-// Botones
-.btn-primary {
-  background-color: $primary-color;
-  border-color: $primary-color;
-  color: $text-dark;
+/*
+ * Estilos para los Badges de Estado
+ * (Traídos de tu styles.scss para asegurar que funcionen)
+ */
+.badge {
   font-weight: 600;
-  transition: all 0.2s ease;
-
-  &:hover {
-    background-color: $secondary-color;
-    border-color: $secondary-color;
-    transform: translateY(-2px);
-  }
+  font-size: 0.75rem;
+  padding: 0.4em 0.75em;
 }
 
-// Modal
+.badge-success-si {
+  color: #fff;
+  background-color: var(--color-success);
+}
+
+.badge-warning-si {
+  color: var(--text-dark);
+  background-color: var(--color-warning);
+}
+
+.badge-danger-si {
+  color: #fff;
+  background-color: var(--color-danger);
+}
+
+.badge-secondary-si {
+  color: #fff;
+  background-color: #6c757d; // Un gris estándar
+}
+
+.badge-primary-si {
+  color: var(--text-dark);
+  background-color: var(--color-primary);
+}
+
+
+/*
+ * Estilos para los Modales
+ */
+.modal-backdrop {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background-color: rgba(0, 0, 0, 0.4);
+  z-index: 1050;
+  opacity: 1;
+}
+
 .modal.show {
-  background-color: rgba(0, 0, 0, 0.5);
+  display: block;
+  opacity: 1;
+  z-index: 1055;
 }
 
 .modal-content {
-  border-radius: 1rem;
+  border-radius: 12px;
+  border: none;
 }
 
-// Cards de estadísticas
-.bg-primary {
-  background-color: $primary-color !important;
-  color: $text-dark !important;
+.modal-header {
+  border-bottom: 1px solid var(--border-color);
 }
 
-// Responsive
-@media (max-width: 768px) {
-  .cita-card {
-    margin-bottom: 1rem;
-  }
+.modal-footer {
+  background-color: #f9f9f9;
+  border-top: 1px solid var(--border-color);
 }

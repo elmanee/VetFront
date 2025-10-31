@@ -1,31 +1,33 @@
 @use "bootstrap/scss/bootstrap";
 
 :root {
-  --color-primary: #F27C2B;
-  --color-secondary: #FFB84C;
-  --color-accent: #3EC1C9;
+  /* Actualizado a la paleta de inicio.component.scss */
+  --color-primary: #FFD95A;    /* $primary-color */
+  --color-secondary: #FFC040; /* $secondary-color */
+  --color-accent: #3EC1C9;     /* Se mantiene como acento */
 
-  --text-dark: #2D2D2D;
+  --text-dark: #333333;     /* $text-dark */
   --text-muted: #6B6B6B;
-  --text-light: #FFFFFF;
+  --text-light: #FFFFFF;     /* Para fondos oscuros (si los hay) */
 
   --color-success: #5CC689;
   --color-danger: #E74C3C;
-  --color-warning: #FFC107;
+  --color-warning: #FFC040;  /* Coincide con el secundario */
 
-  --bg-light: #FFF9F4;
+  --bg-light: #FFFBF5;       /* $light-bg */
   --bg-surface: #FFFFFF;
-  --bg-alt: #FFF2E0;
+  --bg-alt: #FFFBF5;         /* $light-bg */
 
   --border-color: rgba(0, 0, 0, 0.05);
   --shadow-sm: 0 2px 4px rgba(0, 0, 0, 0.05);
-  --shadow-lg: 0 8px 20px rgba(242, 124, 43, 0.2);
+  /* Sombra actualizada para coincidir con el btn-primary de inicio.scss */
+  --shadow-lg: 0 4px 12px rgba(255, 217, 90, 0.4); 
 }
 
 .btn-primary-si {
   background: var(--color-primary);
   border-color: var(--color-primary);
-  color: var(--text-light);
+  color: var(--text-dark); /* CAMBIO CLAVE: de text-light a text-dark */
   font-weight: 600;
   box-shadow: var(--shadow-lg);
   transition: all 0.25s ease;
@@ -34,9 +36,11 @@
     background: var(--color-secondary);
     border-color: var(--color-secondary);
     transform: translateY(-2px);
+    color: var(--text-dark);
   }
 }
 
+/* Estas clases ahora usarán las variables de arriba automáticamente */
 .card {
   background: var(--bg-surface);
   border: 1px solid var(--border-color);
@@ -54,7 +58,8 @@
   height: 40px;
   border-radius: 50%;
   border: none;
-  background: rgba(242, 124, 43, 0.1);
+  /* Fondo actualizado para usar el nuevo primario */
+  background: rgba(255, 217, 90, 0.2); 
   color: var(--color-primary);
   display: flex;
   align-items: center;
@@ -62,7 +67,7 @@
   transition: all 0.2s ease;
 
   &:hover {
-    background: rgba(242, 124, 43, 0.25);
+    background: rgba(255, 217, 90, 0.4);
     transform: translateY(-2px);
   }
 }
