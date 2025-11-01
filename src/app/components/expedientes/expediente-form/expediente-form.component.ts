@@ -14,18 +14,18 @@ import Swal from 'sweetalert2';
   styleUrl: './expediente-form.component.scss'
 })
 export class ExpedienteFormComponent implements OnInit {
-  
+
   // Datos de la cita
   citaId?: number;
   clienteId?: number;
   mascotaId?: number;
   veterinarioId?: number;
   motivoCita?: string;
-  
+
   // Información del expediente
   expediente: any = null;
   cargandoExpediente: boolean = false;
-  
+
   // Datos del formulario
   signosVitales = {
     peso: null as number | null,
@@ -33,28 +33,28 @@ export class ExpedienteFormComponent implements OnInit {
     frecuencia_cardiaca: null as number | null,
     frecuencia_respiratoria: null as number | null
   };
-  
+
   motivoConsulta: string = '';
   sintomas: string = '';
   observaciones: string = '';
-  
+
   // Arrays dinámicos
   diagnosticos: Diagnostico[] = [];
   tratamientos: Tratamiento[] = [];
   vacunas: Vacuna[] = [];
   procedimientos: Procedimiento[] = [];
   imagenes: ImagenExpediente[] = [];
-  
+
   // Nuevos items temporales
   nuevoDiagnostico: Diagnostico = { descripcion: '', tipo: 'Primario' };
   nuevoTratamiento: Tratamiento = { medicamento: '', dosis: '', frecuencia: '' };
   nuevaVacuna: Vacuna = { nombre_vacuna: '' };
-  nuevoProcedimiento: Procedimiento = { 
-    tipo_procedimiento: '', 
-    nombre_procedimiento: '', 
-    descripcion: '' 
+  nuevoProcedimiento: Procedimiento = {
+    tipo_procedimiento: '',
+    nombre_procedimiento: '',
+    descripcion: ''
   };
-  
+
   // Control de secciones expandidas
   seccionesExpandidas = {
     signosVitales: true,
@@ -64,13 +64,13 @@ export class ExpedienteFormComponent implements OnInit {
     procedimientos: false,
     imagenes: false
   };
-  
+
   // Estados
   cargando: boolean = false;
   guardando: boolean = false;
   mensaje: string = '';
   mensajeClase: string = '';
-  
+
   // Catálogos
   tiposDiagnostico = ['Primario', 'Secundario', 'Provisional', 'Definitivo'];
   viasAdministracion = ['Oral', 'Intravenosa', 'Intramuscular', 'Subcutánea', 'Tópica', 'Inhalatoria'];
@@ -84,70 +84,58 @@ export class ExpedienteFormComponent implements OnInit {
     private authService: AuthService
   ) {}
 
-  ngOnInit(): void {
-    console.log('[EXPEDIENTE FORM] Componente inicializado');
-    
-    // Obtener parámetros de la URL
-    this.route.queryParams.subscribe(params => {
-      this.citaId = params['cita_id'] ? +params['cita_id'] : undefined;
-      this.clienteId = params['cliente_id'] ? +params['cliente_id'] : undefined;
-      this.mascotaId = params['mascota_id'] ? +params['mascota_id'] : undefined;
-      this.veterinarioId = params['veterinario_id'] ? +params['veterinario_id'] : undefined;
-      this.motivoCita = params['motivo'] || '';
-      
-      console.log('[EXPEDIENTE FORM] Parámetros recibidos:', {
-        citaId: this.citaId,
-        mascotaId: this.mascotaId,
-        veterinarioId: this.veterinarioId
-      });
-      
-      // Pre-llenar el motivo de consulta con el motivo de la cita
-      if (this.motivoCita) {
-        this.motivoConsulta = this.motivoCita;
-      }
-      
-      // Si no hay veterinario en params, usar el usuario actual
-      if (!this.veterinarioId) {
-        const usuario = this.authService.getUsuarioActual();
-        if (usuario) {
-          this.veterinarioId = usuario.id;
-          console.log('[EXPEDIENTE FORM] Usando veterinario del usuario logueado:', this.veterinarioId);
-        }
-      }
-      
-      // Validar datos mínimos
-      if (!this.mascotaId) {
-        Swal.fire({
-          icon: 'error',
-          title: 'Error',
-          text: 'No se proporcionó información de la mascota',
-          confirmButtonText: 'Volver'
-        }).then(() => {
-          this.router.navigate(['/citas-atender']);
-        });
-        return;
-      }
-      
-      // Cargar expediente de la mascota
-      this.cargarExpediente();
+ngOnInit(): void {
+  this.route.queryParams.subscribe(params => {
+    this.citaId = +params['id_cita'];
+    this.clienteId = +params['cliente_id'];
+    this.mascotaId = +params['mascota_id'];
+    this.veterinarioId = +params['veterinario_id'];
+    this.motivoCita = params['motivo'] || '';
+
+    // Campos extra de la cita
+    const citaInfo = {
+      animal_id: params['animal_id'],
+      fecha_cita: params['fecha_cita'],
+      hora_cita: params['hora_cita'],
+      estado: params['estado'],
+      created_at: params['created_at'],
+      token_confirmacion: params['token_confirmacion']
+    };
+
+    console.log('📋 Datos de la cita recibidos:', {
+      citaId: this.citaId,
+      clienteId: this.clienteId,
+      mascotaId: this.mascotaId,
+      veterinarioId: this.veterinarioId,
+      motivo: this.motivoCita,
+      ...citaInfo
     });
-  }
+
+    // 🔍 Si la cita tiene mascota, cargar su expediente
+    if (this.mascotaId) {
+      this.cargarExpediente();
+    } else {
+      console.warn('❌ No se encontró mascota asociada a la cita');
+    }
+  });
+}
+
 
   /**
    * Cargar expediente de la mascota
    */
   cargarExpediente(): void {
     if (!this.mascotaId) return;
-    
+
     this.cargandoExpediente = true;
     console.log('[EXPEDIENTE FORM] Cargando expediente de mascota ID:', this.mascotaId);
-    
+
     this.expedienteService.obtenerPorMascota(this.mascotaId).subscribe({
       next: (expediente) => {
         this.expediente = expediente;
         this.cargandoExpediente = false;
         console.log('[EXPEDIENTE FORM] Expediente cargado:', expediente.numero_expediente);
-        
+
         // Si hay peso previo, mostrarlo como referencia
         if (expediente.peso) {
           console.log(`[EXPEDIENTE FORM] Peso anterior: ${expediente.peso} kg`);
@@ -186,7 +174,7 @@ export class ExpedienteFormComponent implements OnInit {
       });
       return;
     }
-    
+
     this.diagnosticos.push({ ...this.nuevoDiagnostico });
     this.nuevoDiagnostico = { descripcion: '', tipo: 'Primario' };
     console.log('[EXPEDIENTE FORM] Diagnóstico agregado. Total:', this.diagnosticos.length);
@@ -200,8 +188,8 @@ export class ExpedienteFormComponent implements OnInit {
    * TRATAMIENTOS
    */
   agregarTratamiento(): void {
-    if (!this.nuevoTratamiento.medicamento.trim() || 
-        !this.nuevoTratamiento.dosis.trim() || 
+    if (!this.nuevoTratamiento.medicamento.trim() ||
+        !this.nuevoTratamiento.dosis.trim() ||
         !this.nuevoTratamiento.frecuencia.trim()) {
       Swal.fire({
         icon: 'warning',
@@ -211,7 +199,7 @@ export class ExpedienteFormComponent implements OnInit {
       });
       return;
     }
-    
+
     this.tratamientos.push({ ...this.nuevoTratamiento });
     this.nuevoTratamiento = { medicamento: '', dosis: '', frecuencia: '' };
     console.log('[EXPEDIENTE FORM] Tratamiento agregado. Total:', this.tratamientos.length);
@@ -234,7 +222,7 @@ export class ExpedienteFormComponent implements OnInit {
       });
       return;
     }
-    
+
     this.vacunas.push({ ...this.nuevaVacuna });
     this.nuevaVacuna = { nombre_vacuna: '' };
     console.log('[EXPEDIENTE FORM] Vacuna agregada. Total:', this.vacunas.length);
@@ -259,12 +247,12 @@ export class ExpedienteFormComponent implements OnInit {
       });
       return;
     }
-    
+
     this.procedimientos.push({ ...this.nuevoProcedimiento });
-    this.nuevoProcedimiento = { 
-      tipo_procedimiento: '', 
-      nombre_procedimiento: '', 
-      descripcion: '' 
+    this.nuevoProcedimiento = {
+      tipo_procedimiento: '',
+      nombre_procedimiento: '',
+      descripcion: ''
     };
     console.log('[EXPEDIENTE FORM] Procedimiento agregado. Total:', this.procedimientos.length);
   }
@@ -278,9 +266,9 @@ export class ExpedienteFormComponent implements OnInit {
    */
   async onImagenSeleccionada(event: any): Promise<void> {
     const file = event.target.files[0];
-    
+
     if (!file) return;
-    
+
     // Validar tipo de archivo
     if (!file.type.startsWith('image/')) {
       Swal.fire({
@@ -291,7 +279,7 @@ export class ExpedienteFormComponent implements OnInit {
       });
       return;
     }
-    
+
     // Validar tamaño (máximo 5MB)
     if (file.size > 5 * 1024 * 1024) {
       Swal.fire({
@@ -302,21 +290,21 @@ export class ExpedienteFormComponent implements OnInit {
       });
       return;
     }
-    
+
     try {
       const base64 = await this.expedienteService.convertirImagenABase64(file);
-      
+
       this.imagenes.push({
         imagen_base64: base64,
         descripcion: '',
         tipo_imagen: 'Fotografía'
       });
-      
+
       console.log('[EXPEDIENTE FORM] Imagen agregada. Total:', this.imagenes.length);
-      
+
       // Resetear input
       event.target.value = '';
-      
+
     } catch (error) {
       console.error('[EXPEDIENTE FORM] Error al procesar imagen:', error);
       Swal.fire({
@@ -346,7 +334,7 @@ export class ExpedienteFormComponent implements OnInit {
       });
       return false;
     }
-    
+
     // Validar que tenga al menos un diagnóstico
     if (this.diagnosticos.length === 0) {
       Swal.fire({
@@ -357,7 +345,7 @@ export class ExpedienteFormComponent implements OnInit {
       });
       return false;
     }
-    
+
     // Validar veterinario
     if (!this.veterinarioId) {
       Swal.fire({
@@ -368,7 +356,7 @@ export class ExpedienteFormComponent implements OnInit {
       });
       return false;
     }
-    
+
     return true;
   }
 
@@ -377,12 +365,12 @@ export class ExpedienteFormComponent implements OnInit {
    */
   guardarConsulta(): void {
     console.log('[EXPEDIENTE FORM] Iniciando guardado de consulta...');
-    
+
     // Validar formulario
     if (!this.validarFormulario()) {
       return;
     }
-    
+
     // Confirmar guardado
     Swal.fire({
       title: '¿Guardar consulta médica?',
@@ -405,7 +393,7 @@ export class ExpedienteFormComponent implements OnInit {
    */
   private enviarConsulta(): void {
     this.guardando = true;
-    
+
     const datos: RegistrarConsultaRequest = {
       cita_id: this.citaId,
       mascota_id: this.mascotaId!,
@@ -426,14 +414,14 @@ export class ExpedienteFormComponent implements OnInit {
       procedimientos: this.procedimientos.length > 0 ? this.procedimientos : undefined,
       imagenes: this.imagenes.length > 0 ? this.imagenes : undefined
     };
-    
+
     console.log('[EXPEDIENTE FORM] Enviando datos:', datos);
-    
+
     this.expedienteService.registrarConsulta(datos).subscribe({
       next: (response) => {
         this.guardando = false;
         console.log('[EXPEDIENTE FORM] ✅ Consulta registrada exitosamente');
-        
+
         Swal.fire({
           icon: 'success',
           title: '¡Éxito!',
@@ -454,7 +442,7 @@ export class ExpedienteFormComponent implements OnInit {
       error: (error) => {
         this.guardando = false;
         console.error('[EXPEDIENTE FORM] ❌ Error al guardar consulta:', error);
-        
+
         Swal.fire({
           icon: 'error',
           title: 'Error al guardar',

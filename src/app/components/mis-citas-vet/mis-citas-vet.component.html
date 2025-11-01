@@ -73,9 +73,9 @@
 
               <!-- Botón de atender -->
               <div class="d-grid">
-                <button 
+                <button
                   class="btn btn-primary-si btn-lg"
-                  (click)="atenderCita(cita._id)"
+                  (click)="atenderCita(cita)"
                   [disabled]="cita.estado !== 'Confirmada'">
                   <i class="bi bi-clipboard2-pulse me-2"></i>
                   Atender Cita

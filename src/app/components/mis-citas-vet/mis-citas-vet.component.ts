@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { MisCitasService } from '../../services/mis-citas.service';
 import { CommonModule } from '@angular/common';
-import { RouterModule } from '@angular/router';
+import { Router, RouterModule } from '@angular/router';
 
 @Component({
   selector: 'app-mis-citas-vet',
@@ -16,31 +16,31 @@ export class MisCitasVetComponent implements OnInit {
   loading: boolean = false;
   veterinarioId: string = '';
 
-  constructor(private misCitasService: MisCitasService) {}
+  constructor(private misCitasService: MisCitasService, private router: Router) {}
 
 ngOnInit(): void {
   console.log('🔍 ngOnInit ejecutado');
-  
+
   // Verificar qué hay en localStorage
   const userData = localStorage.getItem('usuario'); // <--- ¡AQUÍ ESTÁ EL CAMBIO!
   console.log('📦 userData raw:', userData);
-  
+
   if (userData) {
     console.log('✅ userData existe');
     const user = JSON.parse(userData);
     console.log('👤 User parseado:', user);
-    
+
     this.veterinarioId = user.id || user._id;
     console.log('🆔 veterinarioId:', this.veterinarioId);
-    
+
     if (this.veterinarioId) {
       console.log('🚀 Llamando cargarCitas...');
       this.cargarCitas();
     } else {
-      console.error('❌ No se encontró ID del veterinario');
+      console.log('❌ No se encontró ID del veterinario');
     }
   } else {
-    console.error('❌ No hay datos de usuario en localStorage');
+    console.log('❌ No hay datos de usuario en localStorage');
     console.log('📋 Todas las keys en localStorage:', Object.keys(localStorage));
   }
 }
@@ -48,11 +48,12 @@ ngOnInit(): void {
 cargarCitas(): void {
   console.log('📞 cargarCitas iniciado');
   console.log('🆔 Buscando citas para veterinario:', this.veterinarioId);
-  
+
   this.loading = true;
-  
+
   this.misCitasService.getCitasVeterinario(this.veterinarioId).subscribe({
     next: (response) => {
+      console.log('🩺 Citas recibidas:', response.data);
       console.log('✅ Respuesta recibida:', response);
       console.log('📊 Datos:', response.data);
       this.citas = response.data || [];
@@ -60,18 +61,33 @@ cargarCitas(): void {
       this.loading = false;
     },
     error: (error) => {
-      console.error('❌ Error al cargar citas:', error);
-      console.error('📄 Detalle del error:', error.message);
-      console.error('🔍 Status:', error.status);
+      console.log('❌ Error al cargar citas:', error);
+      console.log('📄 Detalle del error:', error.message);
+      console.log('🔍 Status:', error.status);
       this.loading = false;
     }
   });
 }
 
-  atenderCita(citaId: string): void {
-    // Navegar a la página de atención o abrir modal
-    console.log('Atender cita:', citaId);
-  }
+atenderCita(cita: any): void {
+  console.log('🩺 Atendiendo cita:', cita);
+
+  this.router.navigate(['veterinario/expedienbtes-form'], {
+    queryParams: {
+      id_cita: cita.id_cita,
+      cliente_id: cita.cliente_id,
+      mascota_id: cita.mascota_id,
+      veterinario_id: cita.veterinario_id,
+      animal_id: cita.animal_id,
+      fecha_cita: cita.fecha_cita,
+      hora_cita: cita.hora_cita,
+      motivo: cita.motivo,
+      estado: cita.estado,
+      created_at: cita.created_at,
+      token_confirmacion: cita.token_confirmacion
+    }
+  });
+}
 
   getEstadoBadgeClass(estado: string): string {
     const estados: any = {
