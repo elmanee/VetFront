@@ -2,6 +2,7 @@
   display: block;
 }
 
+// Se mantiene, ya que toma el color de la variable global
 .titulo-principal {
   color: var(--color-primary);
   font-weight: 800;
@@ -9,36 +10,37 @@
   margin-bottom: 0;
 }
 
+// Actualizado para usar las nuevas variables de fondo
 .btn-light {
-  background: #fff;
-  border: 1px solid rgba(0, 0, 0, 0.05);
+  background: var(--bg-surface);
+  border: 1px solid var(--border-color);
   color: var(--text-dark);
   font-weight: 600;
   transition: all 0.25s ease;
 
   &:hover {
-    background: rgba(242, 124, 43, 0.1);
+    // Usamos el fondo alternativo (crema) para el hover
+    background: var(--bg-alt);
   }
 }
 
-.card {
-  border: none;
-  border-radius: 14px;
-  background: #fff;
-  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.05);
-}
+/* Se elimina la clase .card de aquí, 
+  ya que está definida globalmente en styles.scss 
+  y es idéntica.
+*/
 
 .table {
   border-collapse: separate;
   border-spacing: 0;
   width: 100%;
-  background: white;
+  background: var(--bg-surface); // Fondo blanco
   border-radius: 10px;
   overflow: hidden;
 
   thead.table-light {
-    background-color: #f8b160;
-    color: #fff !important;
+    // Actualizado al nuevo color primario
+    background-color: var(--color-primary); 
+    color: var(--text-dark) !important; // Texto oscuro para legibilidad
     font-weight: 600;
     text-transform: uppercase;
     letter-spacing: 0.02em;
@@ -47,7 +49,7 @@
       border: none !important;
       padding: 14px 16px;
       font-size: 0.85rem;
-      color: #fff !important;
+      color: var(--text-dark) !important; // Texto oscuro
       background: transparent !important;
     }
   }
@@ -57,11 +59,13 @@
       transition: background 0.25s ease;
 
       &:nth-child(even) {
-        background: #fffaf5;
+        // Actualizado a la variable global de fondo claro
+        background: var(--bg-light); 
       }
 
       &:hover {
-        background: rgba(242, 124, 43, 0.08);
+        // Actualizado al hover con el nuevo primario (amarillo transparente)
+        background: rgba(255, 217, 90, 0.1); 
       }
 
       td {
@@ -70,6 +74,7 @@
         vertical-align: middle;
       }
 
+      // Se mantiene, usa la variable global
       td strong {
         color: var(--color-primary);
       }
@@ -77,6 +82,7 @@
   }
 }
 
+// Botones de icono (tamaño específico para este componente)
 td .btn-icon {
   width: 34px;
   height: 34px;
@@ -93,19 +99,22 @@ td .btn-icon {
   }
 }
 
+// Botón Editar (Actualizado a la nueva paleta)
 .btn-edit {
-  background: rgba(242, 124, 43, 0.12);
+  // Usa el global .btn-icon (amarillo)
+  background: rgba(255, 217, 90, 0.2);
   color: var(--color-primary);
 
   &:hover {
-    background: rgba(242, 124, 43, 0.25);
+    background: rgba(255, 217, 90, 0.4);
     transform: translateY(-2px);
   }
 }
 
+// Botón Borrar (Actualizado para usar variables)
 .btn-delete {
   background: rgba(231, 76, 60, 0.12);
-  color: #e74c3c;
+  color: var(--color-danger); // Variable global de peligro
 
   &:hover {
     background: rgba(231, 76, 60, 0.25);
@@ -113,9 +122,10 @@ td .btn-icon {
   }
 }
 
+// Botón Ver (Actualizado para usar variables)
 .btn-view {
   background: rgba(62, 193, 201, 0.12);
-  color: #3ec1c9;
+  color: var(--color-accent); // Variable global de acento
 
   &:hover {
     background: rgba(62, 193, 201, 0.25);
@@ -123,25 +133,25 @@ td .btn-icon {
   }
 }
 
+// Paginación (Actualizada a la nueva paleta)
 .pagination .page-link {
   border-radius: 8px !important;
   color: var(--color-primary);
-  border: 1px solid rgba(242, 124, 43, 0.25);
+  // Borde con el nuevo primario transparente
+  border: 1px solid rgba(255, 217, 90, 0.5); 
 
   &:hover {
-    background: rgba(242, 124, 43, 0.1);
+    // Hover con el nuevo primario transparente
+    background: rgba(255, 217, 90, 0.1); 
   }
 }
 
 .pagination .active .page-link {
   background: var(--color-primary);
-  color: white;
+  // CAMBIO CRÍTICO: Texto oscuro para legibilidad
+  color: var(--text-dark); 
   border-color: var(--color-primary);
 }
-
-
-
-
 
 .collapse-animated {
   overflow: hidden;
@@ -150,6 +160,7 @@ td .btn-icon {
 }
 .collapse-animated.show { max-height: 500px; }
 
+// Formularios (Actualizados a la nueva paleta)
 .form-control,
 .form-select,
 textarea {
@@ -162,13 +173,16 @@ textarea {
 
   &:focus {
     border-color: var(--color-primary);
-    box-shadow: 0 0 0 3px rgba(242, 124, 43, 0.2);
+    // Sombra de focus con el nuevo primario (amarillo)
+    box-shadow: 0 0 0 3px rgba(255, 217, 90, 0.3); 
   }
 }
 
+// Botón Limpiar (Actualizado a la nueva paleta)
 .btn-outline-clean {
   background: #fff;
-  border: 1.5px solid rgba(242, 124, 43, 0.35);
+  // Borde con el nuevo primario transparente
+  border: 1.5px solid rgba(255, 217, 90, 0.5); 
   color: var(--color-primary);
   font-weight: 600;
   font-size: 0.92rem;
@@ -186,7 +200,8 @@ textarea {
   }
 
   &:hover {
-    background: rgba(242, 124, 43, 0.08);
+    // Hover con el nuevo primario transparente
+    background: rgba(255, 217, 90, 0.1); 
     border-color: var(--color-primary);
     color: var(--color-primary);
     transform: translateY(-1px);
@@ -200,4 +215,3 @@ textarea {
     transform: scale(0.97);
   }
 }
-

@@ -1,0 +1,45 @@
+.cita-card {
+  transition: all 0.3s ease;
+  
+  &:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1) !important;
+  }
+}
+
+.cita-info {
+  .info-row {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 8px 0;
+    border-bottom: 1px solid var(--border-color);
+    
+    &:last-child {
+      border-bottom: none;
+    }
+    
+    i {
+      font-size: 1.1rem;
+      width: 20px;
+      text-align: center;
+    }
+    
+    span {
+      flex: 1;
+      font-size: 0.95rem;
+    }
+  }
+}
+
+.badge {
+  padding: 0.5rem 1rem;
+  font-weight: 600;
+  font-size: 0.8rem;
+}
+
+.btn-primary-si:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+  transform: none !important;
+}

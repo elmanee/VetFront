@@ -16,6 +16,10 @@ import { AuthGuard } from '../guards/auth.guard';
 import { LotesComponent } from './components/lotes/lotes.component';
 import { MovimientosComponent } from './components/movimientos/movimientos.component';
 import { RegistroPersonalComponent } from './authentication/registro-personal/registro-personal.component';
+import { MisCitasVetComponent } from './components/mis-citas-vet/mis-citas-vet.component';
+import { LayoutVeterinarioComponent } from './shared/veterinario/layout-veterinario/layout-veterinario.component';
+import { ExpedintesComponent } from './components/expedintes/expedintes.component';
+import { ExpedientesFormComponent } from './components/expedientes-form/expedientes-form.component';
 
 export const routes: Routes = [
   // Rutas públicas
@@ -80,16 +84,38 @@ export const routes: Routes = [
     title: 'Ver Expediente | Pet Health+'
   },
 
-  // Área de veterinario
-
- 
-  
+  {
+    path: 'veterinario',
+    component: LayoutVeterinarioComponent,
+    canActivate: [AuthGuard],
+    data: { roles: ['Veterinario'] },
+    children: [
+      {
+        path: '',
+        redirectTo: 'mis-citas',
+        pathMatch: 'full'
+      },
+      {
+        path: 'mis-citas',
+        component: MisCitasVetComponent
+      },
+      {
+        path: 'expedienbtes',
+        component: ExpedintesComponent
+      },
+      {
+        path: 'expedienbtes-form',
+        component: ExpedientesFormComponent
+      }
+    ]
+  },
 
   // Área de administración
   {
     path: 'admin',
     component: LayoutAdminComponent,
     canActivate: [AuthGuard],
+    data: { roles: ['Admin'] },
     children: [
       {
         path: '',

@@ -1,5 +1,7 @@
 export interface ResponseDTO<T> {
   status?: string,
-  data: T[],
+  // ¡CORRECCIÓN CLAVE! 
+  // Cambiar T[] (array) por T (objeto único)
+  data: T, 
   message: string
 }

@@ -3,7 +3,7 @@ import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { RouterModule } from '@angular/router'; 
-import { Cita, CitasService, ActualizarCitaRequest } from '../../../../services/citas.service';
+import { Cita, CitasService, ActualizarCitaRequest, Veterinario } from '../../../../services/citas.service';
 import Swal from 'sweetalert2';
 
 @Component({
@@ -15,15 +15,12 @@ import Swal from 'sweetalert2';
 })
 export class AgendaViewComponent implements OnInit {
   
-  veterinarios: { id: number, nombre: string }[] = [
-    { id: 1, nombre: 'Dr. Juan Pérez' },
-    { id: 2, nombre: 'Dra. María García' }
-  ];
-  
+  veterinarios: Veterinario[] = [];
+
   citasAgenda: Cita[] = [];
   citasFiltradas: Cita[] = [];
   
-  veterinarioSeleccionadoId: number = 1;
+  veterinarioSeleccionadoId: number | null = null; 
   fechaSeleccionada: string = new Date().toISOString().substring(0, 10);
   busquedaTexto: string = '';
   
@@ -43,9 +40,34 @@ export class AgendaViewComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    console.log('[AGENDA] Cargando citas al iniciar...');
-    this.cargarCitas();
+    console.log('[AGENDA] Cargando veterinarios y citas al iniciar...');
+    this.cargarVeterinarios();
+    // Quitado de aquí, se llamará después de cargar veterinarios
+    // this.cargarCitas(); 
   }
+
+   cargarVeterinarios(): void {
+    this.citasService.getVeterinarios().subscribe({
+      next: (vets) => {
+        this.veterinarios = vets;
+        if (vets.length > 0) {
+          // Asignamos el primer veterinario de la lista por defecto
+          this.veterinarioSeleccionadoId = vets[0].id;
+          // Ahora que tenemos un veterinario, cargamos sus citas
+          this.cargarCitas(); 
+        } else {
+          console.warn('[AGENDA] No se encontraron veterinarios activos');
+          this.cargando = false;
+        }
+      },
+      error: (error) => {
+        console.error('[AGENDA] Error al cargar veterinarios:', error.message);
+        this.mensaje = 'Error al cargar lista de doctores';
+        this.mensajeClase = 'error';
+      }
+    });
+  }
+
 
   cargarCitas(): void {
     this.cargando = true;
@@ -95,8 +117,12 @@ export class AgendaViewComponent implements OnInit {
 
     const busqueda = this.busquedaTexto.toLowerCase();
     this.citasFiltradas = this.citasAgenda.filter(cita => 
-      cita.motivo.toLowerCase().includes(busqueda) ||
-      cita.hora_cita.includes(busqueda)
+      // ¡Filtro actualizado para buscar en los nuevos campos!
+      (cita.motivo && cita.motivo.toLowerCase().includes(busqueda)) ||
+      (cita.hora_cita && cita.hora_cita.includes(busqueda)) ||
+      (cita.cliente_nombre && cita.cliente_nombre.toLowerCase().includes(busqueda)) ||
+      (cita.cliente_correo && cita.cliente_correo.toLowerCase().includes(busqueda)) ||
+      (cita.mascota_nombre && cita.mascota_nombre.toLowerCase().includes(busqueda))
     );
   }
 
@@ -217,18 +243,22 @@ export class AgendaViewComponent implements OnInit {
 
   getEstadoBadgeClass(estado: string): string {
     switch(estado) {
-      case 'Confirmada': return 'bg-success';
-      case 'Pendiente': return 'bg-warning';
-      case 'Cancelada': return 'bg-danger';
-      default: return 'bg-secondary';
+      case 'Confirmada': return 'badge-success-si';
+      case 'Por Confirmar': return 'badge-warning-si';
+      case 'Pendiente': return 'badge-warning-si';
+      case 'Cancelada': return 'badge-danger-si';
+      case 'Completada': return 'badge-secondary-si';
+      default: return 'badge-secondary-si';
     }
   }
 
   getEstadoCardClass(estado: string): string {
     switch(estado) {
       case 'Confirmada': return 'border-success';
+      case 'Por Confirmar': return 'border-warning';
       case 'Pendiente': return 'border-warning';
       case 'Cancelada': return 'border-danger';
+      case 'Completada': return 'border-secondary';
       default: return 'border-secondary';
     }
   }

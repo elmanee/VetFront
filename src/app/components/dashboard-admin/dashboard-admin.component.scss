@@ -1,0 +1,220 @@
+/*
+ * Estilos para el Dashboard Admin
+ * Diseño profesional y esquematizado
+ */
+
+:host {
+  display: block;
+  // Usamos el fondo crema claro para la página, no blanco
+  background-color: var(--bg-light); 
+  min-height: 100%;
+}
+
+.dashboard-admin-page {
+  // Asegura que el contenedor ocupe el espacio
+  width: 100%;
+}
+
+/*
+ * Estilo Base para Tarjetas de Estadísticas (KPIs)
+ */
+.stat-card {
+  background-color: var(--bg-surface);
+  border-radius: 12px;
+  box-shadow: var(--shadow-sm);
+  border: 1px solid var(--border-color);
+  border-left: 5px solid var(--text-muted); // Borde gris por defecto
+  transition: all 0.3s ease;
+
+  &:hover {
+    box-shadow: 0 6px 16px rgba(0, 0, 0, 0.07);
+    transform: translateY(-2px);
+  }
+
+  .stat-label {
+    color: var(--text-muted);
+    font-size: 0.8rem;
+    font-weight: 600;
+  }
+
+  .stat-number {
+    font-size: 2.5rem;
+    font-weight: 700;
+    color: var(--text-dark);
+    line-height: 1.1;
+  }
+
+  .stat-sublabel {
+    font-size: 0.9rem;
+    color: var(--text-muted);
+  }
+
+  .stat-icon {
+    font-size: 3rem;
+    opacity: 0.3;
+    color: var(--text-dark);
+  }
+}
+
+/* Variaciones de color para las tarjetas de estadísticas */
+.stat-card-primary {
+  border-left-color: var(--color-primary); // Amarillo
+  .stat-icon {
+    color: var(--color-primary);
+  }
+}
+
+.stat-card-accionable {
+  border-left-color: var(--color-danger); // Rojo
+  .stat-icon {
+    color: var(--color-danger);
+  }
+  .stat-number {
+    color: var(--color-danger); // Número en rojo para llamar la acción
+  }
+}
+
+.stat-card-accent {
+  border-left-color: var(--color-accent); // Cyan/Azul
+  .stat-icon {
+    color: var(--color-accent);
+  }
+}
+
+.stat-card-muted {
+  border-left-color: #adb5bd; // Gris
+  .stat-icon {
+    color: #adb5bd;
+  }
+}
+
+/*
+ * Tarjeta de Gráfica (Top 5)
+ */
+.chart-card {
+  .card-header {
+    background-color: var(--bg-surface);
+    border-bottom: 1px solid var(--border-color);
+    h6 {
+      color: var(--text-dark);
+      font-size: 1.05rem;
+    }
+  }
+
+  .table {
+    margin-bottom: 0; // Quitar margen dentro de la tarjeta
+    thead.table-light {
+      // Encabezado de tabla con el color primario
+      background-color: var(--color-primary) !important;
+      th {
+        color: var(--text-dark) !important; // Texto oscuro (legible)
+        font-weight: 600;
+        text-transform: uppercase;
+        letter-spacing: 0.02em;
+        font-size: 0.8rem;
+        border: none !important;
+        padding: 12px 16px;
+      }
+    }
+    tbody {
+      tr:last-child {
+        td {
+          border-bottom: none; // Limpiar borde inferior
+        }
+      }
+      td {
+        padding: 12px 16px;
+        vertical-align: middle;
+      }
+      .badge {
+        font-size: 0.85rem;
+        padding: 0.4em 0.7em;
+      }
+    }
+  }
+}
+
+
+/*
+ * Tarjeta del Centro de Alertas (Pestañas)
+ */
+.alert-card {
+  .card-header {
+    background-color: var(--bg-surface);
+    border-bottom: 1px solid var(--border-color);
+    h6 {
+      color: var(--text-dark);
+      font-size: 1.05rem;
+    }
+  }
+
+  // Estilos de Pestañas (Tabs)
+  .alert-tabs {
+    border-bottom: 2px solid var(--border-color);
+
+    .nav-link {
+      border: none;
+      color: var(--text-muted);
+      font-weight: 500;
+      padding: 0.8rem 1rem;
+      transition: all 0.2s ease;
+
+      &.active {
+        // Pestaña activa usa el color primario
+        color: var(--color-primary); 
+        border-bottom: 2px solid var(--color-primary);
+        font-weight: 600;
+      }
+
+      &:hover:not(.active) {
+        color: var(--text-dark);
+      }
+    }
+  }
+
+  // Contenido de la lista de alertas
+  .alert-list {
+    max-height: 350px; // Altura máxima para la lista
+    overflow-y: auto;
+  }
+
+  .alert-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 1rem 1.25rem;
+    transition: background-color 0.2s ease;
+
+    &:hover {
+      background-color: var(--bg-light);
+    }
+
+    .alert-item-content {
+      line-height: 1.3;
+    }
+    .alert-item-title {
+      font-weight: 600;
+      color: var(--text-dark);
+    }
+    .alert-item-subtitle {
+      font-size: 0.85rem;
+      color: var(--text-muted);
+    }
+  }
+
+  // Badges personalizados para alertas
+  .badge-alert-danger {
+    // Fondo rojo muy claro, texto rojo
+    background-color: rgba(231, 76, 60, 0.1); 
+    color: var(--color-danger);
+    font-weight: 600;
+  }
+
+  .badge-alert-warning {
+    // Fondo amarillo/naranja muy claro, texto naranja
+    background-color: rgba(255, 193, 7, 0.15); 
+    color: #E67E22; // Un naranja oscuro legible
+    font-weight: 600;
+  }
+}
+

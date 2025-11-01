@@ -28,7 +28,7 @@
 
   <nav class="sidebar-nav flex-grow-1 px-2">
     <div class="nav-section mb-4">
-      <a routerLink="/admin/das-admin"
+      <a routerLink="/veterinario/mis-citas"
          routerLinkActive="active"
          class="nav-item d-flex align-items-center rounded mb-1"
          [title]="isCollapsed ? 'Dashboard' : ''">
@@ -36,74 +36,17 @@
         <span class="nav-text">Dashboard</span>
       </a>
 
-      <a routerLink="/admin/inventario"
+      <a routerLink="/veterinario/expedienbtes"
          routerLinkActive="active"
          class="nav-item d-flex align-items-center rounded mb-1"
-         [title]="isCollapsed ? 'Inventario' : ''">
-        <i class="ri-inbox-line me-3"></i>
-        <span class="nav-text">Inventario</span>
+         [title]="isCollapsed ? 'Expedientes' : ''">
+        <i class="ri-file-list-3-line me-3"></i>
+        <span class="nav-text">Expedientes</span>
       </a>
-
-      <a routerLink="/admin/lotes"
-        routerLinkActive="active"
-        class="nav-item d-flex align-items-center rounded mb-1"
-        [title]="isCollapsed ? 'Lotes' : ''">
-        <i class="ri-stack-line me-3"></i>
-        <span class="nav-text">Lotes</span>
-      </a>
-
-      <a
-        routerLink="/admin/movimientos"
-        routerLinkActive="active"
-        class="nav-item d-flex align-items-center rounded mb-1"
-        [title]="isCollapsed ? 'Movimientos de Inventario' : ''">
-        <i class="ri-arrow-left-right-line me-3"></i>
-        <span class="nav-text">Movimientos y Rep.</span>
-      </a>
-      
-
-      <a routerLink="/admin/agenda"
-         routerLinkActive="active"
-         class="nav-item d-flex align-items-center rounded mb-1"
-         [title]="isCollapsed ? 'Agenda de Citas' : ''">
-        <i class="ri-calendar-line me-3"></i>
-        <span class="nav-text">Agenda de Citas</span>
-      </a>
-
-      <a routerLink="/admin/registrar-cita"
-         routerLinkActive="active"
-         class="nav-item d-flex align-items-center rounded mb-1"
-         [title]="isCollapsed ? 'Registrar Cita' : ''">
-        <i class="ri-add-circle-line me-3"></i>
-        <span class="nav-text">Registrar Cita</span>
-      </a>
-
-      <a routerLink="/admin/pacientes"
-         routerLinkActive="active"
-         class="nav-item d-flex align-items-center rounded mb-1"
-         [title]="isCollapsed ? 'Pacientes' : ''">
-        <i class="ri-bear-smile-line me-3"></i>
-        <span class="nav-text">Pacientes</span>
-      </a>
-
-      <a routerLink="/admin/mis-citas"
-         routerLinkActive="active"
-         class="nav-item d-flex align-items-center rounded mb-1"
-         [title]="isCollapsed ? 'Pacientes' : ''">
-        <i class="ri-bear-smile-line me-3"></i>
-        <span class="nav-text">Mis Citas Vet</span>
-      </a>
-
-      <a routerLink="/admin/clientes"
-         routerLinkActive="active"
-         class="nav-item d-flex align-items-center rounded mb-1"
-         [title]="isCollapsed ? 'Clientes' : ''">
-        <i class="ri-group-line me-3"></i>
-        <span class="nav-text">Clientes</span>
-      </a>
-    </div>
+      </div>
 
     <div class="nav-section mb-3">
+      <h6 class="nav-title text-uppercase px-3 mb-2">App</h6>
 
       <a routerLink="/admin/perfil"
          routerLinkActive="active"
