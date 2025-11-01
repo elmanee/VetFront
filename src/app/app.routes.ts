@@ -19,7 +19,6 @@ import { RegistroPersonalComponent } from './authentication/registro-personal/re
 import { MisCitasVetComponent } from './components/mis-citas-vet/mis-citas-vet.component';
 import { LayoutVeterinarioComponent } from './shared/veterinario/layout-veterinario/layout-veterinario.component';
 import { ExpedintesComponent } from './components/expedintes/expedintes.component';
-import { ExpedientesFormComponent } from './components/expedientes-form/expedientes-form.component';
 
 export const routes: Routes = [
   // Rutas públicas
@@ -105,7 +104,7 @@ export const routes: Routes = [
       },
       {
         path: 'expedienbtes-form',
-        component: ExpedientesFormComponent
+        component: ExpedienteFormComponent
       }
     ]
   },
