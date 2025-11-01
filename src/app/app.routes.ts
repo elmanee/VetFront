@@ -80,6 +80,11 @@ export const routes: Routes = [
     title: 'Ver Expediente | Pet Health+'
   },
 
+  // Área de veterinario
+
+ 
+  
+
   // Área de administración
   {
     path: 'admin',
@@ -139,7 +144,7 @@ export const routes: Routes = [
         path: 'movimientos',
         component: MovimientosComponent,
         title: 'Moviemintos | El Morralito'
-      }
+      },
     ]
   },
 
