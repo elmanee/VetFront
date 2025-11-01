@@ -2,11 +2,10 @@ import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
-import { ExpedienteService, Expediente, FiltrosBusqueda } from '../../../services/expediente.service';
-import { environment } from '../../../../environments/environment';
+import { ExpedienteService, FiltrosBusqueda, Expediente } from '../../../services/expediente.service';
 
 @Component({
-  selector: 'app-expediente-search',
+  selector: 'app-buscar-expediente',
   standalone: true,
   imports: [CommonModule, FormsModule],
   templateUrl: './buscar-expediente.component.html',
@@ -14,159 +13,147 @@ import { environment } from '../../../../environments/environment';
 })
 export class BuscarExpedienteComponent implements OnInit {
   
-  expedientes: Expediente[] = [];
-  
-  // Filtros de búsqueda 
+  Math = Math;
+  // Filtros de búsqueda (RQF02 - 3+ filtros)
   filtros: FiltrosBusqueda = {
-    nombre_mascota: '',
+    nombreMascota: '',
     propietario: '',
-    numero_expediente: '',
-    fecha_desde: '',
-    fecha_hasta: '',
+    numeroExpediente: '',
+    fechaConsulta: '',
     diagnostico: '',
     estado: ''
   };
   
-  cargando: boolean = false;
+  // Resultados
+  expedientes: Expediente[] = [];
+  expedientesFiltrados: Expediente[] = [];
+  
+  // Estados
+  buscando: boolean = false;
   busquedaRealizada: boolean = false;
   mensaje: string = '';
   mensajeClase: string = '';
-
+  
+  // Paginación
+  paginaActual: number = 1;
+  itemsPorPagina: number = 12;
+  
   constructor(
     private expedienteService: ExpedienteService,
     private router: Router
   ) {}
 
   ngOnInit(): void {
-    console.log('[BÚSQUEDA EXPEDIENTES] Componente inicializado');
+    console.log('[BUSCAR EXPEDIENTE] Componente inicializado');
   }
 
   /**
-   * RQF02 - Buscar expedientes con múltiples filtros
+   * Realizar búsqueda con filtros (RQF02)
    */
   buscarExpedientes(): void {
-    // Validar que al menos un filtro esté lleno
-    const filtrosActivos = Object.values(this.filtros).filter(v => v && v.trim() !== '');
+    console.log('[BUSCAR EXPEDIENTE] Iniciando búsqueda con filtros:', this.filtros);
     
-    if (filtrosActivos.length === 0) {
-      this.mensaje = 'Debe ingresar al menos un criterio de búsqueda.';
-      this.mensajeClase = 'error';
+    // Validar que al menos un filtro esté completo
+    const filtrosActivos = this.contarFiltrosActivos();
+    
+    if (filtrosActivos === 0) {
+      this.mensaje = 'Debe ingresar al menos un criterio de búsqueda';
+      this.mensajeClase = 'warning';
       return;
     }
     
-    console.log('[BÚSQUEDA EXPEDIENTES] Buscando con filtros:', this.filtros);
-    
-    this.cargando = true;
-    this.busquedaRealizada = true;
+    this.buscando = true;
     this.mensaje = '';
     
-    this.expedienteService.buscarExpedientes(this.filtros).subscribe({
-      next: (expedientes) => {
-        this.cargando = false;
-        this.expedientes = expedientes;
+    // Preparar filtros (remover vacíos)
+    const filtrosLimpios: FiltrosBusqueda = {};
+    
+    if (this.filtros.nombreMascota?.trim()) {
+      filtrosLimpios.nombreMascota = this.filtros.nombreMascota.trim();
+    }
+    if (this.filtros.propietario?.trim()) {
+      filtrosLimpios.propietario = this.filtros.propietario.trim();
+    }
+    if (this.filtros.numeroExpediente?.trim()) {
+      filtrosLimpios.numeroExpediente = this.filtros.numeroExpediente.trim();
+    }
+    if (this.filtros.fechaConsulta) {
+      filtrosLimpios.fechaConsulta = this.filtros.fechaConsulta;
+    }
+    if (this.filtros.diagnostico?.trim()) {
+      filtrosLimpios.diagnostico = this.filtros.diagnostico.trim();
+    }
+    if (this.filtros.estado) {
+      filtrosLimpios.estado = this.filtros.estado;
+    }
+    
+    this.expedienteService.buscarExpedientes(filtrosLimpios).subscribe({
+      next: (resultados) => {
+        this.expedientes = resultados;
+        this.expedientesFiltrados = resultados;
+        this.buscando = false;
+        this.busquedaRealizada = true;
+        this.paginaActual = 1;
         
-        console.log(`[BÚSQUEDA EXPEDIENTES] Se encontraron ${expedientes.length} expedientes`);
+        console.log(`[BUSCAR EXPEDIENTE] Se encontraron ${resultados.length} expedientes`);
         
-        if (expedientes.length === 0) {
-          this.mensaje = 'No se encontraron expedientes con los criterios especificados.';
+        if (resultados.length === 0) {
+          this.mensaje = 'No se encontraron expedientes con los criterios especificados';
           this.mensajeClase = 'info';
         } else {
-          this.mensaje = `Se encontraron ${expedientes.length} expediente(s).`;
+          this.mensaje = `Se encontraron ${resultados.length} expediente(s)`;
           this.mensajeClase = 'success';
         }
       },
-      error: (error) => {
-        console.error('[BÚSQUEDA EXPEDIENTES] Error:', error);
-        this.cargando = false;
-        this.mensaje = error.message;
+        error: (error) => {
+        console.error('[BUSCAR EXPEDIENTE] Error en búsqueda:', error);
+        this.buscando = false;
+        this.mensaje = error.message || 'Error al buscar expedientes';
         this.mensajeClase = 'error';
       }
     });
   }
 
   /**
-   * Limpiar filtros y resultados
+   * Contar filtros activos
    */
-  limpiarBusqueda(): void {
+  contarFiltrosActivos(): number {
+    let count = 0;
+    if (this.filtros.nombreMascota?.trim()) count++;
+    if (this.filtros.propietario?.trim()) count++;
+    if (this.filtros.numeroExpediente?.trim()) count++;
+    if (this.filtros.fechaConsulta) count++;
+    if (this.filtros.diagnostico?.trim()) count++;
+    if (this.filtros.estado) count++;
+    return count;
+  }
+
+  /**
+   * Limpiar filtros
+   */
+  limpiarFiltros(): void {
     this.filtros = {
-      nombre_mascota: '',
+      nombreMascota: '',
       propietario: '',
-      numero_expediente: '',
-      fecha_desde: '',
-      fecha_hasta: '',
+      numeroExpediente: '',
+      fechaConsulta: '',
       diagnostico: '',
       estado: ''
     };
-    
     this.expedientes = [];
+    this.expedientesFiltrados = [];
     this.busquedaRealizada = false;
     this.mensaje = '';
+    this.paginaActual = 1;
+    console.log('[BUSCAR EXPEDIENTE] Filtros limpiados');
   }
 
   /**
-   * Ver historial completo de un expediente
+   * Ver expediente completo
    */
   verExpediente(expediente: Expediente): void {
-    console.log('[BÚSQUEDA EXPEDIENTES] Ver expediente:', expediente);
+    console.log('[BUSCAR EXPEDIENTE] Abriendo expediente:', expediente.numero_expediente);
     this.router.navigate(['/expediente/ver', expediente.id_expediente]);
-  }
-
-  /**
-   * Generar reporte PDF de un expediente
-   */
-  generarReporte(expediente: Expediente): void {
-    console.log('[BÚSQUEDA EXPEDIENTES] Generando reporte para expediente:', expediente.numero_expediente);
-    
-    this.cargando = true;
-    
-    this.expedienteService.generarReporteMedico(expediente.id_expediente).subscribe({
-      next: (resultado) => {
-        this.cargando = false;
-        
-        // Descargar el PDF
-        const url = `${environment.apiUrl}/reportes/descargar/${resultado.nombreArchivo}`;
-        window.open(url, '_blank');
-        
-        this.mensaje = 'Reporte generado exitosamente.';
-        this.mensajeClase = 'success';
-        
-        setTimeout(() => this.mensaje = '', 3000);
-      },
-      error: (error) => {
-        this.cargando = false;
-        this.mensaje = error.message;
-        this.mensajeClase = 'error';
-      }
-    });
-  }
-
-  /**
-   * Generar certificado de salud
-   */
-  generarCertificado(expediente: Expediente): void {
-    console.log('[BÚSQUEDA EXPEDIENTES] Generando certificado para expediente:', expediente.numero_expediente);
-    
-    this.cargando = true;
-    
-    this.expedienteService.generarCertificadoSalud(expediente.id_expediente).subscribe({
-      next: (resultado) => {
-        this.cargando = false;
-        
-        // Descargar el PDF
-        const url = `${environment.apiUrl}/reportes/descargar/${resultado.nombreArchivo}`;
-        window.open(url, '_blank');
-        
-        this.mensaje = 'Certificado generado exitosamente.';
-        this.mensajeClase = 'success';
-        
-        setTimeout(() => this.mensaje = '', 3000);
-      },
-      error: (error) => {
-        this.cargando = false;
-        this.mensaje = error.message;
-        this.mensajeClase = 'error';
-      }
-    });
   }
 
   /**
@@ -174,21 +161,48 @@ export class BuscarExpedienteComponent implements OnInit {
    */
   formatearFecha(fecha: string): string {
     if (!fecha) return 'N/A';
-    
     const date = new Date(fecha);
-    const opciones: Intl.DateTimeFormatOptions = { 
-      year: 'numeric', 
-      month: 'short', 
-      day: 'numeric' 
-    };
-    
-    return date.toLocaleDateString('es-MX', opciones);
+    return date.toLocaleDateString('es-MX', {
+      year: 'numeric',
+      month: 'long',
+      day: 'numeric'
+    });
   }
 
   /**
-   * Contar filtros activos
+   * Paginación - Obtener expedientes de la página actual
    */
-  contarFiltrosActivos(): number {
-    return Object.values(this.filtros).filter(v => v && v.trim() !== '').length;
+  get expedientesPaginados(): Expediente[] {
+    const inicio = (this.paginaActual - 1) * this.itemsPorPagina;
+    const fin = inicio + this.itemsPorPagina;
+    return this.expedientesFiltrados.slice(inicio, fin);
+  }
+
+  /**
+   * Paginación - Total de páginas
+   */
+  get totalPaginas(): number {
+    return Math.ceil(this.expedientesFiltrados.length / this.itemsPorPagina);
+  }
+
+  /**
+   * Paginación - Array de números de página
+   */
+  get numerosPaginas(): number[] {
+    const paginas = [];
+    for (let i = 1; i <= this.totalPaginas; i++) {
+      paginas.push(i);
+    }
+    return paginas;
+  }
+
+  /**
+   * Cambiar página
+   */
+  cambiarPagina(pagina: number): void {
+    if (pagina >= 1 && pagina <= this.totalPaginas) {
+      this.paginaActual = pagina;
+    }
   }
 }
+

@@ -1,12 +1,8 @@
-// /home/agus/Documentos/VetHealth/VetFront/src/app/home/expedientes/citas-atender/citas-atender.component.ts
-// RQF02: Componente para listar citas confirmadas listas para atender
-
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
 import { CitasService, Cita } from '../../../../services/citas.service';
-import { ExpedienteService } from '../../../../services/expediente.service';
 
 @Component({
   selector: 'app-citas-atender',
@@ -37,7 +33,6 @@ export class CitasAtenderComponent implements OnInit {
 
   constructor(
     private citasService: CitasService,
-    private expedienteService: ExpedienteService,
     private router: Router
   ) {}
 
@@ -46,9 +41,6 @@ export class CitasAtenderComponent implements OnInit {
     this.cargarCitasConfirmadas();
   }
 
-  /**
-   * Cargar todas las citas con estado 'Confirmada'
-   */
   cargarCitasConfirmadas(): void {
     this.cargando = true;
     console.log('[CITAS ATENDER] Cargando citas confirmadas...');
@@ -86,9 +78,6 @@ export class CitasAtenderComponent implements OnInit {
     });
   }
 
-  /**
-   * Aplicar filtros
-   */
   aplicarFiltros(): void {
     console.log('[CITAS ATENDER] Aplicando filtros...');
     
@@ -124,42 +113,12 @@ export class CitasAtenderComponent implements OnInit {
     console.log(`[CITAS ATENDER] Resultados filtrados: ${this.citasFiltradas.length}`);
   }
 
-  /**
-   * Limpiar filtros
-   */
   limpiarFiltros(): void {
     this.veterinarioSeleccionado = 0;
     this.fechaSeleccionada = '';
     this.busquedaTexto = '';
     this.citasFiltradas = [...this.citasConfirmadas];
     this.mensaje = '';
-  }
-
-  /**
-   * Verificar si la cita puede ser atendida
-   */
-  verificarCita(cita: Cita): void {
-    if (!cita.id_cita) return;
-    
-    this.cargando = true;
-    
-    this.expedienteService.verificarCita(cita.id_cita).subscribe({
-      next: (respuesta) => {
-        this.cargando = false;
-        
-        if (respuesta.puede_atender) {
-          this.atenderCita(cita);
-        } else {
-          this.mensaje = respuesta.mensaje;
-          this.mensajeClase = 'error';
-        }
-      },
-      error: (error) => {
-        this.cargando = false;
-        this.mensaje = error.message;
-        this.mensajeClase = 'error';
-      }
-    });
   }
 
   /**
@@ -200,9 +159,6 @@ export class CitasAtenderComponent implements OnInit {
     return date.toLocaleDateString('es-MX', opciones);
   }
 
-  /**
-   * Verificar si la cita es para hoy
-   */
   esHoy(fecha: string): boolean {
     let fechaISO = fecha;
     if (fechaISO.includes('T')) {
@@ -213,9 +169,6 @@ export class CitasAtenderComponent implements OnInit {
     return fechaISO === hoy;
   }
 
-  /**
-   * Verificar si la cita está próxima (en las próximas 2 horas)
-   */
   esProxima(fecha: string, hora: string): boolean {
     const ahora = new Date();
     let fechaISO = fecha;
@@ -229,10 +182,7 @@ export class CitasAtenderComponent implements OnInit {
     
     return diferencia > 0 && diferencia <= dosHorasEnMs;
   }
-
-  /**
-   * Contar citas para hoy
-   */
+  
   contarCitasHoy(): number {
     return this.citasFiltradas.filter(c => this.esHoy(c.fecha_cita)).length;
   }

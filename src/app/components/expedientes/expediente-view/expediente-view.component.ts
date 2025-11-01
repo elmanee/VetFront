@@ -1,8 +1,8 @@
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ActivatedRoute, Router } from '@angular/router';
-import { ExpedienteService, Expediente } from '../../../services/expediente.service';
-import { environment } from '../../../../environments/environment';
+import { ExpedienteService, ExpedienteCompleto } from '../../../services/expediente.service';
+import Swal from 'sweetalert2';
 
 @Component({
   selector: 'app-expediente-view',
@@ -13,13 +13,10 @@ import { environment } from '../../../../environments/environment';
 })
 export class ExpedienteViewComponent implements OnInit {
   
-  expediente: Expediente | null = null;
-  historial: any[] = [];
-  expedienteId: number = 0;
-  
+  expedienteId?: number;
+  expediente?: ExpedienteCompleto;
   cargando: boolean = false;
-  mensaje: string = '';
-  mensajeClase: string = '';
+  generandoPDF: boolean = false;
   
   // Control de secciones expandidas
   consultasExpandidas: { [key: number]: boolean } = {};
@@ -36,127 +33,151 @@ export class ExpedienteViewComponent implements OnInit {
     this.route.params.subscribe(params => {
       this.expedienteId = +params['id'];
       
-      if (this.expedienteId) {
-        this.cargarExpediente();
+      if (!this.expedienteId || isNaN(this.expedienteId)) {
+        this.mostrarErrorYRedirigir('ID de expediente inválido');
+        return;
       }
+      
+      this.cargarExpediente();
     });
   }
 
   /**
-   * Cargar información completa del expediente
+   * Cargar expediente completo
    */
   cargarExpediente(): void {
+    if (!this.expedienteId) return;
+    
     this.cargando = true;
+    console.log('[EXPEDIENTE VIEW] Cargando expediente ID:', this.expedienteId);
     
-    console.log(`[EXPEDIENTE VIEW] Cargando expediente ID: ${this.expedienteId}`);
-    
-    // Cargar datos del expediente
-    this.expedienteService.obtenerExpedientePorId(this.expedienteId).subscribe({
+    this.expedienteService.obtenerExpedienteCompleto(this.expedienteId).subscribe({
       next: (expediente) => {
         this.expediente = expediente;
-        console.log('[EXPEDIENTE VIEW] Expediente cargado:', expediente);
+        this.cargando = false;
+        console.log('[EXPEDIENTE VIEW] Expediente cargado:', expediente.expediente.numero_expediente);
         
-        // Cargar historial completo
-        this.cargarHistorial();
+        // Inicializar todas las consultas como expandidas
+        if (expediente.consultas) {
+          expediente.consultas.forEach((consulta, index) => {
+            this.consultasExpandidas[index] = index === 0; // Solo la primera expandida
+          });
+        }
       },
       error: (error) => {
         console.error('[EXPEDIENTE VIEW] Error al cargar expediente:', error);
         this.cargando = false;
-        this.mensaje = error.message;
-        this.mensajeClase = 'error';
+        this.mostrarErrorYRedirigir(error.message || 'No se pudo cargar el expediente');
       }
     });
   }
 
   /**
-   * Cargar historial de consultas
-   */
-  cargarHistorial(): void {
-    this.expedienteService.obtenerHistorialCompleto(this.expedienteId).subscribe({
-      next: (datos) => {
-        this.historial = datos.consultas || [];
-        this.cargando = false;
-        
-        console.log(`[EXPEDIENTE VIEW] Historial cargado: ${this.historial.length} consultas`);
-      },
-      error: (error) => {
-        console.error('[EXPEDIENTE VIEW] Error al cargar historial:', error);
-        this.cargando = false;
-        this.mensaje = error.message;
-        this.mensajeClase = 'error';
-      }
-    });
-  }
-
-  /**
-   * Expandir/colapsar consulta
+   * Toggle consulta expandida
    */
   toggleConsulta(index: number): void {
     this.consultasExpandidas[index] = !this.consultasExpandidas[index];
   }
 
   /**
-   * Verificar si una consulta está expandida
+   * Generar reporte PDF (RQF02)
    */
-  isConsultaExpandida(index: number): boolean {
-    return this.consultasExpandidas[index] || false;
-  }
-
-  /**
-   * Generar reporte PDF
-   */
-  generarReporte(): void {
+  generarReportePDF(): void {
+    if (!this.expedienteId) return;
+    
+    this.generandoPDF = true;
     console.log('[EXPEDIENTE VIEW] Generando reporte PDF...');
     
-    this.cargando = true;
-    
-    this.expedienteService.generarReporteMedico(this.expedienteId).subscribe({
-      next: (resultado) => {
-        this.cargando = false;
+    this.expedienteService.generarReportePDF(this.expedienteId).subscribe({
+      next: (blob) => {
+        this.generandoPDF = false;
         
-        // Descargar el PDF
-        const url = `${environment.apiUrl}/reportes/descargar/${resultado.nombreArchivo}`;
-        window.open(url, '_blank');
+        // Crear URL del blob y descargarlo
+        const url = window.URL.createObjectURL(blob);
+        const link = document.createElement('a');
+        link.href = url;
+        link.download = `expediente_${this.expediente?.expediente?.numero_expediente || 'desconocido'}.pdf`;
+        link.click();
+        window.URL.revokeObjectURL(url);
         
-        this.mensaje = 'Reporte generado exitosamente.';
-        this.mensajeClase = 'success';
+        console.log('[EXPEDIENTE VIEW] ✅ Reporte PDF generado');
         
-        setTimeout(() => this.mensaje = '', 3000);
+        Swal.fire({
+          icon: 'success',
+          title: '¡Éxito!',
+          text: 'Reporte PDF generado correctamente',
+          timer: 2000,
+          showConfirmButton: false
+        });
       },
       error: (error) => {
-        this.cargando = false;
-        this.mensaje = error.message;
-        this.mensajeClase = 'error';
+        this.generandoPDF = false;
+        console.error('[EXPEDIENTE VIEW] Error al generar PDF:', error);
+        
+        Swal.fire({
+          icon: 'error',
+          title: 'Error',
+          text: 'No se pudo generar el reporte PDF',
+          confirmButtonText: 'Aceptar'
+        });
       }
     });
   }
 
   /**
-   * Generar certificado de salud
+   * Generar certificado de salud PDF (RQF02)
    */
-  generarCertificado(): void {
-    console.log('[EXPEDIENTE VIEW] Generando certificado...');
+  generarCertificadoPDF(): void {
+    if (!this.expedienteId) return;
     
-    this.cargando = true;
+    this.generandoPDF = true;
+    console.log('[EXPEDIENTE VIEW] Generando certificado PDF...');
     
-    this.expedienteService.generarCertificadoSalud(this.expedienteId).subscribe({
-      next: (resultado) => {
-        this.cargando = false;
+    this.expedienteService.generarCertificadoPDF(this.expedienteId).subscribe({
+      next: (blob) => {
+        this.generandoPDF = false;
         
-        // Descargar el PDF
-        const url = `${environment.apiUrl}/reportes/descargar/${resultado.nombreArchivo}`;
-        window.open(url, '_blank');
+        const url = window.URL.createObjectURL(blob);
+        const link = document.createElement('a');
+        link.href = url;
+        link.download = `certificado_${this.expediente?.expediente?.numero_expediente || 'desconocido'}.pdf`;
+        link.click();
+        window.URL.revokeObjectURL(url);
         
-        this.mensaje = 'Certificado generado exitosamente.';
-        this.mensajeClase = 'success';
+        console.log('[EXPEDIENTE VIEW] ✅ Certificado PDF generado');
         
-        setTimeout(() => this.mensaje = '', 3000);
+        Swal.fire({
+          icon: 'success',
+          title: '¡Éxito!',
+          text: 'Certificado de salud generado correctamente',
+          timer: 2000,
+          showConfirmButton: false
+        });
       },
       error: (error) => {
-        this.cargando = false;
-        this.mensaje = error.message;
-        this.mensajeClase = 'error';
+        this.generandoPDF = false;
+        console.error('[EXPEDIENTE VIEW] Error al generar certificado:', error);
+        
+        Swal.fire({
+          icon: 'error',
+          title: 'Error',
+          text: 'No se pudo generar el certificado',
+          confirmButtonText: 'Aceptar'
+        });
       }
+    });
+  }
+
+  /**
+   * Formatear fecha
+   */
+  formatearFecha(fecha: string): string {
+    if (!fecha) return 'N/A';
+    const date = new Date(fecha);
+    return date.toLocaleDateString('es-MX', {
+      year: 'numeric',
+      month: 'long',
+      day: 'numeric'
     });
   }
 
@@ -168,18 +189,16 @@ export class ExpedienteViewComponent implements OnInit {
   }
 
   /**
-   * Formatear fecha
+   * Mostrar error y redirigir
    */
-  formatearFecha(fecha: string): string {
-    if (!fecha) return 'N/A';
-    
-    const date = new Date(fecha);
-    const opciones: Intl.DateTimeFormatOptions = { 
-      year: 'numeric', 
-      month: 'long', 
-      day: 'numeric' 
-    };
-    
-    return date.toLocaleDateString('es-MX', opciones);
+  private mostrarErrorYRedirigir(mensaje: string): void {
+    Swal.fire({
+      icon: 'error',
+      title: 'Error',
+      text: mensaje,
+      confirmButtonText: 'Volver'
+    }).then(() => {
+      this.router.navigate(['/expedientes/buscar']);
+    });
   }
 }
