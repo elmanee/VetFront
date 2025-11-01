@@ -170,7 +170,7 @@ export const routes: Routes = [
         path: 'movimientos',
         component: MovimientosComponent,
         title: 'Moviemintos | El Morralito'
-      }
+      },
     ]
   },
 
