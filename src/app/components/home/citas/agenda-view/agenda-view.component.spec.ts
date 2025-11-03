@@ -1,23 +1,368 @@
-import { ComponentFixture, TestBed } from '@angular/core/testing';
+<!-- /home/agus/Documentos/VetHealth/VetFront/src/app/components/home/citas/agenda-view/agenda-view.component.html -->
 
-import { AgendaViewComponent } from './agenda-view.component';
+<div class="container-fluid min-vh-100 bg-light py-5 agenda-page">
+  <div class="row justify-content-center">
+    <div class="col-12 col-xl-11">
+      
+      <div class="d-flex justify-content-between align-items-center mb-5 flex-wrap gap-3">
+        <div>
+          <h1 class="display-5 fw-bold text-dark mb-2">
+            <i class="bi bi-calendar3 me-2"></i>
+            Agenda Veterinaria
+          </h1>
+          <p class="lead text-muted mb-0">
+            Gestiona y consulta todas las citas programadas
+          </p>
+        </div>
+        
+        <!-- ✨ BOTÓN PARA ATENDER CITAS -->
+        <div>
+          <a routerLink="/citas-atender" class="btn btn-success btn-lg shadow-sm">
+            <i class="bi bi-clipboard2-pulse me-2"></i>
+            Atender Citas Confirmadas
+          </a>
+        </div>
+      </div>
 
-describe('AgendaViewComponent', () => {
-  let component: AgendaViewComponent;
-  let fixture: ComponentFixture<AgendaViewComponent>;
+      <!-- Mensajes -->
+      <div *ngIf="mensaje && !mostrarModal" class="alert alert-dismissible fade show mb-4" 
+           [ngClass]="{
+             'alert-success': mensajeClase === 'success',
+             'alert-danger': mensajeClase === 'error',
+             'alert-info': mensajeClase === 'info'
+           }"
+           role="alert">
+        <div class="d-flex align-items-center">
+          <i class="bi me-2" 
+             [ngClass]="{
+               'bi-check-circle-fill': mensajeClase === 'success',
+               'bi-exclamation-triangle-fill': mensajeClase === 'error',
+               'bi-info-circle-fill': mensajeClase === 'info'
+             }"></i>
+          <span>{{ mensaje }}</span>
+        </div>
+        <button type="button" class="btn-close" (click)="mensaje = ''" aria-label="Close"></button>
+      </div>
 
-  beforeEach(async () => {
-    await TestBed.configureTestingModule({
-      imports: [AgendaViewComponent]
-    })
-    .compileComponents();
+      <!-- Controles de filtro -->
+      <div class="card border-0 shadow-sm mb-4">
+        <div class="card-body p-4">
+          <div class="row g-3 align-items-end">
+            
+            <!-- Selector de veterinario -->
+            <div class="col-lg-3 col-md-6">
+              <label for="vetSelect" class="form-label fw-semibold">
+                <i class="bi bi-person-badge me-1"></i>
+                Veterinario
+              </label>
+              <!-- MODIFICADO: (change) ahora llama a aplicarFiltros() -->
+              <select 
+                id="vetSelect" 
+                class="form-select" 
+                [(ngModel)]="veterinarioSeleccionadoId" 
+                (change)="aplicarFiltros()">
+                <!-- ¡NUEVA OPCIÓN "TODOS"! -->
+                <option value="todos">-- Todos los Veterinarios --</option>
+                <option *ngFor="let vet of veterinarios" [value]="vet.id">
+                  {{ vet.nombre_completo }}
+                </option>
+              </select>
+            </div>
+            
+            <!-- Navegación de fecha -->
+            <div class="col-lg-4 col-md-6">
+              <label class="form-label fw-semibold">
+                <i class="bi bi-calendar-date me-1"></i>
+                Fecha
+              </label>
+              <div class="input-group">
+                <button 
+                  class="btn btn-outline-secondary" 
+                  type="button"
+                  (click)="cambiarFecha(-1)">
+                  <i class="bi bi-chevron-left"></i>
+                </button>
+                <!-- MODIFICADO: (change) ahora llama a aplicarFiltros() -->
+                <input 
+                  type="date" 
+                  class="form-control text-center fw-semibold" 
+                  [(ngModel)]="fechaSeleccionada" 
+                  (change)="aplicarFiltros()">
+                <button 
+                  class="btn btn-outline-secondary" 
+                  type="button"
+                  (click)="cambiarFecha(1)">
+                  <i class="bi bi-chevron-right"></i>
+                </button>
+              </div>
+            </div>
+            
+            <!-- Botones de acción de fecha -->
+            <div class="col-lg-3 col-md-6 d-flex gap-2">
+              <button 
+                class="btn btn-outline-secondary w-100" 
+                (click)="verHoy()">
+                <i class="bi bi-calendar-check me-1"></i>
+                Ver Hoy
+              </button>
+              <!-- ¡NUEVO BOTÓN "VER TODAS"! -->
+              <button 
+                class="btn btn-outline-info w-100" 
+                (click)="verTodasLasFechas()">
+                <i class="bi bi-calendar3-range me-1"></i>
+                Ver Todas
+              </button>
+            </div>
 
-    fixture = TestBed.createComponent(AgendaViewComponent);
-    component = fixture.componentInstance;
-    fixture.detectChanges();
-  });
+            <!-- Botón de Actualizar -->
+            <div class="col-lg-2 col-md-6">
+              <button 
+                class="btn btn-primary w-100" 
+                (click)="cargarCitas()">
+                <i class="bi bi-arrow-clockwise me-1"></i>
+                Actualizar
+              </button>
+            </div>
+          </div>
 
-  it('should create', () => {
-    expect(component).toBeTruthy();
-  });
-});
+          <!-- Barra de búsqueda -->
+          <div class="row mt-3">
+            <div class="col-12">
+              <div class="input-group">
+                <span class="input-group-text bg-white">
+                  <i class="bi bi-search"></i>
+                </span>
+                <!-- MODIFICADO: (input) ahora llama a onBusquedaInput() -->
+                <input 
+                  type="text" 
+                  class="form-control" 
+                  placeholder="Buscar por mascota, cliente, correo o motivo..."
+                  [(ngModel)]="busquedaTexto"
+                  (input)="onBusquedaInput()">
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Estadísticas rápidas (MODIFICADAS para usar las nuevas variables) -->
+      <div class="row g-3 mb-4">
+        <div class="col-md-4">
+          <div class="card border-0 shadow-sm bg-primary text-dark">
+            <div class="card-body text-center">
+              <h3 class="display-6 fw-bold mb-0">{{ totalCitasFiltradas }}</h3>
+              <p class="mb-0">Total Mostradas</p>
+            </div>
+          </div>
+        </div>
+        <div class="col-md-4">
+          <div class="card border-0 shadow-sm bg-success text-white">
+            <div class="card-body text-center">
+              <h3 class="display-6 fw-bold mb-0">{{ totalConfirmadas }}</h3>
+              <p class="mb-0">Confirmadas</p>
+            </div>
+          </div>
+        </div>
+        <div class="col-md-4">
+          <div class="card border-0 shadow-sm bg-warning text-dark">
+            <div class="card-body text-center">
+              <h3 class="display-6 fw-bold mb-0">{{ totalPendientes }}</h3>
+              <p class="mb-0">Pendientes</p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Loading -->
+      <div *ngIf="cargando" class="text-center py-5">
+        <div class="spinner-border text-primary" style="width: 3rem; height: 3rem;" role="status">
+          <span class="visually-hidden">Cargando...</span>
+        </div>
+        <p class="text-muted mt-3">Cargando citas...</p>
+      </div>
+
+      <!-- Lista de citas -->
+      <div class="row mt-4" *ngIf="!cargando">
+        <div class="col-12 mb-3">
+          <h3 class="h5 fw-bold">
+            <!-- Título dinámico -->
+            <span *ngIf="!fechaSeleccionada">Mostrando todas las citas</span>
+            <span *ngIf="fechaSeleccionada">Citas para el {{ fechaSeleccionada | date:'fullDate' }}</span>
+            
+            <span class="badge bg-primary-si text-dark ms-2">{{ citasFiltradas.length }}</span>
+          </h3>
+        </div>
+        
+        <!-- Mensaje si no hay citas -->
+        <div *ngIf="citasFiltradas.length === 0" class="col-12">
+          <div class="card border-0 shadow-sm">
+            <div class="card-body text-center py-5 empty-state">
+              <i class="bi bi-calendar-x display-1"></i>
+              <h4 class="mt-3">No hay citas</h4>
+              <p class="text-muted">
+                No se encontraron citas que coincidan con los filtros seleccionados.
+              </p>
+            </div>
+          </div>
+        </div>
+
+        <!-- Cards de citas -->
+        <div *ngFor="let cita of citasFiltradas" class="col-lg-6 col-xl-4 mb-4">
+          <!-- Usamos [ngClass] para el borde dinámico -->
+          <div class="card h-100 border-0 shadow-sm card-cita" [ngClass]="getEstadoCardClass(cita.estado || '')">
+            <div class="card-body p-4 d-flex flex-column">
+              
+              <!-- Header de la cita -->
+              <div class="d-flex justify-content-between align-items-start mb-3">
+                <div>
+                  <!-- Usamos [ngClass] para el badge dinámico -->
+                  <span class="badge" [ngClass]="getEstadoBadgeClass(cita.estado || '')">
+                    {{ cita.estado || 'Pendiente' }}
+                  </span>
+                </div>
+                <div class="text-end">
+                  <h4 class="mb-0 fw-bold cita-hora">{{ cita.hora_cita | slice:0:5 }}</h4>
+                  <!-- ¡NUEVO! Mostrar la fecha si no hay filtro de fecha -->
+                  <small class="text-muted" *ngIf="!fechaSeleccionada">
+                    {{ cita.fecha_cita | date:'mediumDate' }}
+                  </small>
+                  <small class="text-muted" *ngIf="fechaSeleccionada">
+                    Cita #{{ cita.id_cita }}
+                  </small>
+                </div>
+              </div>
+              
+              <!-- Motivo de la cita -->
+              <h5 class="fw-bold text-dark mb-3">{{ cita.motivo }}</h5>
+
+              <!-- Información del Paciente y Cliente -->
+              <div class="cita-paciente mb-3">
+                <div class="cita-paciente-nombre">
+                  <i class="bi bi-heart-fill text-danger me-2 align-middle"></i>
+                  {{ cita.mascota_nombre || 'Mascota Nueva' }}
+                </div>
+                <div class="cita-paciente-tutor">
+                  <i class="bi bi-person-fill text-muted me-2 align-middle"></i>
+                  <span class="small">{{ cita.cliente_nombre || 'Cliente' }} ({{ cita.cliente_correo || 'Sin correo' }})</span>
+                </div>
+              </div>
+
+              <!-- Botones de acción (empujados al fondo) -->
+              <div class="d-flex gap-2 mt-auto cita-acciones">
+                <button 
+                  class="btn btn-sm btn-outline-primary flex-fill"
+                  (click)="abrirModal(cita, 'reprogramar')"
+                  [disabled]="cita.estado === 'Cancelada' || cita.estado === 'Completada'">
+                  <i class="bi bi-calendar-event"></i> Reprogramar
+                </button>
+                <button 
+                  class="btn btn-sm btn-outline-danger flex-fill"
+                  (click)="abrirModal(cita, 'cancelar')"
+                  [disabled]="cita.estado === 'Cancelada' || cita.estado === 'Completada'">
+                  <i class="bi bi-x-circle"></i> Cancelar
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+<!-- Modal para Cancelar/Reprogramar -->
+<div class="modal fade" [class.show]="mostrarModal" [style.display]="mostrarModal ? 'block' : 'none'" tabindex="-1">
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content border-0 shadow-lg">
+      <div class="modal-header border-0 pb-0">
+        <h5 class="modal-title fw-bold">
+          {{ accionModal === 'cancelar' ? 'Cancelar Cita' : 'Reprogramar Cita' }}
+        </h5>
+        <button type="button" class="btn-close" (click)="cerrarModal()"></button>
+      </div>
+      <div class="modal-body pt-2">
+        
+        <!-- Mensaje de error/éxito DENTRO del modal -->
+        <div *ngIf="mensaje && mostrarModal" class="alert mb-3" 
+             [ngClass]="{
+               'alert-success': mensajeClase === 'success',
+               'alert-danger': mensajeClase === 'error'
+             }">
+          {{ mensaje }}
+        </div>
+
+        <!-- Cancelar -->
+        <div *ngIf="accionModal === 'cancelar'">
+          <div class="alert alert-warning d-flex align-items-center">
+            <i class="bi bi-exclamation-triangle-fill me-2"></i>
+            <div>
+              ¿Estás seguro de cancelar la cita #{{ citaSeleccionada?.id_cita }} de <strong>{{ citaSeleccionada?.mascota_nombre || 'Mascota Nueva' }}</strong>?
+            </div>
+          </div>
+          <p class="text-muted small mb-0">Esta acción no se puede deshacer.</p>
+        </div>
+
+        <!-- Reprogramar -->
+        <div *ngIf="accionModal === 'reprogramar'">
+          <p class="text-muted mb-3">Selecciona la nueva fecha y hora para la cita #{{ citaSeleccionada?.id_cita }} de <strong>{{ citaSeleccionada?.mascota_nombre || 'Mascota Nueva' }}</strong></p>
+          
+          <div class="row g-3">
+            <div class="col-12">
+              <label class="form-label fw-semibold">Nueva Fecha</label>
+              <input 
+                type="date" 
+                class="form-control" 
+                [(ngModel)]="nuevaFecha">
+            </div>
+            <div class="col-12">
+              <label class="form-label fw-semibold">Nueva Hora</label>
+              <!-- Horas generadas con un *ngFor para simplificar -->
+              <select class="form-select" [(ngModel)]="nuevaHora">
+                <option value="">Seleccione una hora</option>
+                <option value="08:00:00">08:00 AM</option>
+                <option value="08:30:00">08:30 AM</option>
+                <option value="09:00:00">09:00 AM</option>
+                <option value="09:30:00">09:30 AM</option>
+                <option value="10:00:00">10:00 AM</option>
+                <option value="10:30:00">10:30 AM</option>
+                <option value="11:00:00">11:00 AM</option>
+                <option value="11:30:00">11:30 AM</option>
+                <option value="12:00:00">12:00 PM</option>
+                <option value="12:30:00">12:30 PM</option>
+                <option value="13:00:00">01:00 PM</option>
+                <option value="13:30:00">01:30 PM</option>
+                <option value="14:00:00">02:00 PM</option>
+                <option value="14:30:00">02:30 PM</option>
+                <option value="15:00:00">03:00 PM</option>
+                <option value="15:30:00">03:30 PM</option>
+                <option value="16:00:00">04:00 PM</option>
+                <option value="16:30:00">04:30 PM</option>
+                <option value="17:00:00">05:00 PM</option>
+                <option value="17:30:00">05:30 PM</option>
+              </select>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="modal-footer border-0">
+        <button type="button" class="btn btn-secondary" (click)="cerrarModal()">
+          Cerrar
+        </button>
+        <button 
+          type="button" 
+          class="btn"
+          [disabled]="cargando"
+          [ngClass]="accionModal === 'cancelar' ? 'btn-danger' : 'btn-primary'"
+          (click)="accionModal === 'cancelar' ? confirmarCancelar() : confirmarReprogramar()">
+          
+          <span *ngIf="cargando" class="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>
+
+          {{ accionModal === 'cancelar' ? 'Sí, Cancelar' : 'Reprogramar' }}
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+<!-- Backdrop para el modal -->
+<div class="modal-backdrop fade" [class.show]="mostrarModal" *ngIf="mostrarModal"></div>

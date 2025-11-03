@@ -1,4 +1,4 @@
-<!-- /home/agus/Documentos/VetHealth/VetFront/src/app/home/citas/agenda-view/agenda-view.component.html -->
+<!-- /home/agus/Documentos/VetHealth/VetFront/src/app/components/home/citas/agenda-view/agenda-view.component.html -->
 
 <div class="container-fluid min-vh-100 bg-light py-5 agenda-page">
   <div class="row justify-content-center">
@@ -25,7 +25,7 @@
       </div>
 
       <!-- Mensajes -->
-      <div *ngIf="mensaje" class="alert alert-dismissible fade show mb-4" 
+      <div *ngIf="mensaje && !mostrarModal" class="alert alert-dismissible fade show mb-4" 
            [ngClass]="{
              'alert-success': mensajeClase === 'success',
              'alert-danger': mensajeClase === 'error',
@@ -50,16 +50,19 @@
           <div class="row g-3 align-items-end">
             
             <!-- Selector de veterinario -->
-            <div class="col-md-3">
+            <div class="col-lg-3 col-md-6">
               <label for="vetSelect" class="form-label fw-semibold">
                 <i class="bi bi-person-badge me-1"></i>
                 Veterinario
               </label>
+              <!-- MODIFICADO: (change) ahora llama a aplicarFiltros() -->
               <select 
                 id="vetSelect" 
                 class="form-select" 
                 [(ngModel)]="veterinarioSeleccionadoId" 
-                (change)="cargarCitas()">
+                (change)="aplicarFiltros()">
+                <!-- ¡NUEVA OPCIÓN "TODOS"! -->
+                <option value="todos">-- Todos los Veterinarios --</option>
                 <option *ngFor="let vet of veterinarios" [value]="vet.id">
                   {{ vet.nombre_completo }}
                 </option>
@@ -67,7 +70,7 @@
             </div>
             
             <!-- Navegación de fecha -->
-            <div class="col-md-5">
+            <div class="col-lg-4 col-md-6">
               <label class="form-label fw-semibold">
                 <i class="bi bi-calendar-date me-1"></i>
                 Fecha
@@ -79,11 +82,12 @@
                   (click)="cambiarFecha(-1)">
                   <i class="bi bi-chevron-left"></i>
                 </button>
+                <!-- MODIFICADO: (change) ahora llama a aplicarFiltros() -->
                 <input 
                   type="date" 
                   class="form-control text-center fw-semibold" 
                   [(ngModel)]="fechaSeleccionada" 
-                  (change)="cargarCitas()">
+                  (change)="aplicarFiltros()">
                 <button 
                   class="btn btn-outline-secondary" 
                   type="button"
@@ -93,17 +97,25 @@
               </div>
             </div>
             
-            <!-- Búsqueda -->
-            <div class="col-md-2">
+            <!-- Botones de acción de fecha -->
+            <div class="col-lg-3 col-md-6 d-flex gap-2">
               <button 
-                class="btn btn-secondary w-100" 
+                class="btn btn-outline-secondary w-100" 
                 (click)="verHoy()">
                 <i class="bi bi-calendar-check me-1"></i>
                 Ver Hoy
               </button>
+              <!-- ¡NUEVO BOTÓN "VER TODAS"! -->
+              <button 
+                class="btn btn-outline-info w-100" 
+                (click)="verTodasLasFechas()">
+                <i class="bi bi-calendar3-range me-1"></i>
+                Ver Todas
+              </button>
             </div>
 
-            <div class="col-md-2">
+            <!-- Botón de Actualizar -->
+            <div class="col-lg-2 col-md-6">
               <button 
                 class="btn btn-primary w-100" 
                 (click)="cargarCitas()">
@@ -120,34 +132,33 @@
                 <span class="input-group-text bg-white">
                   <i class="bi bi-search"></i>
                 </span>
+                <!-- MODIFICADO: (input) ahora llama a onBusquedaInput() -->
                 <input 
                   type="text" 
                   class="form-control" 
                   placeholder="Buscar por mascota, cliente, correo o motivo..."
                   [(ngModel)]="busquedaTexto"
-                  (input)="filtrarCitas()">
+                  (input)="onBusquedaInput()">
               </div>
             </div>
           </div>
         </div>
       </div>
 
-      <!-- Estadísticas rápidas -->
+      <!-- Estadísticas rápidas (MODIFICADAS para usar las nuevas variables) -->
       <div class="row g-3 mb-4">
         <div class="col-md-4">
           <div class="card border-0 shadow-sm bg-primary text-dark">
             <div class="card-body text-center">
-              <h3 class="display-6 fw-bold mb-0">{{ citasAgenda.length }}</h3>
-              <p class="mb-0">Total de Citas</p>
+              <h3 class="display-6 fw-bold mb-0">{{ totalCitasFiltradas }}</h3>
+              <p class="mb-0">Total Mostradas</p>
             </div>
           </div>
         </div>
         <div class="col-md-4">
           <div class="card border-0 shadow-sm bg-success text-white">
             <div class="card-body text-center">
-              <h3 class="display-6 fw-bold mb-0">
-                {{ (citasAgenda | json).split('"Confirmada"').length - 1 }}
-              </h3>
+              <h3 class="display-6 fw-bold mb-0">{{ totalConfirmadas }}</h3>
               <p class="mb-0">Confirmadas</p>
             </div>
           </div>
@@ -155,9 +166,7 @@
         <div class="col-md-4">
           <div class="card border-0 shadow-sm bg-warning text-dark">
             <div class="card-body text-center">
-              <h3 class="display-6 fw-bold mb-0">
-                {{ (citasAgenda | json).split('"Pendiente"').length - 1 + (citasAgenda | json).split('"Por Confirmar"').length - 1 }}
-              </h3>
+              <h3 class="display-6 fw-bold mb-0">{{ totalPendientes }}</h3>
               <p class="mb-0">Pendientes</p>
             </div>
           </div>
@@ -176,8 +185,11 @@
       <div class="row mt-4" *ngIf="!cargando">
         <div class="col-12 mb-3">
           <h3 class="h5 fw-bold">
-            Citas para el {{ fechaSeleccionada | date:'fullDate' }} 
-            <span class="badge bg-primary-si text-dark">{{ citasFiltradas.length }}</span>
+            <!-- Título dinámico -->
+            <span *ngIf="!fechaSeleccionada">Mostrando todas las citas</span>
+            <span *ngIf="fechaSeleccionada">Citas para el {{ fechaSeleccionada | date:'fullDate' }}</span>
+            
+            <span class="badge bg-primary-si text-dark ms-2">{{ citasFiltradas.length }}</span>
           </h3>
         </div>
         
@@ -186,9 +198,9 @@
           <div class="card border-0 shadow-sm">
             <div class="card-body text-center py-5 empty-state">
               <i class="bi bi-calendar-x display-1"></i>
-              <h4 class="mt-3">No hay citas programadas</h4>
+              <h4 class="mt-3">No hay citas</h4>
               <p class="text-muted">
-                No se encontraron citas para el veterinario y fecha seleccionados.
+                No se encontraron citas que coincidan con los filtros seleccionados.
               </p>
             </div>
           </div>
@@ -210,11 +222,15 @@
                 </div>
                 <div class="text-end">
                   <h4 class="mb-0 fw-bold cita-hora">{{ cita.hora_cita | slice:0:5 }}</h4>
-                  <small class="text-muted">Cita #{{ cita.id_cita }}</small>
+                  <!-- ¡NUEVO! Mostrar la fecha si no hay filtro de fecha -->
+                  <small class="text-muted" *ngIf="!fechaSeleccionada">
+                    {{ cita.fecha_cita | date:'mediumDate' }}
+                  </small>
+                  <small class="text-muted" *ngIf="fechaSeleccionada">
+                    Cita #{{ cita.id_cita }}
+                  </small>
                 </div>
               </div>
-
-              <!-- ===== INICIO DE LA SECCIÓN MODIFICADA ===== -->
               
               <!-- Motivo de la cita -->
               <h5 class="fw-bold text-dark mb-3">{{ cita.motivo }}</h5>
@@ -230,8 +246,6 @@
                   <span class="small">{{ cita.cliente_nombre || 'Cliente' }} ({{ cita.cliente_correo || 'Sin correo' }})</span>
                 </div>
               </div>
-
-              <!-- ===== FIN DE LA SECCIÓN MODIFICADA ===== -->
 
               <!-- Botones de acción (empujados al fondo) -->
               <div class="d-flex gap-2 mt-auto cita-acciones">
@@ -306,26 +320,26 @@
               <!-- Horas generadas con un *ngFor para simplificar -->
               <select class="form-select" [(ngModel)]="nuevaHora">
                 <option value="">Seleccione una hora</option>
-                <option value="08:00">08:00 AM</option>
-                <option value="08:30">08:30 AM</option>
-                <option value="09:00">09:00 AM</option>
-                <option value="09:30">09:30 AM</option>
-                <option value="10:00">10:00 AM</option>
-                <option value="10:30">10:30 AM</option>
-                <option value="11:00">11:00 AM</option>
-                <option value="11:30">11:30 AM</option>
-                <option value="12:00">12:00 PM</option>
-                <option value="12:30">12:30 PM</option>
-                <option value="13:00">01:00 PM</option>
-                <option value="13:30">01:30 PM</option>
-                <option value="14:00">02:00 PM</option>
-                <option value="14:30">02:30 PM</option>
-                <option value="15:00">03:00 PM</option>
-                <option value="15:30">03:30 PM</option>
-                <option value="16:00">04:00 PM</option>
-                <option value="16:30">04:30 PM</option>
-                <option value="17:00">05:00 PM</option>
-                <option value="17:30">05:30 PM</option>
+                <option value="08:00:00">08:00 AM</option>
+                <option value="08:30:00">08:30 AM</option>
+                <option value="09:00:00">09:00 AM</option>
+                <option value="09:30:00">09:30 AM</option>
+                <option value="10:00:00">10:00 AM</option>
+                <option value="10:30:00">10:30 AM</option>
+                <option value="11:00:00">11:00 AM</option>
+                <option value="11:30:00">11:30 AM</option>
+                <option value="12:00:00">12:00 PM</option>
+                <option value="12:30:00">12:30 PM</option>
+                <option value="13:00:00">01:00 PM</option>
+                <option value="13:30:00">01:30 PM</option>
+                <option value="14:00:00">02:00 PM</option>
+                <option value="14:30:00">02:30 PM</option>
+                <option value="15:00:00">03:00 PM</option>
+                <option value="15:30:00">03:30 PM</option>
+                <option value="16:00:00">04:00 PM</option>
+                <option value="16:30:00">04:30 PM</option>
+                <option value="17:00:00">05:00 PM</option>
+                <option value="17:30:00">05:30 PM</option>
               </select>
             </div>
           </div>
