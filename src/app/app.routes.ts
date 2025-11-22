@@ -8,9 +8,6 @@ import { CitaFormComponent } from './components/home/citas/cita-form/cita-form.c
 import { AgendaViewComponent } from './components/home/citas/agenda-view/agenda-view.component';
 import { SolicitarcitaComponent } from './components/home/citas/solicitarcita/solicitarcita.component';
 import { CitasAtenderComponent } from './components/home/citas/citas-atender/citas-atender.component';
-import { ExpedienteFormComponent } from './components/expedientes/expediente-form/expediente-form.component';
-import { BuscarExpedienteComponent } from './components/expedientes/buscar-expediente/buscar-expediente.component';
-import { ExpedienteViewComponent } from './components/expedientes/expediente-view/expediente-view.component';
 import { DashboardAdminComponent } from './components/dashboard-admin/dashboard-admin.component';
 import { AuthGuard } from '../guards/auth.guard';
 import { LotesComponent } from './components/lotes/lotes.component';
@@ -18,7 +15,7 @@ import { MovimientosComponent } from './components/movimientos/movimientos.compo
 import { RegistroPersonalComponent } from './authentication/registro-personal/registro-personal.component';
 import { MisCitasVetComponent } from './components/mis-citas-vet/mis-citas-vet.component';
 import { LayoutVeterinarioComponent } from './shared/veterinario/layout-veterinario/layout-veterinario.component';
-import { ExpedintesComponent } from './components/expedintes/expedintes.component';
+import { ExpedientesComponent } from './components/expedientes/expedientes.component';
 
 export const routes: Routes = [
   // Rutas públicas
@@ -66,22 +63,22 @@ export const routes: Routes = [
     title: 'Citas por Atender | Pet Health+'
   },
 
-  // RQF02 - Expedientes Médicos
-  {
-    path: 'expediente/registrar-consulta',
-    component: ExpedienteFormComponent,
-    title: 'Registrar Consulta | Pet Health+'
-  },
-  {
-    path: 'expedientes/buscar',
-    component: BuscarExpedienteComponent,
-    title: 'Buscar Expedientes | Pet Health+'
-  },
-  {
-    path: 'expediente/ver/:id',
-    component: ExpedienteViewComponent,
-    title: 'Ver Expediente | Pet Health+'
-  },
+  // // RQF02 - Expedientes Médicos
+  // {
+  //   path: 'expediente/registrar-consulta',
+  //   // component: ,
+  //   title: 'Registrar Consulta | Pet Health+'
+  // },
+  // {
+  //   path: 'expedientes/buscar',
+  //   // component: ,
+  //   title: 'Buscar Expedientes | Pet Health+'
+  // },
+  // {
+  //   path: 'expediente/ver/:id',
+  //   // component: ,
+  //   title: 'Ver Expediente | Pet Health+'
+  // },
 
   {
     path: 'veterinario',
@@ -99,13 +96,13 @@ export const routes: Routes = [
         component: MisCitasVetComponent
       },
       {
-        path: 'expedienbtes',
-        component: ExpedintesComponent
+        path: 'expedientes',
+        component: ExpedientesComponent
       },
-      {
-        path: 'expedienbtes-form',
-        component: ExpedienteFormComponent
-      }
+      // {
+      //   path: 'expedienbtes-form',
+      //   // component:
+      // }
     ]
   },
 
@@ -145,21 +142,21 @@ export const routes: Routes = [
         component: CitasAtenderComponent,
         title: 'Citas por Atender | Pet Health+ Admin'
       },
-      {
-        path: 'expedientes/buscar',
-        component: BuscarExpedienteComponent,
-        title: 'Buscar Expedientes | Pet Health+ Admin'
-      },
-      {
-        path: 'expediente/ver/:id',
-        component: ExpedienteViewComponent,
-        title: 'Ver Expediente | Pet Health+ Admin'
-      },
-      {
-        path: 'expediente/registrar-consulta',
-        component: ExpedienteFormComponent,
-        title: 'Registrar Consulta | Pet Health+ Admin'
-      },
+      // {
+      //   path: 'expedientes/buscar',
+      //   // component: ,
+      //   title: 'Buscar Expedientes | Pet Health+ Admin'
+      // },
+      // {
+      //   path: 'expediente/ver/:id',
+      //   // component: ,
+      //   title: 'Ver Expediente | Pet Health+ Admin'
+      // },
+      // {
+      //   path: 'expediente/registrar-consulta',
+      //   // component: ,
+      //   title: 'Registrar Consulta | Pet Health+ Admin'
+      // },
       {
         path: 'lotes',
         component: LotesComponent,
