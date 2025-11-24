@@ -1,0 +1,35 @@
+<form [formGroup]="form" (ngSubmit)="guardar()" class="row g-3">
+
+  <div class="col-md-6">
+    <label class="form-label">Nombre de la mascota</label>
+    <input type="text" class="form-control" formControlName="nombre" />
+  </div>
+
+  <div class="col-md-6">
+    <label class="form-label">Raza</label>
+    <input type="text" class="form-control" formControlName="raza" />
+  </div>
+
+  <div class="col-md-4">
+    <label class="form-label">Edad (años)</label>
+    <input type="number" class="form-control" formControlName="edad" />
+  </div>
+
+  <div class="col-md-4">
+    <label class="form-label">Peso (kg)</label>
+    <input type="number" step="0.1" class="form-control" formControlName="peso" />
+  </div>
+
+  <div class="col-md-4 d-flex align-items-end justify-content-end">
+    <button class="btn btn-primary-si px-4" type="submit" [disabled]="form.invalid || loading">
+      <span *ngIf="!loading">
+        <i class="bi bi-save me-2"></i>
+        Guardar paciente
+      </span>
+      <span *ngIf="loading">
+        Guardando...
+      </span>
+    </button>
+  </div>
+
+</form>

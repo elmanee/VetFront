@@ -1,0 +1,136 @@
+<div class="container py-4" *ngIf="!loading && expediente">
+
+  <h2 class="fw-bold text-primary-si mb-3">
+    Expediente {{ expediente.numero_expediente }}
+  </h2>
+
+  <div class="row g-4">
+
+    <!-- =============================
+         INFORMACIÓN DEL PACIENTE
+    ============================== -->
+    <div class="col-md-6">
+      <div class="card shadow rounded-4 p-3">
+        <h5 class="fw-semibold text-secondary-si mb-2">Paciente</h5>
+
+        <p class="m-0"><strong>Nombre:</strong> {{ expediente.paciente.nombre }}</p>
+        <p class="m-0"><strong>Raza:</strong> {{ expediente.paciente.raza }}</p>
+        <p class="m-0"><strong>Edad:</strong> {{ expediente.paciente.edad }}</p>
+        <p class="m-0"><strong>Peso:</strong> {{ expediente.paciente.peso }} kg</p>
+        <p class="m-0"><strong>Animal:</strong> {{ expediente.paciente.animal_id }}</p>
+      </div>
+    </div>
+
+    <!-- =============================
+         INFORMACIÓN DEL CLIENTE
+    ============================== -->
+    <div class="col-md-6">
+      <div class="card shadow rounded-4 p-3">
+        <h5 class="fw-semibold text-secondary-si mb-2">Propietario</h5>
+
+        <p class="m-0"><strong>Nombre:</strong> {{ expediente.cliente.nombre_completo }}</p>
+        <p class="m-0"><strong>Teléfono:</strong> {{ expediente.cliente.telefono }}</p>
+        <p class="m-0"><strong>Correo:</strong> {{ expediente.cliente.correo }}</p>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- =============================
+       CONSULTAS
+  ============================== -->
+  <div class="card shadow mt-4 rounded-4">
+    <div class="card-body">
+
+      <h4 class="fw-bold text-primary-si mb-3">Consultas</h4>
+
+      <div *ngFor="let c of expediente.consultas" class="border rounded-4 p-3 mb-4">
+
+        <h5 class="fw-semibold mb-2">
+          Consulta del {{ c.consulta.fecha_consulta | date }}
+        </h5>
+
+        <p><strong>Motivo:</strong> {{ c.consulta.motivo_consulta }}</p>
+        <p><strong>Síntomas:</strong> {{ c.consulta.sintomas }}</p>
+        <p><strong>Observaciones:</strong> {{ c.consulta.observaciones }}</p>
+
+        <!-- DIAGNOSTICOS -->
+        <div *ngIf="c.diagnosticos?.length">
+          <h6 class="fw-bold mt-3">Diagnósticos</h6>
+          <ul>
+            <li *ngFor="let d of c.diagnosticos">
+              {{ d.tipo }} – {{ d.descripcion }}
+            </li>
+          </ul>
+        </div>
+
+        <!-- TRATAMIENTOS -->
+        <div *ngIf="c.tratamientos?.length">
+          <h6 class="fw-bold mt-3">Tratamientos</h6>
+          <ul>
+            <li *ngFor="let t of c.tratamientos">
+              {{ t.medicamento }} – {{ t.dosis }} ({{ t.frecuencia }})
+            </li>
+          </ul>
+        </div>
+
+        <!-- VACUNAS -->
+        <div *ngIf="c.vacunas?.length">
+          <h6 class="fw-bold mt-3">Vacunas</h6>
+          <ul>
+            <li *ngFor="let v of c.vacunas">
+              {{ v.nombre_vacuna }} – {{ v.fecha_aplicacion | date }}
+            </li>
+          </ul>
+        </div>
+
+        <!-- PROCEDIMIENTOS -->
+        <div *ngIf="c.procedimientos?.length">
+          <h6 class="fw-bold mt-3">Procedimientos</h6>
+          <ul>
+            <li *ngFor="let p of c.procedimientos">
+              {{ p.nombre_procedimiento }} – {{ p.descripcion }}
+            </li>
+          </ul>
+        </div>
+
+        <!-- IMÁGENES -->
+        <div *ngIf="c.imagenes?.length">
+          <h6 class="fw-bold mt-3">Imágenes</h6>
+
+          <div class="d-flex flex-wrap gap-3">
+            <img *ngFor="let img of c.imagenes"
+                 [src]="img.imagen_base64"
+                 class="rounded shadow"
+                 style="width: 150px; height: auto;">
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </div>
+
+  <!-- =============================
+       HISTORIAL DE CAMBIOS
+  ============================== -->
+  <div class="card shadow mt-4 rounded-4">
+    <div class="card-body">
+
+      <h4 class="fw-bold text-primary-si mb-3">Historial de cambios</h4>
+
+      <ul class="list-group">
+        <li class="list-group-item" *ngFor="let h of expediente.historial">
+          <strong>{{ h.fecha_cambio | date:'short' }}</strong> — {{ h.tipo_cambio }}
+          <br>
+          <small class="text-muted">{{ h.descripcion_cambio }}</small>
+        </li>
+      </ul>
+
+    </div>
+  </div>
+
+</div>
+
+<div *ngIf="loading" class="text-center py-5">
+  <div class="spinner-border text-primary-si"></div>
+</div>

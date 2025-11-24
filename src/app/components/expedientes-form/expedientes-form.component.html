@@ -1,1 +1,187 @@
-<p>expedientes-form works!</p>
+<div class="container py-4">
+
+  <!-- Título principal -->
+  <h2 class="fw-bold text-primary-si mb-2">Atender Cita</h2>
+
+  <p class="text-muted mb-4">
+    {{ cita?.cliente_nombre }} · {{ cita?.animal_nombre }} ·
+    {{ cita?.fecha_cita | date:'mediumDate' }} · {{ cita?.hora_cita }}
+  </p>
+
+  <!-- Paso 1: Crear paciente si no existe -->
+  <div *ngIf="mostrarCrearPaciente" class="card shadow-sm border-0 rounded-4 p-4 mb-4">
+    <h4 class="fw-semibold text-secondary-si mb-3">Registrar paciente</h4>
+
+    <app-crear-paciente
+      [cita]="cita"
+      (pacienteCreado)="onPacienteCreado($event)">
+    </app-crear-paciente>
+  </div>
+
+  <!-- Paso 2: Tabs del expediente médico -->
+  <div *ngIf="mostrarTabs" class="card shadow-sm border-0 rounded-4 p-0 overflow-hidden">
+
+    <!-- Encabezado de tabs -->
+    <ul class="nav nav-tabs px-3 pt-3 bg-light">
+
+      <!-- TAB CONSULTA -->
+      <li class="nav-item">
+        <button class="nav-link active"
+                id="btn_consulta"
+                data-bs-toggle="tab"
+                data-bs-target="#consultaTab"
+                [disabled]="!tabs.consulta">
+          Consulta
+        </button>
+      </li>
+
+      <!-- TAB DIAGNÓSTICOS -->
+      <li class="nav-item">
+        <button class="nav-link"
+                id="btn_diagnosticos"
+                data-bs-toggle="tab"
+                data-bs-target="#diagTab"
+                [disabled]="!tabs.diagnosticos">
+          Diagnósticos
+        </button>
+      </li>
+
+      <!-- TAB TRATAMIENTOS -->
+      <li class="nav-item">
+        <button class="nav-link"
+                id="btn_tratamientos"
+                data-bs-toggle="tab"
+                data-bs-target="#tratTab"
+                [disabled]="!tabs.tratamientos">
+          Tratamientos
+        </button>
+      </li>
+
+      <!-- TAB VACUNAS -->
+      <li class="nav-item">
+        <button class="nav-link"
+                id="btn_vacunas"
+                data-bs-toggle="tab"
+                data-bs-target="#vacTab"
+                [disabled]="!tabs.vacunas">
+          Vacunas
+        </button>
+      </li>
+
+      <!-- TAB PROCEDIMIENTOS -->
+      <li class="nav-item">
+        <button class="nav-link"
+                id="btn_procedimientos"
+                data-bs-toggle="tab"
+                data-bs-target="#procTab"
+                [disabled]="!tabs.procedimientos">
+          Procedimientos
+        </button>
+      </li>
+
+      <!-- TAB IMÁGENES -->
+      <li class="nav-item">
+        <button class="nav-link"
+                id="btn_imagenes"
+                data-bs-toggle="tab"
+                data-bs-target="#imgTab"
+                [disabled]="!tabs.imagenes">
+          Imágenes
+        </button>
+      </li>
+
+    </ul>
+
+    <!-- Contenido de tabs -->
+    <div class="tab-content p-4">
+
+      <!-- TAB CONSULTA -->
+      <div class="tab-pane fade show active" id="consultaTab">
+        <app-tab-consulta
+          [cita]="cita"
+          [expediente]="expediente"
+          (consultaCreada)="onConsultaCreada($event)">
+        </app-tab-consulta>
+      </div>
+
+      <!-- TAB DIAGNÓSTICOS -->
+      <div class="tab-pane fade" id="diagTab">
+        <div *ngIf="!consulta" class="alert alert-warning">
+          Primero debes registrar la consulta.
+        </div>
+
+        <div *ngIf="consulta">
+          <app-tab-diagnosticos
+            [consulta]="consulta"
+            (guardado)="goToNextTab()">
+          </app-tab-diagnosticos>
+        </div>
+      </div>
+
+      <!-- TAB TRATAMIENTOS -->
+      <div class="tab-pane fade" id="tratTab">
+        <div *ngIf="!consulta" class="alert alert-warning">
+          Primero debes registrar la consulta.
+        </div>
+
+        <div *ngIf="consulta">
+          <app-tab-tratamientos
+            [consulta]="consulta"
+            (guardado)="goToNextTab()">
+          </app-tab-tratamientos>
+        </div>
+      </div>
+
+      <!-- TAB VACUNAS -->
+      <div class="tab-pane fade" id="vacTab">
+        <div *ngIf="!consulta" class="alert alert-warning">
+          Primero debes registrar la consulta.
+        </div>
+
+        <div *ngIf="consulta">
+          <app-tab-vacunas
+            [consulta]="consulta"
+            (guardado)="goToNextTab()">
+          </app-tab-vacunas>
+        </div>
+      </div>
+
+      <!-- TAB PROCEDIMIENTOS -->
+      <div class="tab-pane fade" id="procTab">
+        <div *ngIf="!consulta" class="alert alert-warning">
+          Primero debes registrar la consulta.
+        </div>
+
+        <div *ngIf="consulta">
+          <app-tab-procedimientos
+            [consulta]="consulta"
+            (guardado)="goToNextTab()">
+          </app-tab-procedimientos>
+        </div>
+      </div>
+
+      <!-- TAB IMÁGENES -->
+      <div class="tab-pane fade" id="imgTab">
+        <div *ngIf="!consulta" class="alert alert-warning">
+          Primero debes registrar la consulta.
+        </div>
+
+        <div *ngIf="consulta">
+          <app-tab-imagenes
+            [consulta]="consulta"
+            (guardado)="goToNextTab()">
+          </app-tab-imagenes>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- BOTÓN FINALIZAR ATENCIÓN -->
+  <div class="text-end mt-3" *ngIf="consulta">
+    <button class="btn btn-success px-4" (click)="finalizarAtencion()">
+      Finalizar Atención
+    </button>
+  </div>
+
+</div>

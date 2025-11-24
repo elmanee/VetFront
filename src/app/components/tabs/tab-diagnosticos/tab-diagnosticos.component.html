@@ -1,0 +1,57 @@
+<div class="card border-0 shadow-sm rounded-4 p-4">
+
+  <form [formGroup]="form">
+
+    <div formArrayName="diagnosticos">
+
+      <div *ngFor="let diag of diagnosticosArr.controls; let i = index" [formGroupName]="i"
+           class="border rounded-4 p-3 mb-3">
+
+        <div class="row g-3">
+
+          <!-- Descripción -->
+          <div class="col-md-8">
+            <label class="form-label fw-semibold">Descripción</label>
+            <textarea class="form-control" formControlName="descripcion" rows="3"></textarea>
+          </div>
+
+          <!-- Tipo -->
+          <div class="col-md-4">
+            <label class="form-label fw-semibold">Tipo</label>
+            <select class="form-select" formControlName="tipo">
+              <option value="Primario">Primario</option>
+              <option value="Secundario">Secundario</option>
+            </select>
+          </div>
+
+        </div>
+
+        <div class="text-end mt-2">
+          <button type="button" class="btn btn-outline-danger btn-sm"
+                  (click)="quitarDiagnostico(i)" *ngIf="diagnosticosArr.length > 1">
+            Eliminar
+          </button>
+        </div>
+
+      </div>
+
+    </div>
+
+    <div class="d-flex justify-content-between mt-4">
+
+      <button type="button" class="btn btn-outline-primary"
+              (click)="agregarDiagnostico()">
+        Añadir diagnóstico
+      </button>
+
+      <button type="button" class="btn btn-primary px-4"
+              (click)="guardar()"
+              [disabled]="loading">
+        Guardar diagnósticos
+      </button>
+
+    </div>
+
+  </form>
+
+</div>
