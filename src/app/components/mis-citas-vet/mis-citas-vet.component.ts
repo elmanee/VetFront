@@ -69,24 +69,13 @@ cargarCitas(): void {
   });
 }
 
-atenderCita(cita: any): void {
-  console.log('🩺 Atendiendo cita:', cita);
+atenderCita(cita: any) {
+  console.log('cita a atender', cita);
 
-  this.router.navigate(['veterinario/expedienbtes-form'], {
-    queryParams: {
-      id_cita: cita.id_cita,
-      cliente_id: cita.cliente_id,
-      mascota_id: cita.mascota_id,
-      veterinario_id: cita.veterinario_id,
-      animal_id: cita.animal_id,
-      fecha_cita: cita.fecha_cita,
-      hora_cita: cita.hora_cita,
-      motivo: cita.motivo,
-      estado: cita.estado,
-      created_at: cita.created_at,
-      token_confirmacion: cita.token_confirmacion
-    }
-  });
+  this.router.navigate(
+    ['/veterinario/expedientes-form'],
+    { state: { cita } }
+  );
 }
 
   getEstadoBadgeClass(estado: string): string {

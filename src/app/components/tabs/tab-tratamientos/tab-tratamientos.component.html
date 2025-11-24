@@ -1,0 +1,77 @@
+<div class="card border-0 shadow-sm rounded-4 p-4">
+
+  <form [formGroup]="form">
+
+    <div formArrayName="tratamientos">
+
+      <div *ngFor="let tr of tratamientosArr.controls; let i = index"
+           [formGroupName]="i"
+           class="border rounded-4 p-3 mb-3">
+
+        <div class="row g-3">
+
+          <div class="col-md-4">
+            <label class="form-label fw-semibold">Medicamento</label>
+            <input class="form-control" formControlName="medicamento" />
+          </div>
+
+          <div class="col-md-3">
+            <label class="form-label fw-semibold">Dosis</label>
+            <input class="form-control" formControlName="dosis" />
+          </div>
+
+          <div class="col-md-3">
+            <label class="form-label fw-semibold">Frecuencia</label>
+            <input class="form-control" formControlName="frecuencia" />
+          </div>
+
+          <div class="col-md-2">
+            <label class="form-label fw-semibold">Duración (días)</label>
+            <input type="number" class="form-control" formControlName="duracion_dias" />
+          </div>
+
+          <div class="col-md-4">
+            <label class="form-label fw-semibold">Vía administración</label>
+            <input class="form-control" formControlName="via_administracion" />
+          </div>
+
+          <div class="col-md-8">
+            <label class="form-label fw-semibold">Indicaciones</label>
+            <textarea rows="2" class="form-control" formControlName="indicaciones"></textarea>
+          </div>
+
+        </div>
+
+        <div class="text-end mt-2">
+          <button type="button"
+                  class="btn btn-outline-danger btn-sm"
+                  (click)="quitarTratamiento(i)"
+                  *ngIf="tratamientosArr.length > 1">
+            Eliminar
+          </button>
+        </div>
+
+      </div>
+
+    </div>
+
+    <div class="d-flex justify-content-between mt-4">
+
+      <button type="button"
+              class="btn btn-outline-primary"
+              (click)="agregarTratamiento()">
+        Añadir tratamiento
+      </button>
+
+      <button type="button"
+              class="btn btn-primary px-4"
+              [disabled]="loading"
+              (click)="guardar()">
+        Guardar tratamiento(s)
+      </button>
+
+    </div>
+
+  </form>
+
+</div>
