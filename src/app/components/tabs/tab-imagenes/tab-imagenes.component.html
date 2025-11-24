@@ -1,0 +1,70 @@
+<div class="card border-0 shadow-sm rounded-4 p-4">
+  <form [formGroup]="form">
+
+    <div formArrayName="imagenes">
+
+      <div *ngFor="let img of imagenesArr.controls; let i = index"
+           [formGroupName]="i"
+           class="border rounded-4 p-3 mb-3">
+
+        <div class="row g-3">
+
+          <div class="col-md-6">
+            <label class="form-label fw-semibold">Imagen *</label>
+            <input type="file" accept="image/*" class="form-control"
+                   (change)="onFileSelected($event, i)" />
+          </div>
+
+          <div class="col-md-6">
+            <label class="form-label fw-semibold">Tipo</label>
+            <select class="form-select" formControlName="tipo_imagen">
+              <option>Fotografía</option>
+              <option>Rayos X</option>
+              <option>Ultrasonido</option>
+              <option>Laboratorio</option>
+              <option>Otro</option>
+            </select>
+          </div>
+
+          <div class="col-12">
+            <label class="form-label fw-semibold">Descripción</label>
+            <textarea rows="2" class="form-control" formControlName="descripcion"></textarea>
+          </div>
+
+          <div class="col-12">
+            <img *ngIf="previews[i]"
+                 [src]="previews[i]"
+                 class="img-fluid rounded mt-2 shadow-sm"
+                 style="max-height: 180px;">
+          </div>
+
+        </div>
+
+        <div class="text-end mt-2">
+          <button type="button"
+                  class="btn btn-outline-danger btn-sm"
+                  (click)="quitarImagen(i)"
+                  *ngIf="imagenesArr.length > 1">
+            Eliminar
+          </button>
+        </div>
+
+      </div>
+
+    </div>
+
+    <div class="d-flex justify-content-between mt-4">
+      <button type="button" class="btn btn-outline-primary" (click)="agregarImagen()">
+        Añadir imagen
+      </button>
+
+      <button type="button"
+              class="btn btn-primary px-4"
+              [disabled]="loading"
+              (click)="guardar()">
+        Guardar imagen(es)
+      </button>
+    </div>
+
+  </form>
+</div>

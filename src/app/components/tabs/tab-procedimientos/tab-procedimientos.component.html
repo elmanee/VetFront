@@ -1,0 +1,88 @@
+<div class="card border-0 shadow-sm rounded-4 p-4">
+  <form [formGroup]="form">
+
+    <div formArrayName="procedimientos">
+
+      <div *ngFor="let proc of procedimientosArr.controls; let i = index"
+           [formGroupName]="i"
+           class="border rounded-4 p-3 mb-3">
+
+        <div class="row g-3">
+
+          <div class="col-md-4">
+            <label class="form-label fw-semibold">Tipo de procedimiento</label>
+            <input class="form-control" formControlName="tipo_procedimiento" />
+          </div>
+
+          <div class="col-md-8">
+            <label class="form-label fw-semibold">Nombre del procedimiento *</label>
+            <input class="form-control" formControlName="nombre_procedimiento" />
+          </div>
+
+          <div class="col-12">
+            <label class="form-label fw-semibold">Descripción</label>
+            <textarea class="form-control" rows="2" formControlName="descripcion"></textarea>
+          </div>
+
+          <div class="col-md-4">
+            <label class="form-label fw-semibold">Fecha de realización</label>
+            <input type="date" class="form-control" formControlName="fecha_realizacion" />
+          </div>
+
+          <div class="col-md-4">
+            <label class="form-label fw-semibold">Hora inicio</label>
+            <input type="time" class="form-control" formControlName="hora_inicio" />
+          </div>
+
+          <div class="col-md-4">
+            <label class="form-label fw-semibold">Hora fin</label>
+            <input type="time" class="form-control" formControlName="hora_fin" />
+          </div>
+
+          <div class="col-md-6">
+            <label class="form-label fw-semibold">Anestesia utilizada</label>
+            <input class="form-control" formControlName="anestesia_utilizada" />
+          </div>
+
+          <div class="col-md-6">
+            <label class="form-label fw-semibold">Complicaciones</label>
+            <input class="form-control" formControlName="complicaciones" />
+          </div>
+
+          <div class="col-12">
+            <label class="form-label fw-semibold">Observaciones</label>
+            <textarea class="form-control" rows="2" formControlName="observaciones"></textarea>
+          </div>
+
+        </div>
+
+        <div class="text-end mt-2">
+          <button type="button"
+                  class="btn btn-outline-danger btn-sm"
+                  (click)="quitarProcedimiento(i)"
+                  *ngIf="procedimientosArr.length > 1">
+            Eliminar
+          </button>
+        </div>
+
+      </div>
+
+    </div>
+
+    <div class="d-flex justify-content-between mt-4">
+      <button type="button"
+              class="btn btn-outline-primary"
+              (click)="agregarProcedimiento()">
+        Añadir procedimiento
+      </button>
+
+      <button type="button"
+              class="btn btn-primary px-4"
+              (click)="guardar()"
+              [disabled]="loading">
+        Guardar procedimiento(s)
+      </button>
+    </div>
+
+  </form>
+</div>
