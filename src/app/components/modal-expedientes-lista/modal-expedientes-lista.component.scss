@@ -1,0 +1,26 @@
+.list-group-item-action {
+      cursor: pointer;
+      transition: all 0.3s ease;
+      border-left: 4px solid transparent;
+    }
+
+    .list-group-item-action:hover {
+      background-color: #FEF9F3;
+      border-left: 4px solid #FFC040;
+      transform: translateX(5px);
+    }
+
+    .badge {
+      font-size: 0.75rem;
+      padding: 0.4em 0.7em;
+      font-weight: 600;
+    }
+
+    .modal-content {
+      border-radius: 1rem;
+      overflow: hidden;
+    }
+
+    .modal-header {
+      border-bottom: 3px solid #E8903C;
+    }

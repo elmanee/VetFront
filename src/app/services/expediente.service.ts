@@ -38,7 +38,18 @@ export class ExpedienteService {
     );
   }
 
-  // Actualizar expediente
+  getExpedientesPorPaciente(paciente_id: number): Observable<ResponseDTO<any>> {
+    return this.http.get<ResponseDTO<any>>(
+      `${this.API_URL}/api/expedientes/paciente/${paciente_id}/todos`
+    );
+  }
+
+  getExpedienteCompleto(expediente_id: number): Observable<ResponseDTO<any>> {
+    return this.http.get<ResponseDTO<any>>(
+      `${this.API_URL}/api/expedientes/${expediente_id}/completo`
+    );
+  }
+
   updateExpediente(id: number, payload: any): Observable<ResponseDTO<any>> {
     return this.http.patch<ResponseDTO<any>>(
       `${this.API_URL}/api/expedientes/${id}`,

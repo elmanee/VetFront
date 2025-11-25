@@ -14,7 +14,7 @@ export class ProcedimientoService {
   constructor(private http: HttpClient) {}
 
   registrarProcedimientos(payload: any): Observable<ResponseDTO<any>> {
-    return this.http.post<ResponseDTO<any>>(
+    return this.http.patch<ResponseDTO<any>>(
       `${this.API_URL}/procedimientos`,
       payload
     );

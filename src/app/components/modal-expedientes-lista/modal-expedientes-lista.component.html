@@ -1,0 +1,93 @@
+<div class="modal fade show d-block" tabindex="-1" style="background-color: rgba(0,0,0,0.5)">
+      <div class="modal-dialog modal-lg modal-dialog-centered modal-dialog-scrollable">
+        <div class="modal-content">
+
+          <!-- Header -->
+          <div class="modal-header" style="background-color: #FFC040; color: white;">
+            <h5 class="modal-title fw-bold">
+              <i class="bi bi-folder-open me-2"></i>
+              Expedientes del Paciente
+            </h5>
+            <button type="button" class="btn-close btn-close-white" (click)="cerrar()"></button>
+          </div>
+
+          <!-- Body -->
+          <div class="modal-body p-0">
+
+            <!-- Info del paciente -->
+            <div class="p-3 border-bottom" style="background-color: #FEF9F3;">
+              <h6 class="mb-1 fw-bold text-dark">
+                <i class="bi bi-heart-fill text-danger me-2"></i>
+                {{ paciente?.nombre }}
+              </h6>
+              <small class="text-muted">
+                <i class="bi bi-info-circle me-1"></i>
+                {{ paciente?.raza }} · {{ paciente?.edad }} años · {{ paciente?.peso }} kg
+              </small>
+            </div>
+
+            <!-- Lista de expedientes -->
+            <div class="list-group list-group-flush">
+              <button
+                *ngFor="let exp of expedientes; let i = index"
+                class="list-group-item list-group-item-action py-3"
+                (click)="seleccionarExpediente(exp)">
+
+                <div class="d-flex justify-content-between align-items-start">
+                  <div class="flex-grow-1">
+                    <div class="d-flex align-items-center mb-2">
+                      <span class="badge text-dark me-2" style="background-color: #FFC040;">
+                        Expediente #{{ exp.id_expediente }}
+                      </span>
+                      <span class="badge bg-info text-white">
+                        {{ exp.total_consultas || 0 }} consultas
+                      </span>
+                      <span class="badge ms-2"
+                            [ngClass]="exp.estado === 'Activo' ? 'bg-success' : 'bg-secondary'">
+                        {{ exp.estado }}
+                      </span>
+                    </div>
+
+                    <p class="mb-1 small text-muted">
+                      <i class="bi bi-calendar-event me-1"></i>
+                      <strong>Creado:</strong> {{ exp.created_at | date:'dd/MM/yyyy HH:mm' }}
+                    </p>
+
+                    <p class="mb-1 small text-muted" *ngIf="exp.ultima_consulta_fecha">
+                      <i class="bi bi-clock-history me-1"></i>
+                      <strong>Última consulta:</strong> {{ exp.ultima_consulta_fecha | date:'dd/MM/yyyy' }}
+                    </p>
+
+                    <p class="mb-0 small" *ngIf="exp.observaciones_generales">
+                      <i class="bi bi-chat-left-text me-1"></i>
+                      {{ exp.observaciones_generales }}
+                    </p>
+                  </div>
+
+                  <i class="bi bi-chevron-right text-muted fs-4"></i>
+                </div>
+              </button>
+            </div>
+
+            <!-- Si no hay expedientes -->
+            <div *ngIf="!expedientes || expedientes.length === 0" class="text-center py-5">
+              <i class="bi bi-inbox display-4 text-muted"></i>
+              <p class="text-muted mt-3">No hay expedientes registrados</p>
+            </div>
+          </div>
+
+          <!-- Footer -->
+          <div class="modal-footer bg-light">
+            <button class="btn btn-secondary" (click)="cerrar()">
+              <i class="bi bi-x-circle me-2"></i>
+              Cancelar
+            </button>
+            <button class="btn btn-warning text-white" (click)="crearNuevo()">
+              <i class="bi bi-plus-circle me-2"></i>
+              Crear Nuevo Expediente
+            </button>
+          </div>
+
+        </div>
+      </div>
+    </div>

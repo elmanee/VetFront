@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { Component, EventEmitter, Input, Output } from '@angular/core';
+import { Component, EventEmitter, Input, Output, OnChanges, SimpleChanges, OnInit } from '@angular/core';
 import { FormArray, FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { VacunaService } from '../../../services/vacuna.service';
 
@@ -11,13 +11,15 @@ import { VacunaService } from '../../../services/vacuna.service';
   templateUrl: './tab-vacunas.component.html',
   styleUrl: './tab-vacunas.component.scss'
 })
-export class TabVacunasComponent {
+export class TabVacunasComponent implements OnInit, OnChanges {
 
   @Input() consulta: any;
+  @Input() modoEdicion = false;
   @Output() guardado = new EventEmitter<any>();
 
   form!: FormGroup;
   loading = false;
+  vacunasExistentes: any[] = [];
 
   constructor(
     private fb: FormBuilder,
@@ -25,27 +27,66 @@ export class TabVacunasComponent {
   ) {}
 
   ngOnInit(): void {
-
-    if (!this.consulta) return;
-
-    this.form = this.fb.group({
+      this.form = this.fb.group({
       vacunas: this.fb.array([
         this.crearVacunaForm()
       ])
     });
+
+
+    if (this.consulta && this.modoEdicion) {
+      this.cargarVacunasExistentes();
+    }
+  }
+
+  ngOnChanges(changes: SimpleChanges): void {
+    if (changes['consulta'] && this.consulta && this.modoEdicion && this.form) {
+      this.cargarVacunasExistentes();
+    }
   }
 
   get vacunasArr(): FormArray {
     return this.form.get('vacunas') as FormArray;
   }
 
-  crearVacunaForm(): FormGroup {
+  crearVacunaForm(vacuna?: any): FormGroup {
     return this.fb.group({
-      nombre_vacuna: ['', Validators.required],
-      fecha_aplicacion: [new Date().toISOString().split("T")[0], Validators.required],
-      proxima_dosis: [''],
-      sitio_aplicacion: [''],
-      reacciones_adversas: ['']
+      id_vacuna: [vacuna?.id_vacuna || null],
+      nombre_vacuna: [vacuna?.nombre_vacuna || '', Validators.required],
+      fecha_aplicacion: [
+        vacuna?.fecha_aplicacion ? vacuna.fecha_aplicacion.split('T')[0] : new Date().toISOString().split("T")[0],
+        Validators.required
+      ],
+      proxima_dosis: [vacuna?.proxima_dosis ? vacuna.proxima_dosis.split('T')[0] : ''],
+      sitio_aplicacion: [vacuna?.sitio_aplicacion || ''],
+      reacciones_adversas: [vacuna?.reacciones_adversas || '']
+    });
+  }
+
+  cargarVacunasExistentes() {
+    if (!this.consulta?.id_consulta) {
+      return;
+    }
+
+
+    this.vacunaServ.obtenerPorConsulta(this.consulta.id_consulta).subscribe({
+      next: (resp) => {
+        this.vacunasExistentes = resp.data || [];
+
+        if (this.vacunasExistentes.length > 0) {
+          this.vacunasArr.clear();
+
+          this.vacunasExistentes.forEach((vac, index) => {
+            this.vacunasArr.push(this.crearVacunaForm(vac));
+          });
+
+        } else {
+          console.log('No hay vacunas existentes');
+        }
+      },
+      error: (err) => {
+        console.error('Error al cargar vacunas:', err);
+      }
     });
   }
 
@@ -54,7 +95,18 @@ export class TabVacunasComponent {
   }
 
   quitarVacuna(index: number) {
-    if (this.vacunasArr.length > 1) {
+    const vacuna = this.vacunasArr.at(index).value;
+
+    if (vacuna.id_vacuna) {
+      this.vacunaServ.eliminar(vacuna.id_vacuna).subscribe({
+        next: () => {
+          this.vacunasArr.removeAt(index);
+        },
+        error: (err) => {
+          console.error(' Error al eliminar:', err);
+        }
+      });
+    } else {
       this.vacunasArr.removeAt(index);
     }
   }
@@ -93,17 +145,19 @@ export class TabVacunasComponent {
     this.vacunaServ.registrarVacunas(payload).subscribe({
       next: (resp) => {
         this.loading = false;
-        this.guardado.emit(resp.data);
-
-        this.form.reset();
-        this.form.setControl('vacunas', this.fb.array([this.crearVacunaForm()]));
         this.guardado.emit('ok');
 
+        if (this.modoEdicion) {
+          this.cargarVacunasExistentes();
+        } else {
+          this.form.reset();
+          this.vacunasArr.clear();
+          this.vacunasArr.push(this.crearVacunaForm());
+        }
       },
       error: () => {
         this.loading = false;
       }
     });
   }
-
 }

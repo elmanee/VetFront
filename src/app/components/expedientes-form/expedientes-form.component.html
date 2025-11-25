@@ -8,9 +8,30 @@
     {{ cita?.fecha_cita | date:'mediumDate' }} · {{ cita?.hora_cita }}
   </p>
 
-  <!-- Paso 1: Crear paciente si no existe -->
-  <div *ngIf="mostrarCrearPaciente" class="card shadow-sm border-0 rounded-4 p-4 mb-4">
-    <h4 class="fw-semibold text-secondary-si mb-3">Registrar paciente</h4>
+  <div *ngIf="cargandoDatos" class="text-center py-5">
+    <div class="spinner-border text-warning" role="status" style="width: 3rem; height: 3rem;">
+      <span class="visually-hidden">Cargando...</span>
+    </div>
+    <p class="mt-3 text-muted fw-semibold">
+      <i class="bi bi-hourglass-split me-2"></i>
+      Cargando información del paciente...
+    </p>
+  </div>
+
+  <app-modal-expedientes-lista
+    *ngIf="mostrarModalExpedientes"
+    [paciente]="paciente"
+    [expedientes]="expedientesDisponibles"
+    (expedienteSeleccionado)="onExpedienteSeleccionado($event)"
+    (crearNuevoExpediente)="onCrearNuevoExpedienteDesdeModal()"
+    (cerrarModal)="onCerrarModal()">
+  </app-modal-expedientes-lista>
+
+  <div *ngIf="mostrarCrearPaciente && !cargandoDatos" class="card shadow-sm border-0 rounded-4 p-4 mb-4">
+    <h4 class="fw-semibold text-secondary-si mb-3">
+      <i class="bi bi-plus-circle me-2"></i>
+      Registrar paciente
+    </h4>
 
     <app-crear-paciente
       [cita]="cita"
@@ -18,8 +39,14 @@
     </app-crear-paciente>
   </div>
 
-  <!-- Paso 2: Tabs del expediente médico -->
-  <div *ngIf="mostrarTabs" class="card shadow-sm border-0 rounded-4 p-0 overflow-hidden">
+  <div *ngIf="mostrarTabs && !cargandoDatos" class="card shadow-sm border-0 rounded-4 p-0 overflow-hidden">
+
+    <div *ngIf="modoEdicion" class="alert alert-info mb-0 rounded-0 text-center border-0"
+         style="background-color: #D1ECF1; border-bottom: 3px solid #0C5460 !important;">
+      <i class="bi bi-pencil-square me-2"></i>
+      <strong>Modo Edición:</strong> Estás trabajando con un expediente existente
+      <span class="badge bg-primary ms-2">Expediente #{{ expediente?.id_expediente }}</span>
+    </div>
 
     <!-- Encabezado de tabs -->
     <ul class="nav nav-tabs px-3 pt-3 bg-light">
@@ -31,6 +58,7 @@
                 data-bs-toggle="tab"
                 data-bs-target="#consultaTab"
                 [disabled]="!tabs.consulta">
+          <i class="bi bi-clipboard-pulse me-1"></i>
           Consulta
         </button>
       </li>
@@ -42,6 +70,7 @@
                 data-bs-toggle="tab"
                 data-bs-target="#diagTab"
                 [disabled]="!tabs.diagnosticos">
+          <i class="bi bi-file-medical me-1"></i>
           Diagnósticos
         </button>
       </li>
@@ -53,6 +82,7 @@
                 data-bs-toggle="tab"
                 data-bs-target="#tratTab"
                 [disabled]="!tabs.tratamientos">
+          <i class="bi bi-prescription2 me-1"></i>
           Tratamientos
         </button>
       </li>
@@ -64,6 +94,7 @@
                 data-bs-toggle="tab"
                 data-bs-target="#vacTab"
                 [disabled]="!tabs.vacunas">
+          <i class="bi bi-shield-check me-1"></i>
           Vacunas
         </button>
       </li>
@@ -75,6 +106,7 @@
                 data-bs-toggle="tab"
                 data-bs-target="#procTab"
                 [disabled]="!tabs.procedimientos">
+          <i class="bi bi-tools me-1"></i>
           Procedimientos
         </button>
       </li>
@@ -86,6 +118,7 @@
                 data-bs-toggle="tab"
                 data-bs-target="#imgTab"
                 [disabled]="!tabs.imagenes">
+          <i class="bi bi-images me-1"></i>
           Imágenes
         </button>
       </li>
@@ -100,6 +133,8 @@
         <app-tab-consulta
           [cita]="cita"
           [expediente]="expediente"
+          [modoEdicion]="modoEdicion"
+          [consultaExistente]="expedienteCompleto?.ultima_consulta"
           (consultaCreada)="onConsultaCreada($event)">
         </app-tab-consulta>
       </div>
@@ -107,12 +142,14 @@
       <!-- TAB DIAGNÓSTICOS -->
       <div class="tab-pane fade" id="diagTab">
         <div *ngIf="!consulta" class="alert alert-warning">
+          <i class="bi bi-exclamation-triangle me-2"></i>
           Primero debes registrar la consulta.
         </div>
 
         <div *ngIf="consulta">
           <app-tab-diagnosticos
             [consulta]="consulta"
+            [modoEdicion]="modoEdicion"
             (guardado)="goToNextTab()">
           </app-tab-diagnosticos>
         </div>
@@ -121,12 +158,14 @@
       <!-- TAB TRATAMIENTOS -->
       <div class="tab-pane fade" id="tratTab">
         <div *ngIf="!consulta" class="alert alert-warning">
+          <i class="bi bi-exclamation-triangle me-2"></i>
           Primero debes registrar la consulta.
         </div>
 
         <div *ngIf="consulta">
           <app-tab-tratamientos
             [consulta]="consulta"
+            [modoEdicion]="modoEdicion"
             (guardado)="goToNextTab()">
           </app-tab-tratamientos>
         </div>
@@ -135,12 +174,14 @@
       <!-- TAB VACUNAS -->
       <div class="tab-pane fade" id="vacTab">
         <div *ngIf="!consulta" class="alert alert-warning">
+          <i class="bi bi-exclamation-triangle me-2"></i>
           Primero debes registrar la consulta.
         </div>
 
         <div *ngIf="consulta">
           <app-tab-vacunas
             [consulta]="consulta"
+            [modoEdicion]="modoEdicion"
             (guardado)="goToNextTab()">
           </app-tab-vacunas>
         </div>
@@ -149,12 +190,14 @@
       <!-- TAB PROCEDIMIENTOS -->
       <div class="tab-pane fade" id="procTab">
         <div *ngIf="!consulta" class="alert alert-warning">
+          <i class="bi bi-exclamation-triangle me-2"></i>
           Primero debes registrar la consulta.
         </div>
 
         <div *ngIf="consulta">
           <app-tab-procedimientos
             [consulta]="consulta"
+            [modoEdicion]="modoEdicion"
             (guardado)="goToNextTab()">
           </app-tab-procedimientos>
         </div>
@@ -163,12 +206,14 @@
       <!-- TAB IMÁGENES -->
       <div class="tab-pane fade" id="imgTab">
         <div *ngIf="!consulta" class="alert alert-warning">
+          <i class="bi bi-exclamation-triangle me-2"></i>
           Primero debes registrar la consulta.
         </div>
 
         <div *ngIf="consulta">
           <app-tab-imagenes
             [consulta]="consulta"
+            [modoEdicion]="modoEdicion"
             (guardado)="goToNextTab()">
           </app-tab-imagenes>
         </div>
@@ -178,8 +223,9 @@
   </div>
 
   <!-- BOTÓN FINALIZAR ATENCIÓN -->
-  <div class="text-end mt-3" *ngIf="consulta">
-    <button class="btn btn-success px-4" (click)="finalizarAtencion()">
+  <div class="text-end mt-3" *ngIf="consulta && !cargandoDatos">
+    <button class="btn btn-success px-4 shadow" (click)="finalizarAtencion()">
+      <i class="bi bi-check-circle me-2"></i>
       Finalizar Atención
     </button>
   </div>

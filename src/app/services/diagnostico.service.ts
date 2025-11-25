@@ -14,14 +14,7 @@ export class DiagnosticoService {
   constructor(private http: HttpClient) {}
 
   registrarDiagnosticos(payload: any): Observable<any> {
-    return this.http.post<any>(`${this.API_URL}/api/diagnosticos`, payload);
-  }
-
-  postDiagnosticos(payload: any[]): Observable<ResponseDTO<any>> {
-    return this.http.post<ResponseDTO<any>>(
-      `${this.API_URL}/api/diagnosticos`,
-      payload
-    );
+    return this.http.patch<any>(`${this.API_URL}/api/diagnosticos`, payload);
   }
 
   getDiagnosticosPorConsulta(consulta_id: number): Observable<ResponseDTO<any>> {
