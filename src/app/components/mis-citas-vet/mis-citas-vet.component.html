@@ -1,109 +1,110 @@
-<div class="container-fluid min-vh-100 bg-light py-5">
-  <div class="row justify-content-center">
-    <div class="col-12 col-xl-11">
-      <!-- Header -->
-      <div class="card shadow rounded-4 mb-4">
-        <div class="card-body">
-          <div class="d-flex justify-content-between align-items-center mb-3 flex-wrap gap-3">
-            <div>
-              <h1 class="display-5 titulo-principal mb-2">
-                <i class="bi bi-calendar-check me-3"></i>
-                Mis Citas Programadas
-              </h1>
-              <p class="text-muted mb-0">Gestiona tus consultas veterinarias</p>
-            </div>
-            <div>
-              <a routerLink="/citas-atender" class="btn btn-success btn-lg shadow-sm">
-                <i class="bi bi-clipboard2-pulse me-2"></i>
-                Atender Citas Confirmadas
-              </a>
-            </div>
+<div class="agenda-container py-5">
+  <div class="container-xl">
+    
+    <!-- Cabecera de la Sección -->
+    <div class="row mb-5 align-items-center">
+      <div class="col-md-8">
+        <div class="d-flex align-items-center gap-3 mb-2">
+          <div class="icon-header-box">
+            <i class="bi bi-journal-medical"></i>
+          </div>
+          <h1 class="titulo-principal m-0 display-6">Agenda del Día</h1>
+        </div>
+        <p class="text-muted ms-1" style="font-size: 1.1rem;">
+          Hola Doctor, hoy tienes <strong class="text-dark">{{ citas.length }} consultas</strong> programadas.
+        </p>
+      </div>
+      <div class="col-md-4 text-md-end mt-3 mt-md-0">
+        <a routerLink="/citas-atender" class="btn btn-outline-accent btn-lg shadow-sm">
+          <i class="bi bi-list-check me-2"></i>
+          Ver Pendientes
+        </a>
+      </div>
+    </div>
+
+    <!-- Loading -->
+    <div *ngIf="loading" class="text-center py-5">
+      <div class="spinner-border text-accent" style="width: 3rem; height: 3rem;" role="status">
+        <span class="visually-hidden">Cargando agenda...</span>
+      </div>
+      <p class="mt-3 text-muted">Sincronizando citas...</p>
+    </div>
+
+    <!-- Estado Vacío (Friendly) -->
+    <div *ngIf="!loading && citas.length === 0" class="empty-state-card text-center py-5">
+      <div class="mb-4">
+        <i class="bi bi-cup-hot text-primary-soft display-1"></i>
+      </div>
+      <h3 class="fw-bold text-dark">¡Todo despejado!</h3>
+      <p class="text-muted fs-5">No tienes pacientes agendados por el momento.<br>Disfruta tu café.</p>
+    </div>
+
+    <!-- LISTA DE AGENDA (Diseño de Bloques Temporales) -->
+    <div *ngIf="!loading && citas.length > 0" class="agenda-timeline">
+      
+      <div class="agenda-item" *ngFor="let cita of citas">
+        
+        <!-- 1. Columna de Tiempo (Izquierda) -->
+        <div class="time-column">
+          <div class="time-box">
+            <span class="hour">{{ cita.hora_cita }}</span>
+            <span class="meridiem">HR</span> <!-- Opcional: podrías calcular AM/PM si quisieras, o dejarlo simple -->
+          </div>
+          <div class="date-label text-muted">
+            {{ cita.fecha_cita | date:'dd MMM' }}
           </div>
         </div>
-      </div>
 
-      <!-- Loading -->
-      <div *ngIf="loading" class="text-center py-5">
-        <div class="spinner-border text-primary" role="status">
-          <span class="visually-hidden">Cargando...</span>
-        </div>
-      </div>
-
-      <!-- Lista de Citas -->
-      <div *ngIf="!loading && citas.length > 0" class="row g-4">
-        <div class="col-12 col-lg-6 col-xl-4" *ngFor="let cita of citas">
-          <div class="card h-100 shadow-sm rounded-4 border-0 cita-card">
-            <div class="card-body p-4">
-              <!-- Header de la cita -->
-              <div class="d-flex justify-content-between align-items-start mb-3">
-                <div class="flex-grow-1">
-                  <h5 class="card-title fw-bold mb-2">
-                    <i class="bi bi-person-circle me-2 text-primary"></i>
-                    {{ cita.mascota_nombre || cita.animal_nombre || 'Nueva Mascota' }}
-                  </h5>
-                  <p class="text-muted small mb-1">
-                    <i class="bi bi-person me-1"></i>
-                    {{ cita.cliente_nombre }}
-                  </p>
+        <!-- 2. Tarjeta de Cita (Derecha) -->
+        <div class="card cita-card flex-grow-1">
+          <div class="card-body p-4">
+            <div class="row align-items-center">
+              
+              <!-- Datos del Paciente -->
+              <div class="col-md-4 mb-3 mb-md-0">
+                <div class="d-flex align-items-center gap-3">
+                  <!-- Avatar con inicial o icono -->
+                  <div class="pet-avatar">
+                    <i class="bi bi-heart-pulse-fill"></i>
+                  </div>
+                  <div>
+                    <h5 class="fw-bold text-dark mb-1 fs-4">
+                      {{ cita.mascota_nombre || cita.animal_nombre || 'Paciente' }}
+                    </h5>
+                    <div class="d-flex align-items-center text-muted">
+                      <i class="bi bi-person-fill me-1 text-accent"></i>
+                      <span class="fs-6">{{ cita.cliente_nombre }}</span>
+                    </div>
+                  </div>
                 </div>
-                <span [class]="'badge ' + getEstadoBadgeClass(cita.estado)">
+              </div>
+
+              <!-- Motivo y Estado -->
+              <div class="col-md-5 mb-3 mb-md-0 border-start-md ps-md-4">
+                <span class="badge rounded-pill mb-2" [ngClass]="getEstadoBadgeClass(cita.estado)">
                   {{ cita.estado }}
                 </span>
+                <p class="mb-0 text-dark fw-medium fs-6 text-truncate-2">
+                  {{ cita.motivo || 'Revisión General' }}
+                </p>
               </div>
 
-              <!-- Información de la cita -->
-              <div class="cita-info mb-4">
-                <div class="info-row">
-                  <i class="bi bi-calendar3 text-primary"></i>
-                  <span class="fw-semibold">{{ cita.fecha_cita | date:'dd/MM/yyyy' }}</span>
-                </div>
-                <div class="info-row">
-                  <i class="bi bi-clock text-primary"></i>
-                  <span>{{ cita.hora_cita }}</span>
-                </div>
-                <div class="info-row">
-                  <i class="bi bi-tag text-primary"></i>
-                  <span>{{ cita.animal_nombre || 'Nueva Mascota' }}</span>
-                </div>
-                <div class="info-row" *ngIf="cita.motivo">
-                  <i class="bi bi-card-text text-primary"></i>
-                  <span class="text-truncate">{{ cita.motivo }}</span>
-                </div>
-              </div>
-
-              <!-- Botón de atender -->
-              <div class="d-grid">
-                <button
-                  class="btn btn-primary-si btn-lg"
+              <!-- Botón de Acción -->
+              <div class="col-md-3 text-end">
+                <button 
+                  class="btn btn-primary-si w-100 py-2"
                   (click)="atenderCita(cita)"
                   [disabled]="cita.estado !== 'Confirmada'">
-                  <i class="bi bi-clipboard2-pulse me-2"></i>
-                  Atender Cita
+                  Atender
                 </button>
               </div>
-            </div>
 
-            <!-- Footer con info adicional -->
-            <div class="card-footer bg-transparent border-0 pt-0 pb-3 px-4">
-              <small class="text-muted">
-                <i class="bi bi-telephone me-1"></i>
-                {{ 'Sin teléfono' }}
-              </small>
             </div>
           </div>
         </div>
+
       </div>
 
-      <!-- Sin citas -->
-      <div *ngIf="!loading && citas.length === 0" class="text-center py-5">
-        <div class="card shadow rounded-4 py-5">
-          <div class="card-body">
-            <i class="bi bi-calendar-x display-1 text-muted mb-4"></i>
-            <h3 class="text-muted">No tienes citas programadas</h3>
-            <p class="text-muted">Las citas aparecerán aquí cuando sean agendadas</p>
-          </div>
-        </div>
-      </div>
     </div>
   </div>
 </div>

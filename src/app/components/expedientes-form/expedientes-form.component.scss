@@ -1,0 +1,123 @@
+// --- Variables Globales ---
+$color-primary: var(--color-primary, #FFD95A); // Amarillo
+$color-accent: var(--color-accent, #3EC1C9);   // Cian
+$text-dark: var(--text-dark, #333333);
+$bg-app: var(--bg-light, #FFFBF5);
+
+.clinical-container {
+  background-color: $bg-app;
+  min-height: 100vh;
+  font-family: 'Segoe UI', system-ui, sans-serif;
+}
+
+// --- Patient Banner (Header) ---
+.patient-banner {
+  background: white;
+  border: 1px solid rgba(0,0,0,0.05) !important;
+}
+
+.avatar-box {
+  width: 60px;
+  height: 60px;
+  background-color: #EFF6FF; // Azul muy claro
+  color: $color-accent;
+  border-radius: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.border-end-md {
+  @media (min-width: 768px) {
+    border-right: 1px solid #E5E7EB;
+  }
+}
+
+.info-label {
+  font-size: 0.7rem;
+  font-weight: 700;
+  color: #9CA3AF;
+  letter-spacing: 0.5px;
+  text-transform: uppercase;
+  display: block;
+  margin-bottom: 2px;
+}
+
+.info-value {
+  font-weight: 600;
+  color: $text-dark;
+  font-size: 1rem;
+}
+
+// --- Clinical Tabs (Navegación) ---
+.tabs-header {
+  background-color: #FAFAFA; // Gris muy claro para la barra de tabs
+}
+
+
+
+// --- Workspace Content ---
+.clinical-workspace {
+  min-height: 500px; // Altura mínima para que no brinque al cambiar tabs
+}
+
+// Guías de Sección
+.section-guide {
+  border-bottom: 1px solid #F3F4F6;
+  padding-bottom: 1rem;
+  
+  .guide-title {
+    font-weight: 700;
+    color: $text-dark;
+    margin-bottom: 0.2rem;
+  }
+  
+  .guide-subtitle {
+    font-size: 0.9rem;
+    margin: 0;
+  }
+}
+
+.text-primary-custom {
+  color: #D97706; // Amarillo oscuro/Ocre para títulos
+}
+
+// --- Alertas y Modos ---
+.edit-mode-bar {
+  background-color: #FFF3CD;
+  color: #856404;
+  border-bottom: 1px solid #FFEEBA;
+}
+
+.alert-warning-custom {
+  background-color: #FFFBEB;
+  border: 1px dashed #FCD34D;
+  color: #92400E;
+  padding: 1.5rem;
+  border-radius: 12px;
+  text-align: center;
+  font-weight: 500;
+}
+
+// --- Botones Finales ---
+.btn-finish {
+  background-color: #10B981; // Verde médico
+  color: white;
+  border: none;  
+  &:hover {
+    background-color: #059669;
+    transform: translateY(-2px);
+    box-shadow: 0 10px 20px rgba(16, 185, 129, 0.3) !important;
+  }
+}
+
+// --- Icono Grande para Empty State ---
+.icon-circle-lg {
+  width: 80px;
+  height: 80px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 2.5rem;
+}
