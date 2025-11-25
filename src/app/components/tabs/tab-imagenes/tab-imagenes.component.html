@@ -17,7 +17,8 @@
 
           <div class="col-md-6">
             <label class="form-label fw-semibold">Tipo</label>
-            <select class="form-select" formControlName="tipo_imagen">
+            <select class="form-select" formControlName="tipo_imagen"
+                    (change)="onCampoModificado(i)">
               <option>Fotografía</option>
               <option>Rayos X</option>
               <option>Ultrasonido</option>
@@ -28,7 +29,8 @@
 
           <div class="col-12">
             <label class="form-label fw-semibold">Descripción</label>
-            <textarea rows="2" class="form-control" formControlName="descripcion"></textarea>
+            <textarea rows="2" class="form-control" formControlName="descripcion"
+                      (input)="onCampoModificado(i)"></textarea>
           </div>
 
           <div class="col-12">
@@ -62,7 +64,8 @@
               class="btn btn-primary px-4"
               [disabled]="loading"
               (click)="guardar()">
-        Guardar imagen(es)
+        <span *ngIf="!loading">Guardar imagen(es)</span>
+        <span *ngIf="loading">Guardando...</span>
       </button>
     </div>
 

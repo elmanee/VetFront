@@ -102,7 +102,7 @@ export const routes: Routes = [
         component: ExpedientesComponent
       },
       {
-        path: 'expedientes-form',
+        path: 'expedientes-form/:id',
         component:ExpedientesFormComponent
       },
       {

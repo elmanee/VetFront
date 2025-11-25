@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { Component, EventEmitter, Input, Output } from '@angular/core';
+import { Component, EventEmitter, Input, Output, OnChanges, SimpleChanges, OnInit } from '@angular/core';
 import { FormArray, FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { ProcedimientoService } from '../../../services/procedimiento.service';
 
@@ -11,13 +11,15 @@ import { ProcedimientoService } from '../../../services/procedimiento.service';
   templateUrl: './tab-procedimientos.component.html',
   styleUrl: './tab-procedimientos.component.scss'
 })
-export class TabProcedimientosComponent {
+export class TabProcedimientosComponent implements OnInit, OnChanges {
 
   @Input() consulta: any;
+  @Input() modoEdicion = false;
   @Output() guardado = new EventEmitter<any>();
 
   form!: FormGroup;
   loading = false;
+  procedimientosExistentes: any[] = [];
 
   constructor(
     private fb: FormBuilder,
@@ -25,30 +27,67 @@ export class TabProcedimientosComponent {
   ) {}
 
   ngOnInit(): void {
-    if (!this.consulta) return;
-
     this.form = this.fb.group({
       procedimientos: this.fb.array([
         this.crearProcedimientoForm()
       ])
     });
+    if (this.consulta && this.modoEdicion) {
+      this.cargarProcedimientosExistentes();
+    }
+  }
+
+  ngOnChanges(changes: SimpleChanges): void {
+    if (changes['consulta'] && this.consulta && this.modoEdicion && this.form) {
+      this.cargarProcedimientosExistentes();
+    }
   }
 
   get procedimientosArr(): FormArray {
     return this.form.get('procedimientos') as FormArray;
   }
 
-  crearProcedimientoForm(): FormGroup {
+  crearProcedimientoForm(procedimiento?: any): FormGroup {
     return this.fb.group({
-      tipo_procedimiento: [''],
-      nombre_procedimiento: ['', Validators.required],
-      descripcion: [''],
-      fecha_realizacion: [new Date().toISOString().split('T')[0]],
-      hora_inicio: [''],
-      hora_fin: [''],
-      anestesia_utilizada: [''],
-      complicaciones: [''],
-      observaciones: ['']
+      id_procedimiento: [procedimiento?.id_procedimiento || null],
+      tipo_procedimiento: [procedimiento?.tipo_procedimiento || ''],
+      nombre_procedimiento: [procedimiento?.nombre_procedimiento || '', Validators.required],
+      descripcion: [procedimiento?.descripcion || ''],
+      fecha_realizacion: [
+        procedimiento?.fecha_realizacion ? procedimiento.fecha_realizacion.split('T')[0] : new Date().toISOString().split('T')[0]
+      ],
+      hora_inicio: [procedimiento?.hora_inicio || ''],
+      hora_fin: [procedimiento?.hora_fin || ''],
+      anestesia_utilizada: [procedimiento?.anestesia_utilizada || ''],
+      complicaciones: [procedimiento?.complicaciones || ''],
+      observaciones: [procedimiento?.observaciones || '']
+    });
+  }
+
+  cargarProcedimientosExistentes() {
+    if (!this.consulta?.id_consulta) {
+      return;
+    }
+
+
+    this.procedimientoServ.obtenerPorConsulta(this.consulta.id_consulta).subscribe({
+      next: (resp) => {
+        this.procedimientosExistentes = resp.data || [];
+
+        if (this.procedimientosExistentes.length > 0) {
+          this.procedimientosArr.clear();
+
+          this.procedimientosExistentes.forEach((proc, index) => {
+            this.procedimientosArr.push(this.crearProcedimientoForm(proc));
+          });
+
+        } else {
+          console.log('No hay procedimientos existentes');
+        }
+      },
+      error: (err) => {
+        console.error('Error al cargar procedimientos:', err);
+      }
     });
   }
 
@@ -57,7 +96,18 @@ export class TabProcedimientosComponent {
   }
 
   quitarProcedimiento(index: number) {
-    if (this.procedimientosArr.length > 1) {
+    const procedimiento = this.procedimientosArr.at(index).value;
+
+    if (procedimiento.id_procedimiento) {
+      this.procedimientoServ.eliminar(procedimiento.id_procedimiento).subscribe({
+        next: () => {
+          this.procedimientosArr.removeAt(index);
+        },
+        error: (err) => {
+          console.error(' Error al eliminar:', err);
+        }
+      });
+    } else {
       this.procedimientosArr.removeAt(index);
     }
   }
@@ -75,14 +125,15 @@ export class TabProcedimientosComponent {
     this.procedimientoServ.registrarProcedimientos(payload).subscribe({
       next: (resp) => {
         this.loading = false;
-        this.guardado.emit(resp.data);
-
-        this.form.reset();
-        this.form.setControl('procedimientos', this.fb.array([
-          this.crearProcedimientoForm()
-        ]));
         this.guardado.emit('ok');
 
+        if (this.modoEdicion) {
+          this.cargarProcedimientosExistentes();
+        } else {
+          this.form.reset();
+          this.procedimientosArr.clear();
+          this.procedimientosArr.push(this.crearProcedimientoForm());
+        }
       },
       error: () => {
         this.loading = false;

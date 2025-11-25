@@ -14,7 +14,7 @@ export class VacunaService {
   constructor(private http: HttpClient) {}
 
   registrarVacunas(payload: any): Observable<ResponseDTO<any>> {
-    return this.http.post<ResponseDTO<any>>(
+    return this.http.patch<ResponseDTO<any>>(
       `${this.API_URL}/vacunas`,
       payload
     );
