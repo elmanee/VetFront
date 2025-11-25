@@ -1,248 +1,217 @@
-<div class="container-fluid min-vh-100 bg-light py-5">
-  <div class="row justify-content-center">
-    <div class="col-12 col-xl-11">
+<div class="agenda-container py-5">
+  <div class="container-xl">
+    
+    <!-- HEADER (Igual a Expedientes y Mis Citas) -->
+    <div class="d-flex align-items-center justify-content-between mb-5">
+      <div class="d-flex align-items-center gap-3">
+        <!-- Mismo cuadro de icono amarillo -->
+        <div class="icon-header-box">
+          <i class="bi bi-clipboard2-pulse-fill"></i>
+        </div>
+        <div>
+          <h1 class="titulo-principal m-0 display-6">Recepción de Citas</h1>
+          <p class="text-muted mb-0 fs-5">Confirmadas y listas para consulta</p>
+        </div>
+      </div>
       
-      <!-- Encabezado -->
-      <div class="text-center mb-5">
-        <h1 class="display-5 fw-bold text-dark mb-3">
-          <i class="bi bi-clipboard2-pulse me-2"></i>
-          Citas por Atender
-        </h1>
-        <p class="lead text-muted">
-          Listado de citas confirmadas listas para registrar consulta médica
-        </p>
-      </div>
-
-      <!-- Mensajes -->
-      <div *ngIf="mensaje" class="alert alert-dismissible fade show mb-4" 
+      <!-- Alerta Estática (Sin emojis) -->
+      <div *ngIf="mensaje" class="alert-static px-4 py-2 rounded-3 d-flex align-items-center gap-2"
            [ngClass]="{
-             'alert-success': mensajeClase === 'success',
-             'alert-danger': mensajeClase === 'error',
-             'alert-info': mensajeClase === 'info'
-           }"
-           role="alert">
-        <div class="d-flex align-items-center">
-          <i class="bi me-2" 
-             [ngClass]="{
-               'bi-check-circle-fill': mensajeClase === 'success',
-               'bi-exclamation-triangle-fill': mensajeClase === 'error',
-               'bi-info-circle-fill': mensajeClase === 'info'
-             }"></i>
-          <span>{{ mensaje }}</span>
-        </div>
-        <button type="button" class="btn-close" (click)="mensaje = ''" aria-label="Close"></button>
+             'bg-success-soft text-success-dark': mensajeClase === 'success',
+             'bg-danger-soft text-danger-dark': mensajeClase === 'error',
+             'bg-info-soft text-info-dark': mensajeClase === 'info'
+           }">
+        <i class="bi bi-info-circle-fill"></i>
+        <span class="fw-bold">{{ mensaje }}</span>
+        <button type="button" class="btn-close ms-2" style="font-size: 0.8rem" (click)="mensaje = ''"></button>
       </div>
+    </div>
 
-      <!-- Panel de filtros -->
-      <div class="card border-0 shadow-sm mb-4">
-        <div class="card-body p-4">
-          <h5 class="fw-bold mb-3">
-            <i class="bi bi-funnel me-2"></i>
-            Filtros de Búsqueda
-          </h5>
-          
-          <div class="row g-3">
-            <!-- Filtro por veterinario -->
-            <div class="col-md-3">
-              <label for="veterinarioSelect" class="form-label fw-semibold">
-                <i class="bi bi-person-badge me-1"></i>
-                Veterinario
-              </label>
-              <select 
-                id="veterinarioSelect" 
-                class="form-select" 
-                [(ngModel)]="veterinarioSeleccionado"
-                (change)="aplicarFiltros()">
-                <option *ngFor="let vet of veterinarios" [value]="vet.id">
-                  {{ vet.nombre }}
-                </option>
-              </select>
-            </div>
-            
-            <!-- Filtro por fecha -->
-            <div class="col-md-3">
-              <label for="fechaSelect" class="form-label fw-semibold">
-                <i class="bi bi-calendar-date me-1"></i>
-                Fecha
-              </label>
-              <input 
-                type="date" 
-                id="fechaSelect"
-                class="form-control" 
-                [(ngModel)]="fechaSeleccionada"
-                (change)="aplicarFiltros()">
-            </div>
-            
-            <!-- Búsqueda por texto -->
-            <div class="col-md-4">
-              <label for="busquedaTexto" class="form-label fw-semibold">
-                <i class="bi bi-search me-1"></i>
-                Buscar
-              </label>
-              <input 
-                type="text" 
-                id="busquedaTexto"
-                class="form-control" 
-                placeholder="ID de cita, motivo..."
-                [(ngModel)]="busquedaTexto"
-                (input)="aplicarFiltros()">
-            </div>
-            
-            <!-- Botones -->
-            <div class="col-md-2 d-flex align-items-end">
-              <button 
-                class="btn btn-outline-secondary w-100"
-                (click)="limpiarFiltros()">
-                <i class="bi bi-x-circle me-1"></i>
-                Limpiar
-              </button>
-            </div>
+    <!-- 1. DASHBOARD (Tarjetas estilo 'Mis Citas', estáticas) -->
+    <div class="row g-4 mb-5">
+      <!-- Card 1 -->
+      <div class="col-md-4">
+        <div class="kpi-card bg-white p-4 rounded-4 shadow-sm border-0 d-flex align-items-center gap-3">
+          <div class="kpi-icon bg-primary-soft text-primary-dark">
+            <i class="bi bi-inbox-fill"></i>
+          </div>
+          <div>
+            <h2 class="kpi-value m-0">{{ citasConfirmadas.length }}</h2>
+            <p class="kpi-label m-0 text-muted">Total Pendientes</p>
           </div>
         </div>
       </div>
-
-      <!-- Estadísticas -->
-      <div class="row g-3 mb-4">
-        <div class="col-md-4">
-          <div class="card border-0 shadow-sm bg-primary text-white">
-            <div class="card-body text-center">
-              <h3 class="display-6 fw-bold mb-0">{{ citasConfirmadas.length }}</h3>
-              <p class="mb-0">Total Confirmadas</p>
-            </div>
+      
+      <!-- Card 2 -->
+      <div class="col-md-4">
+        <div class="kpi-card bg-white p-4 rounded-4 shadow-sm border-0 d-flex align-items-center gap-3">
+          <div class="kpi-icon bg-success-soft text-success-dark">
+            <i class="bi bi-calendar-check-fill"></i>
           </div>
-        </div>
-        <div class="col-md-4">
-          <div class="card border-0 shadow-sm bg-success text-white">
-            <div class="card-body text-center">
-              <h3 class="display-6 fw-bold mb-0">{{ contarCitasHoy() }}</h3>
-              <p class="mb-0">Para Hoy</p>
-            </div>
-          </div>
-        </div>
-        <div class="col-md-4">
-          <div class="card border-0 shadow-sm bg-warning text-dark">
-            <div class="card-body text-center">
-              <h3 class="display-6 fw-bold mb-0">{{ citasFiltradas.length }}</h3>
-              <p class="mb-0">Filtradas</p>
-            </div>
+          <div>
+            <h2 class="kpi-value m-0">{{ contarCitasHoy() }}</h2>
+            <p class="kpi-label m-0 text-muted">Para Hoy</p>
           </div>
         </div>
       </div>
-
-      <!-- Loading -->
-      <div *ngIf="cargando" class="text-center py-5">
-        <div class="spinner-border text-primary" style="width: 3rem; height: 3rem;" role="status">
-          <span class="visually-hidden">Cargando...</span>
+      
+      <!-- Card 3 -->
+      <div class="col-md-4">
+        <div class="kpi-card bg-white p-4 rounded-4 shadow-sm border-0 d-flex align-items-center gap-3">
+          <div class="kpi-icon bg-accent-soft text-accent-dark">
+            <i class="bi bi-funnel-fill"></i>
+          </div>
+          <div>
+            <h2 class="kpi-value m-0">{{ citasFiltradas.length }}</h2>
+            <p class="kpi-label m-0 text-muted">En Vista</p>
+          </div>
         </div>
-        <p class="text-muted mt-3">Cargando citas...</p>
       </div>
+    </div>
 
-      <!-- Lista de citas -->
-      <div class="row mt-4" *ngIf="!cargando">
-        <div class="col-12 mb-3">
-          <h3 class="h5 fw-bold">
-            Citas Confirmadas
-            <span class="badge bg-primary">{{ citasFiltradas.length }}</span>
-          </h3>
+    <!-- 2. FILTROS (Estilo limpio unificado) -->
+    <div class="card border-0 shadow-sm rounded-4 mb-4">
+      <div class="card-body p-4">
+        <div class="row g-3">
+          <div class="col-md-3">
+            <label class="form-label fw-bold text-muted small">VETERINARIO</label>
+            <select class="form-select bg-light border-0" 
+                    [(ngModel)]="veterinarioSeleccionado" (change)="aplicarFiltros()">
+              <option *ngFor="let vet of veterinarios" [value]="vet.id">{{ vet.nombre }}</option>
+            </select>
+          </div>
+          <div class="col-md-3">
+            <label class="form-label fw-bold text-muted small">FECHA</label>
+            <input type="date" class="form-control bg-light border-0" 
+                   [(ngModel)]="fechaSeleccionada" (change)="aplicarFiltros()">
+          </div>
+          <div class="col-md-4">
+            <label class="form-label fw-bold text-muted small">BUSCAR</label>
+            <div class="input-group">
+              <span class="input-group-text bg-light border-0"><i class="bi bi-search text-muted"></i></span>
+              <input type="text" class="form-control bg-light border-0" 
+                     placeholder="ID, Motivo, Paciente..."
+                     [(ngModel)]="busquedaTexto" (input)="aplicarFiltros()">
+            </div>
+          </div>
+          <div class="col-md-2 d-flex align-items-end">
+            <button class="btn btn-outline-secondary w-100 fw-bold border-2" (click)="limpiarFiltros()">
+              Limpiar
+            </button>
+          </div>
         </div>
+      </div>
+    </div>
+
+    <!-- LOADING -->
+    <div *ngIf="cargando" class="text-center py-5">
+      <div class="spinner-border text-accent" role="status"></div>
+      <p class="mt-3 text-muted">Cargando citas...</p>
+    </div>
+
+    <!-- EMPTY STATE -->
+    <div *ngIf="!cargando && citasFiltradas.length === 0" class="text-center py-5">
+      <div class="card border-0 shadow-sm rounded-4 p-5 d-inline-block" style="min-width: 300px;">
+        <i class="bi bi-clipboard-check display-3 text-muted opacity-50 mb-3"></i>
+        <h4 class="text-dark fw-bold">Sin citas pendientes</h4>
+        <p class="text-muted mb-0">No hay registros con los filtros actuales.</p>
+      </div>
+    </div>
+
+    <!-- 3. GRID DE CITAS (Diseño Sólido y Claro) -->
+    <div class="row g-4" *ngIf="!cargando && citasFiltradas.length > 0">
+      
+      <div *ngFor="let cita of citasFiltradas" class="col-lg-6 col-xl-4">
         
-        <!-- Mensaje si no hay citas -->
-        <div *ngIf="citasFiltradas.length === 0" class="col-12">
-          <div class="card border-0 shadow-sm">
-            <div class="card-body text-center py-5">
-              <i class="bi bi-calendar-x display-1 text-muted"></i>
-              <h4 class="mt-3 text-muted">No hay citas confirmadas</h4>
-              <p class="text-muted">
-                No se encontraron citas confirmadas con los filtros seleccionados.
-              </p>
+        <!-- CARD DE CITA (Estática, sin hover-transform) -->
+        <div class="card h-100 border-0 shadow-sm rounded-4 cita-card-static">
+          
+          <!-- Encabezado Card -->
+          <div class="card-header bg-white border-bottom-0 p-4 pb-0 d-flex justify-content-between align-items-start">
+            <div>
+              <div class="d-flex align-items-center gap-2 mb-1">
+                <span class="badge rounded-pill bg-light text-dark border">
+                  {{ cita.hora_cita }}
+                </span>
+                <!-- Badge Próxima -->
+                <span *ngIf="esProxima(cita.fecha_cita, cita.hora_cita)" 
+                      class="badge rounded-pill bg-warning text-dark fw-bold">
+                  PRÓXIMA
+                </span>
+              </div>
+              <div class="text-muted small fw-bold mt-1">
+                {{ formatearFecha(cita.fecha_cita) | uppercase }}
+              </div>
+            </div>
+            <div class="text-end">
+              <span class="badge bg-success-subtle text-success border border-success-subtle">
+                CONFIRMADA
+              </span>
             </div>
           </div>
-        </div>
 
-        <!-- Cards de citas -->
-        <div *ngFor="let cita of citasFiltradas" class="col-lg-6 col-xl-4 mb-4">
-          <div class="card h-100 border-0 shadow-sm hover-card"
-               [class.border-warning]="esProxima(cita.fecha_cita, cita.hora_cita)"
-               [class.border-success]="esHoy(cita.fecha_cita)">
-            <div class="card-body p-4">
+          <!-- Cuerpo Card -->
+          <div class="card-body p-4 d-flex flex-column">
+            
+            <!-- Motivo -->
+            <h5 class="card-title fw-bold text-dark mb-4" style="min-height: 3rem;">
+              {{ cita.motivo }}
+            </h5>
+
+            <!-- BLOQUE DE ESTATUS DE PACIENTE (Claro y con texto) -->
+            <div class="patient-status-box mb-4 p-3 rounded-3 border"
+                 [ngClass]="cita.mascota_id ? 'status-registered' : 'status-new'">
               
-              <!-- Header -->
-              <div class="d-flex justify-content-between align-items-start mb-3">
+              <!-- Caso 1: Paciente Registrado -->
+              <div *ngIf="cita.mascota_id" class="d-flex align-items-center gap-3">
+                <div class="status-icon bg-white text-primary rounded-circle shadow-sm">
+                  <i class="bi bi-person-check-fill"></i>
+                </div>
                 <div>
-                  <span class="badge bg-success mb-2">
-                    <i class="bi bi-check-circle me-1"></i>
-                    Confirmada
-                  </span>
-                  <span *ngIf="esHoy(cita.fecha_cita)" class="badge bg-info ms-1">
-                    <i class="bi bi-calendar-event me-1"></i>
-                    HOY
-                  </span>
-                  <span *ngIf="esProxima(cita.fecha_cita, cita.hora_cita)" class="badge bg-warning text-dark ms-1">
-                    <i class="bi bi-clock me-1"></i>
-                    PRÓXIMA
-                  </span>
-                </div>
-                <div class="text-end">
-                  <h4 class="mb-0 fw-bold text-primary">{{ cita.hora_cita }}</h4>
-                  <small class="text-muted">Cita #{{ cita.id_cita }}</small>
+                  <span class="d-block text-primary fw-bold small">PACIENTE REGISTRADO</span>
+                  <span class="d-block text-dark fw-bold">ID: {{ cita.mascota_id }}</span>
                 </div>
               </div>
 
-              <!-- Información de la cita -->
-              <div class="mb-3">
-                <h5 class="fw-bold text-dark mb-2">{{ cita.motivo }}</h5>
-                
-                <div class="info-item mb-2">
-                  <i class="bi bi-calendar3 text-muted me-2"></i>
-                  <span class="small">{{ formatearFecha(cita.fecha_cita) }}</span>
+              <!-- Caso 2: Nuevo Ingreso (Sin ID) -->
+              <div *ngIf="!cita.mascota_id" class="d-flex align-items-center gap-3">
+                <div class="status-icon bg-white text-warning-dark rounded-circle shadow-sm">
+                  <i class="bi bi-person-plus-fill"></i>
                 </div>
-                
-                <div class="info-item mb-2">
-                  <i class="bi bi-person-fill text-muted me-2"></i>
-                  <span class="small">Cliente ID: {{ cita.cliente_id }}</span>
-                </div>
-                
-                <div class="info-item" *ngIf="cita.mascota_id">
-                  <i class="bi bi-heart-fill text-danger me-2"></i>
-                  <span class="small">Mascota ID: {{ cita.mascota_id }}</span>
-                </div>
-                
-                <div class="info-item" *ngIf="!cita.mascota_id">
-                  <i class="bi bi-plus-circle text-warning me-2"></i>
-                  <span class="small text-warning">Mascota Nueva</span>
+                <div>
+                  <span class="d-block text-warning-dark fw-bold small">NUEVO INGRESO</span>
+                  <span class="d-block text-dark small">Requiere crear expediente</span>
                 </div>
               </div>
 
-              <!-- Botón de acción -->
-              <div class="d-grid">
-                <button 
-                  class="btn btn-primary fw-semibold"
-                  (click)="atenderCita(cita)">
-                  <i class="bi bi-clipboard2-pulse me-2"></i>
-                  Atender Cita
-                </button>
-              </div>
             </div>
+
+            <!-- Datos extra -->
+             <div class="mt-auto">
+               <div class="d-flex align-items-center gap-2 text-muted small mb-1">
+                 <i class="bi bi-person-fill"></i>
+                 <span>Cliente ID: <strong>{{ cita.cliente_id }}</strong></span>
+               </div>
+               <div class="d-flex align-items-center gap-2 text-muted small">
+                 <i class="bi bi-hash"></i>
+                 <span>Cita Folio: <strong>{{ cita.id_cita }}</strong></span>
+               </div>
+             </div>
+
           </div>
+
+          <!-- Footer Botón -->
+          <div class="card-footer bg-white border-0 p-4 pt-0">
+            <button class="btn btn-primary-solid w-100 py-3 rounded-3 fw-bold"
+                    (click)="atenderCita(cita)">
+              ATENDER AHORA
+            </button>
+          </div>
+
         </div>
       </div>
 
     </div>
+
   </div>
 </div>
-
-<style>
-.hover-card {
-  transition: transform 0.2s, box-shadow 0.2s;
-}
-
-.hover-card:hover {
-  transform: translateY(-5px);
-  box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.15) !important;
-}
-
-.info-item {
-  display: flex;
-  align-items: center;
-}
-</style>

@@ -1,0 +1,126 @@
+// --- Variables Globales (Match con el resto) ---
+$color-primary: var(--color-primary, #FFD95A); // Amarillo
+$color-accent: var(--color-accent, #3EC1C9);   // Cian
+$text-dark: var(--text-dark, #333333);
+$bg-app: var(--bg-light, #FFFBF5);
+
+.agenda-container {
+  background-color: $bg-app;
+  min-height: 100vh;
+  font-family: 'Segoe UI', system-ui, sans-serif;
+}
+
+// --- Header (Copiado de Mis Citas) ---
+.icon-header-box {
+  width: 52px;
+  height: 52px;
+  background-color: $color-primary; // Fondo amarillo
+  color: $text-dark;
+  border-radius: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.6rem;
+  box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+  // Estático, sin hover
+}
+
+.titulo-principal {
+  color: $text-dark;
+  font-weight: 800;
+  letter-spacing: -0.5px;
+}
+
+// --- Alertas ---
+.alert-static {
+  font-size: 0.9rem;
+  &.bg-success-soft { background-color: #DCFCE7; color: #166534; }
+  &.bg-danger-soft { background-color: #FEE2E2; color: #991B1B; }
+  &.bg-info-soft { background-color: #E0F2FE; color: #075985; }
+}
+
+// --- KPI Cards (Métricas) ---
+// Diseño limpio, blanco, redondeado, igual que en Expedientes
+.kpi-card {
+  // Sombra suave estática
+}
+
+.kpi-icon {
+  width: 48px;
+  height: 48px;
+  border-radius: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.4rem;
+
+  &.bg-primary-soft { background-color: #FFF8E1; }
+  .text-primary-dark { color: #B45309; }
+
+  &.bg-success-soft { background-color: #D1FAE5; }
+  .text-success-dark { color: #047857; }
+
+  &.bg-accent-soft { background-color: #E0F7FA; }
+  .text-accent-dark { color: #0E7490; }
+}
+
+.kpi-value {
+  font-weight: 800;
+  color: $text-dark;
+  line-height: 1;
+}
+
+.kpi-label {
+  font-size: 0.9rem;
+  font-weight: 600;
+}
+
+// --- Tarjetas de Cita (Estáticas) ---
+.cita-card-static {
+  // Sin transition, sin transform. Sólida.
+  border: 1px solid rgba(0,0,0,0.03) !important;
+}
+
+// Bloque de Estatus del Paciente (El arreglo solicitado)
+.patient-status-box {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  
+  // Estilo "Registrado" (Azul Institucional suave)
+  &.status-registered {
+    background-color: #EFF6FF; // Azul muy claro
+    border-color: #DBEAFE !important;
+    .text-primary { color: #2563EB !important; } // Azul fuerte para texto
+  }
+
+  // Estilo "Nuevo" (Amarillo Institucional suave)
+  &.status-new {
+    background-color: #FFFBEB; // Amarillo muy claro
+    border-color: #FEF3C7 !important;
+    .text-warning-dark { color: #D97706 !important; } // Naranja/Amarillo oscuro
+  }
+}
+
+.status-icon {
+  width: 40px;
+  height: 40px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  font-size: 1.2rem;
+}
+
+// --- Botón de Acción ---
+.btn-primary-solid {
+  background-color: $color-primary; // #FFD95A
+  color: $text-dark;
+  border: none;
+  // Sin transición de movimiento
+
+}
+
+// Badges
+.bg-success-subtle { background-color: #DCFCE7 !important; }
+.text-success { color: #166534 !important; }

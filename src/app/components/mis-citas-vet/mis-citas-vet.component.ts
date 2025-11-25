@@ -90,3 +90,7 @@ atenderCita(cita: any) {
     return estados[estado] || 'bg-secondary';
   }
 }
+
+
+
+

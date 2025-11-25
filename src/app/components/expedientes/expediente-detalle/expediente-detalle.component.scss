@@ -1,0 +1,241 @@
+// --- Variables de Marca ---
+.agenda-container {
+  background-color: var(--bg-light, #FFFBF5); // Fondo crema suave
+  min-height: 100vh;
+  font-family: 'Segoe UI', system-ui, sans-serif;
+}
+
+$color-primary: var(--color-primary, #FFD95A);
+$color-accent: var(--color-accent, #3EC1C9);
+$text-dark: var(--text-dark, #333333);
+
+// --- Navegación ---
+.btn-back {
+  color: #6B7280;
+  text-decoration: none;
+  font-weight: 600;
+  font-size: 0.95rem;
+  transition: color 0.2s;
+  
+  &:hover {
+    color: $color-accent;
+  }
+}
+
+// --- Ficha de Identificación (Card Superior) ---
+.shadow-custom {
+  box-shadow: 0 10px 30px -5px rgba(0, 0, 0, 0.08); // Sombra elegante para destacar
+}
+
+.bg-light-panel {
+  background-color: #FAFAFA; // Un gris casi blanco para diferenciar la zona del cliente
+}
+
+.border-start-lg {
+  @media (min-width: 992px) {
+    border-left: 1px solid #E5E7EB;
+  }
+}
+
+// Avatar
+.patient-avatar-large {
+  width: 100px;
+  height: 100px;
+  background-color: #FFF8E1; // Amarillo muy claro
+  color: #F59E0B;
+  border-radius: 20px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 3rem;
+  flex-shrink: 0;
+  border: 2px solid white;
+}
+
+.bg-accent-soft {
+  background-color: #E0F7FA;
+  color: #00838F;
+  font-weight: 700;
+  font-size: 0.8rem;
+  padding: 0.4em 0.8em;
+}
+
+// Estadísticas del Paciente
+.stats-grid {
+  display: flex;
+  gap: 2rem;
+  margin-top: 1rem;
+  
+  .stat-item {
+    display: flex;
+    flex-direction: column;
+    
+    .label {
+      font-size: 0.75rem;
+      text-transform: uppercase;
+      color: #9CA3AF;
+      font-weight: 700;
+      letter-spacing: 0.5px;
+    }
+    
+    .value {
+      font-size: 1.25rem;
+      font-weight: 600;
+      color: $text-dark;
+      
+      small {
+        font-size: 0.8rem;
+        color: #6B7280;
+      }
+    }
+  }
+}
+
+// Info Propietario
+.section-title {
+  font-size: 0.9rem;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  color: #9CA3AF;
+  font-weight: 700;
+}
+
+.icon-circle {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  background-color: white;
+  color: $color-accent;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: 1px solid #E5E7EB;
+  flex-shrink: 0;
+}
+
+// --- Tarjetas de Consulta ---
+.consultation-card {
+  transition: transform 0.2s, box-shadow 0.2s;
+  border: 1px solid rgba(0,0,0,0.03) !important;
+  
+  &:hover {
+    // Sombra sutil al hover, sin movimiento excesivo
+    box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.06) !important; 
+  }
+}
+
+// Badge de Fecha
+.date-badge {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  background-color: $color-accent;
+  color: white;
+  padding: 0.5rem 0.8rem;
+  border-radius: 12px;
+  min-width: 70px;
+  line-height: 1;
+  
+  .day {
+    font-size: 1.5rem;
+    font-weight: 800;
+  }
+  .month {
+    font-size: 0.75rem;
+    font-weight: 700;
+  }
+  .year {
+    font-size: 0.7rem;
+    opacity: 0.9;
+  }
+}
+
+// Contenedor Amarillo de Resumen
+.bg-light-yellow {
+  background-color: #FFFCF2; // Un crema más amarillo para destacar el motivo
+  border: 1px solid #FEF3C7;
+}
+
+.border-start-md {
+  @media (min-width: 768px) {
+    border-left: 2px solid rgba(0,0,0,0.05);
+  }
+}
+
+// Cajas Clínicas (Diagnostico, Tratamiento, etc)
+.clinical-box {
+  background-color: #F8F9FA;
+  border-radius: 12px;
+  padding: 1.25rem;
+  border: 1px solid #F1F3F5;
+}
+
+.box-title {
+  font-weight: 700;
+  margin-bottom: 1rem;
+  display: flex;
+  align-items: center;
+  font-size: 0.95rem;
+}
+
+.clinical-list {
+  padding-left: 1.2rem;
+  margin-bottom: 0;
+  
+  li {
+    margin-bottom: 0.5rem;
+    color: #4B5563;
+    
+    &:last-child { margin-bottom: 0; }
+  }
+}
+
+// --- Galería de Fotos ---
+.gallery-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+  gap: 1rem;
+  
+  .gallery-item {
+    aspect-ratio: 1; // Cuadrados perfectos
+    border-radius: 12px;
+    overflow: hidden;
+    border: 1px solid #E5E7EB;
+    
+    img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      transition: transform 0.3s ease;
+      
+      &:hover {
+        transform: scale(1.05);
+      }
+    }
+  }
+}
+
+// --- Acordeón Historial ---
+.history-details {
+  summary {
+    list-style: none;
+    cursor: pointer;
+    font-weight: 600;
+    
+    &::-webkit-details-marker {
+      display: none;
+    }
+    
+    &:hover {
+      background-color: #F3F4F6;
+    }
+  }
+  
+  &[open] summary .bi-chevron-down {
+    transform: rotate(180deg);
+  }
+  
+  .bi-chevron-down {
+    transition: transform 0.3s;
+  }
+}

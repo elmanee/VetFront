@@ -1,23 +1,50 @@
-<div class="container py-4">
+<div class="clinical-container py-4">
+  
+  <!-- ==========================================
+       HEADER DE CONTEXTO (Banner del Paciente)
+       ========================================== -->
+  <div class="patient-banner card border-0 shadow-sm rounded-4 mb-4" *ngIf="cita">
+    <div class="card-body p-4">
+      <div class="row align-items-center">
+        <!-- Avatar y Nombre -->
+        <div class="col-md-5 d-flex align-items-center gap-3 border-end-md">
+          <div class="avatar-box">
+             <i class="bi bi-gitlab fs-2" *ngIf="cita.animal_nombre === 'Gato'"></i> <!-- Ejemplo lógica -->
+             <i class="bi bi-heart-pulse-fill fs-2" *ngIf="cita.animal_nombre !== 'Gato'"></i>
+          </div>
+          <div>
+            <span class="badge bg-warning-subtle text-warning-emphasis mb-1">EN CONSULTA</span>
+            <h3 class="mb-0 fw-bold text-dark">{{ cita.mascota_nombre || 'Paciente Nuevo' }}</h3>
+            <p class="text-muted mb-0 small">Propietario: {{ cita.cliente_nombre }}</p>
+          </div>
+        </div>
 
-  <!-- Título principal -->
-  <h2 class="fw-bold text-primary-si mb-2">Atender Cita</h2>
+        <!-- Detalles Cita -->
+        <div class="col-md-4 py-3 py-md-0 border-end-md ps-md-4">
+          <label class="info-label">MOTIVO DE VISITA</label>
+          <p class="info-value mb-0 text-truncate">{{ cita.motivo }}</p>
+        </div>
 
-  <p class="text-muted mb-4">
-    {{ cita?.cliente_nombre }} · {{ cita?.animal_nombre }} ·
-    {{ cita?.fecha_cita | date:'mediumDate' }} · {{ cita?.hora_cita }}
-  </p>
-
-  <div *ngIf="cargandoDatos" class="text-center py-5">
-    <div class="spinner-border text-warning" role="status" style="width: 3rem; height: 3rem;">
-      <span class="visually-hidden">Cargando...</span>
+        <!-- Fecha/Hora -->
+        <div class="col-md-3 ps-md-4 text-md-end">
+           <div class="d-inline-block text-start">
+             <label class="info-label">FECHA</label>
+             <p class="info-value mb-0">
+               {{ cita.fecha_cita | date:'dd MMM yyyy' }} <span class="text-muted mx-1">|</span> {{ cita.hora_cita }}
+             </p>
+           </div>
+        </div>
+      </div>
     </div>
-    <p class="mt-3 text-muted fw-semibold">
-      <i class="bi bi-hourglass-split me-2"></i>
-      Cargando información del paciente...
-    </p>
   </div>
 
+  <!-- Loading -->
+  <div *ngIf="cargandoDatos" class="text-center py-5 bg-white rounded-4 shadow-sm">
+    <div class="spinner-border text-primary-custom" role="status" style="width: 3rem; height: 3rem;"></div>
+    <p class="mt-3 text-muted fw-bold">Preparando expediente clínico...</p>
+  </div>
+
+  <!-- MODAL LISTA DE EXPEDIENTES -->
   <app-modal-expedientes-lista
     *ngIf="mostrarModalExpedientes"
     [paciente]="paciente"
@@ -27,109 +54,93 @@
     (cerrarModal)="onCerrarModal()">
   </app-modal-expedientes-lista>
 
-  <div *ngIf="mostrarCrearPaciente && !cargandoDatos" class="card shadow-sm border-0 rounded-4 p-4 mb-4">
-    <h4 class="fw-semibold text-secondary-si mb-3">
-      <i class="bi bi-plus-circle me-2"></i>
-      Registrar paciente
-    </h4>
-
-    <app-crear-paciente
-      [cita]="cita"
-      (pacienteCreado)="onPacienteCreado($event)">
-    </app-crear-paciente>
+  <!-- CREAR PACIENTE (Si no existe) -->
+  <div *ngIf="mostrarCrearPaciente && !cargandoDatos" class="action-card card shadow-sm border-0 rounded-4 p-5 mb-4 text-center">
+    <div class="mx-auto mb-3 icon-circle-lg bg-warning-subtle text-warning-dark">
+      <i class="bi bi-person-plus-fill"></i>
+    </div>
+    <h3 class="fw-bold text-dark">Paciente Nuevo Detectado</h3>
+    <p class="text-muted mb-4">Antes de iniciar la consulta, necesitamos crear el perfil básico del paciente.</p>
+    
+    <div class="text-start mx-auto" style="max-width: 800px;">
+       <app-crear-paciente
+         [cita]="cita"
+         (pacienteCreado)="onPacienteCreado($event)">
+       </app-crear-paciente>
+    </div>
   </div>
 
-  <div *ngIf="mostrarTabs && !cargandoDatos" class="card shadow-sm border-0 rounded-4 p-0 overflow-hidden">
+  <!-- ==========================================
+       ÁREA DE TRABAJO (TABS)
+       ========================================== -->
+  <div *ngIf="mostrarTabs && !cargandoDatos" class="clinical-workspace card shadow-sm border-0 rounded-4 overflow-hidden">
 
-    <div *ngIf="modoEdicion" class="alert alert-info mb-0 rounded-0 text-center border-0"
-         style="background-color: #D1ECF1; border-bottom: 3px solid #0C5460 !important;">
-      <i class="bi bi-pencil-square me-2"></i>
-      <strong>Modo Edición:</strong> Estás trabajando con un expediente existente
-      <span class="badge bg-primary ms-2">Expediente #{{ expediente?.id_expediente }}</span>
+    <!-- Alerta de Edición -->
+    <div *ngIf="modoEdicion" class="edit-mode-bar px-4 py-2 d-flex align-items-center gap-2">
+      <i class="bi bi-pencil-fill"></i>
+      <span class="fw-bold small text-uppercase">Modo Edición Activo</span>
+      <span class="ms-auto font-monospace small">Expediente #{{ expediente?.id_expediente }}</span>
     </div>
 
-    <!-- Encabezado de tabs -->
-    <ul class="nav nav-tabs px-3 pt-3 bg-light">
+    <!-- Navegación de Tabs (Estilo Folder) -->
+    <div class="tabs-header bg-light border-bottom px-3 pt-3">
+      <ul class="nav nav-tabs border-0 gap-2">
+        
+        <li class="nav-item">
+          <button class="nav-link" [class.active]="tabActiva === 'consulta'"
+                  (click)="cambiarTab('consulta')" [disabled]="!tabs.consulta">
+            <span class="step-text">Signos y Anamnesis</span>
+          </button>
+        </li>
 
-      <!-- TAB CONSULTA -->
-      <li class="nav-item">
-        <button class="nav-link active"
-                id="btn_consulta"
-                data-bs-toggle="tab"
-                data-bs-target="#consultaTab"
-                [disabled]="!tabs.consulta">
-          <i class="bi bi-clipboard-pulse me-1"></i>
-          Consulta
-        </button>
-      </li>
+        <li class="nav-item">
+          <button class="nav-link" [class.active]="tabActiva === 'diagnosticos'"
+                  (click)="cambiarTab('diagnosticos')" [disabled]="!tabs.diagnosticos">
+            <span class="step-text">Diagnóstico</span>
+          </button>
+        </li>
 
-      <!-- TAB DIAGNÓSTICOS -->
-      <li class="nav-item">
-        <button class="nav-link"
-                id="btn_diagnosticos"
-                data-bs-toggle="tab"
-                data-bs-target="#diagTab"
-                [disabled]="!tabs.diagnosticos">
-          <i class="bi bi-file-medical me-1"></i>
-          Diagnósticos
-        </button>
-      </li>
+        <li class="nav-item">
+          <button class="nav-link" [class.active]="tabActiva === 'tratamientos'"
+                  (click)="cambiarTab('tratamientos')" [disabled]="!tabs.tratamientos">
+            <span class="step-text">Tratamiento</span>
+          </button>
+        </li>
 
-      <!-- TAB TRATAMIENTOS -->
-      <li class="nav-item">
-        <button class="nav-link"
-                id="btn_tratamientos"
-                data-bs-toggle="tab"
-                data-bs-target="#tratTab"
-                [disabled]="!tabs.tratamientos">
-          <i class="bi bi-prescription2 me-1"></i>
-          Tratamientos
-        </button>
-      </li>
+        <li class="nav-item">
+          <button class="nav-link" [class.active]="tabActiva === 'vacunas'"
+                  (click)="cambiarTab('vacunas')" [disabled]="!tabs.vacunas">
+            <span class="step-text">Vacunas</span>
+          </button>
+        </li>
+        
+        <!-- Dropdown para extras en pantallas chicas o pestañas finales -->
+        <li class="nav-item d-none d-lg-block">
+          <button class="nav-link" [class.active]="tabActiva === 'procedimientos'"
+                  (click)="cambiarTab('procedimientos')" [disabled]="!tabs.procedimientos">
+            <span class="step-text">Procedimientos</span>
+          </button>
+        </li>
 
-      <!-- TAB VACUNAS -->
-      <li class="nav-item">
-        <button class="nav-link"
-                id="btn_vacunas"
-                data-bs-toggle="tab"
-                data-bs-target="#vacTab"
-                [disabled]="!tabs.vacunas">
-          <i class="bi bi-shield-check me-1"></i>
-          Vacunas
-        </button>
-      </li>
+        <li class="nav-item d-none d-lg-block">
+          <button class="nav-link" [class.active]="tabActiva === 'imagenes'"
+                  (click)="cambiarTab('imagenes')" [disabled]="!tabs.imagenes">
+            <span class="step-text">Evidencia</span>
+          </button>
+        </li>
 
-      <!-- TAB PROCEDIMIENTOS -->
-      <li class="nav-item">
-        <button class="nav-link"
-                id="btn_procedimientos"
-                data-bs-toggle="tab"
-                data-bs-target="#procTab"
-                [disabled]="!tabs.procedimientos">
-          <i class="bi bi-tools me-1"></i>
-          Procedimientos
-        </button>
-      </li>
+      </ul>
+    </div>
 
-      <!-- TAB IMÁGENES -->
-      <li class="nav-item">
-        <button class="nav-link"
-                id="btn_imagenes"
-                data-bs-toggle="tab"
-                data-bs-target="#imgTab"
-                [disabled]="!tabs.imagenes">
-          <i class="bi bi-images me-1"></i>
-          Imágenes
-        </button>
-      </li>
+    <!-- Contenido dinámico -->
+    <div class="tab-content bg-white p-4 p-lg-5">
 
-    </ul>
-
-    <!-- Contenido de tabs -->
-    <div class="tab-content p-4">
-
-      <!-- TAB CONSULTA -->
-      <div class="tab-pane fade show active" id="consultaTab">
+      <!-- TAB 1: CONSULTA -->
+      <div class="tab-pane fade show active" *ngIf="tabActiva === 'consulta'">
+        <div class="section-guide mb-4">
+          <h5 class="guide-title text-primary-custom">Evaluación Inicial</h5>
+          <p class="guide-subtitle text-muted">Registre los signos vitales actuales y la descripción detallada del problema.</p>
+        </div>
         <app-tab-consulta
           [cita]="cita"
           [expediente]="expediente"
@@ -139,94 +150,79 @@
         </app-tab-consulta>
       </div>
 
-      <!-- TAB DIAGNÓSTICOS -->
-      <div class="tab-pane fade" id="diagTab">
-        <div *ngIf="!consulta" class="alert alert-warning">
-          <i class="bi bi-exclamation-triangle me-2"></i>
-          Primero debes registrar la consulta.
+      <!-- TAB 2: DIAGNÓSTICOS -->
+      <div class="tab-pane fade show active" *ngIf="tabActiva === 'diagnosticos'">
+        <div class="section-guide mb-4">
+          <h5 class="guide-title text-primary-custom">Dictamen Médico</h5>
+          <p class="guide-subtitle text-muted">Añada diagnósticos presuntivos o definitivos basados en la evaluación.</p>
         </div>
-
+        
+        <div *ngIf="!consulta" class="alert alert-warning-custom">
+          <i class="bi bi-lock-fill me-2"></i>Complete la evaluación inicial para desbloquear esta sección.
+        </div>
         <div *ngIf="consulta">
-          <app-tab-diagnosticos
-            [consulta]="consulta"
-            [modoEdicion]="modoEdicion"
-            (guardado)="goToNextTab()">
-          </app-tab-diagnosticos>
+          <app-tab-diagnosticos [consulta]="consulta" [modoEdicion]="modoEdicion" (guardado)="goToNextTab()"></app-tab-diagnosticos>
         </div>
       </div>
 
-      <!-- TAB TRATAMIENTOS -->
-      <div class="tab-pane fade" id="tratTab">
-        <div *ngIf="!consulta" class="alert alert-warning">
-          <i class="bi bi-exclamation-triangle me-2"></i>
-          Primero debes registrar la consulta.
+      <!-- TAB 3: TRATAMIENTOS -->
+      <div class="tab-pane fade show active" *ngIf="tabActiva === 'tratamientos'">
+        <div class="section-guide mb-4">
+          <h5 class="guide-title text-primary-custom">Plan Terapéutico</h5>
+          <p class="guide-subtitle text-muted">Recete medicamentos y establezca la frecuencia de administración.</p>
         </div>
-
+        
+        <div *ngIf="!consulta" class="alert alert-warning-custom"><i class="bi bi-lock-fill me-2"></i>Sección bloqueada.</div>
         <div *ngIf="consulta">
-          <app-tab-tratamientos
-            [consulta]="consulta"
-            [modoEdicion]="modoEdicion"
-            (guardado)="goToNextTab()">
-          </app-tab-tratamientos>
+          <app-tab-tratamientos [consulta]="consulta" [modoEdicion]="modoEdicion" (guardado)="goToNextTab()"></app-tab-tratamientos>
         </div>
       </div>
 
-      <!-- TAB VACUNAS -->
-      <div class="tab-pane fade" id="vacTab">
-        <div *ngIf="!consulta" class="alert alert-warning">
-          <i class="bi bi-exclamation-triangle me-2"></i>
-          Primero debes registrar la consulta.
+      <!-- TAB 4: VACUNAS -->
+      <div class="tab-pane fade show active" *ngIf="tabActiva === 'vacunas'">
+        <div class="section-guide mb-4">
+           <h5 class="guide-title text-primary-custom">Inmunización</h5>
+           <p class="guide-subtitle text-muted">Registre aplicación de biológicos si aplica en esta visita.</p>
         </div>
-
         <div *ngIf="consulta">
-          <app-tab-vacunas
-            [consulta]="consulta"
-            [modoEdicion]="modoEdicion"
-            (guardado)="goToNextTab()">
-          </app-tab-vacunas>
+          <app-tab-vacunas [consulta]="consulta" [modoEdicion]="modoEdicion" (guardado)="goToNextTab()"></app-tab-vacunas>
         </div>
       </div>
 
-      <!-- TAB PROCEDIMIENTOS -->
-      <div class="tab-pane fade" id="procTab">
-        <div *ngIf="!consulta" class="alert alert-warning">
-          <i class="bi bi-exclamation-triangle me-2"></i>
-          Primero debes registrar la consulta.
+      <!-- TAB 5: PROCEDIMIENTOS -->
+      <div class="tab-pane fade show active" *ngIf="tabActiva === 'procedimientos'">
+         <div class="section-guide mb-4">
+           <h5 class="guide-title text-primary-custom">Intervenciones</h5>
+           <p class="guide-subtitle text-muted">Cirugías menores, curaciones o procedimientos realizados.</p>
         </div>
-
         <div *ngIf="consulta">
-          <app-tab-procedimientos
-            [consulta]="consulta"
-            [modoEdicion]="modoEdicion"
-            (guardado)="goToNextTab()">
-          </app-tab-procedimientos>
+          <app-tab-procedimientos [consulta]="consulta" [modoEdicion]="modoEdicion" (guardado)="goToNextTab()"></app-tab-procedimientos>
         </div>
       </div>
 
-      <!-- TAB IMÁGENES -->
-      <div class="tab-pane fade" id="imgTab">
-        <div *ngIf="!consulta" class="alert alert-warning">
-          <i class="bi bi-exclamation-triangle me-2"></i>
-          Primero debes registrar la consulta.
+      <!-- TAB 6: IMÁGENES -->
+      <div class="tab-pane fade show active" *ngIf="tabActiva === 'imagenes'">
+        <div class="section-guide mb-4">
+           <h5 class="guide-title text-primary-custom">Evidencia Digital</h5>
+           <p class="guide-subtitle text-muted">Adjunte fotografías, radiografías o resultados de laboratorio.</p>
         </div>
-
         <div *ngIf="consulta">
-          <app-tab-imagenes
-            [consulta]="consulta"
-            [modoEdicion]="modoEdicion"
-            (guardado)="goToNextTab()">
-          </app-tab-imagenes>
+          <app-tab-imagenes [consulta]="consulta" [modoEdicion]="modoEdicion" (guardado)="goToNextTab()"></app-tab-imagenes>
         </div>
       </div>
 
     </div>
   </div>
 
-  <!-- BOTÓN FINALIZAR ATENCIÓN -->
-  <div class="text-end mt-3" *ngIf="consulta && !cargandoDatos">
-    <button class="btn btn-success px-4 shadow" (click)="finalizarAtencion()">
-      <i class="bi bi-check-circle me-2"></i>
-      Finalizar Atención
+  <!-- FOOTER DE ACCIÓN (Sticky Bottom opcional o estático) -->
+  <div class="form-actions mt-4 d-flex justify-content-between align-items-center" *ngIf="consulta && !cargandoDatos">
+    <button class="btn btn-link text-muted text-decoration-none" (click)="volver()">
+      <i class="bi bi-x-circle me-1"></i> Cancelar / Salir
+    </button>
+    
+    <button class="btn btn-finish px-5 py-3 rounded-pill fw-bold shadow-lg" (click)="finalizarAtencion()">
+      <i class="bi bi-check-circle-fill me-2"></i>
+      GUARDAR Y FINALIZAR CONSULTA
     </button>
   </div>
 

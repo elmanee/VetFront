@@ -1,45 +1,213 @@
-.cita-card {
-  transition: all 0.3s ease;
-  
-  &:hover {
-    transform: translateY(-5px);
-    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1) !important;
-  }
+// Importamos tus variables globales implícitamente al usarlas con var()
+// No necesitamos redefinirlas si ya están en styles.scss, pero usamos fallbacks por seguridad.
+
+.agenda-container {
+  background-color: var(--bg-light, #FFFBF5);
+  min-height: 100vh;
 }
 
-.cita-info {
-  .info-row {
-    display: flex;
-    align-items: center;
-    gap: 12px;
-    padding: 8px 0;
-    border-bottom: 1px solid var(--border-color);
-    
-    &:last-child {
-      border-bottom: none;
-    }
-    
-    i {
-      font-size: 1.1rem;
-      width: 20px;
-      text-align: center;
-    }
-    
-    span {
-      flex: 1;
-      font-size: 0.95rem;
-    }
-  }
+// --- Header ---
+.icon-header-box {
+  width: 48px;
+  height: 48px;
+  background-color: var(--color-primary, #FFD95A);
+  color: var(--text-dark, #333333);
+  border-radius: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.5rem;
+  box-shadow: var(--shadow-sm, 0 2px 4px rgba(0,0,0,0.05));
 }
 
-.badge {
-  padding: 0.5rem 1rem;
+.titulo-principal {
+  color: var(--text-dark, #333333);
+  font-weight: 800; // Letra gruesa para pantalla grande
+  letter-spacing: -0.5px;
+}
+
+.text-accent {
+  color: var(--color-accent, #3EC1C9) !important;
+}
+
+.text-primary-soft {
+  color: rgba(255, 217, 90, 0.5);
+}
+
+// --- Botones Específicos ---
+.btn-outline-accent {
+  color: #2c8d94; 
+  border: 2px solid var(--color-accent, #3EC1C9);
+  background: transparent;
   font-weight: 600;
-  font-size: 0.8rem;
+  border-radius: 10px;
+
+  &:hover {
+    background: var(--color-accent, #3EC1C9);
+    color: white;
+  }
 }
 
-.btn-primary-si:disabled {
-  opacity: 0.6;
-  cursor: not-allowed;
-  transform: none !important;
+.btn-primary-si {
+  background: var(--color-primary); 
+  color: var(--text-dark);
+  font-size: 1.1rem; 
+  border-radius: 10px;
+  font-weight: 600;
+  box-shadow: var(--shadow-lg);
+  &:hover {
+    background: var(--color-secondary);
+    border-color: var(--color-secondary);
+    color: var(--text-dark);
+  }
+  
+  &:disabled {
+    background-color: #E0E0E0;
+    border-color: #E0E0E0;
+    color: #9E9E9E;
+    box-shadow: none;
+    cursor: not-allowed;
+    transform: none; // Aseguramos que no se mueva en disabled tampoco
+  }
+}
+
+// --- Empty State ---
+.empty-state-card {
+  background: white;
+  border-radius: 20px;
+  border: 2px dashed rgba(0,0,0,0.05);
+}
+
+// --- Timeline Layout ---
+.agenda-timeline {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem; // Espacio entre citas
+  max-width: 1000px;
+  margin: 0 auto;
+}
+
+.agenda-item {
+  display: flex;
+  align-items: stretch; // Para que la altura se ajuste
+  gap: 20px;
+
+  @media (max-width: 768px) {
+    flex-direction: column;
+    gap: 10px;
+  }
+}
+
+// 1. Columna de Tiempo
+.time-column {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-start;
+  min-width: 90px;
+  padding-top: 10px;
+
+  @media (max-width: 768px) {
+    flex-direction: row;
+    align-items: baseline;
+    gap: 10px;
+    padding-top: 0;
+  }
+}
+
+.time-box {
+  text-align: center;
+  line-height: 1;
+  
+  .hour {
+    font-size: 1.8rem;
+    font-weight: 800;
+    color: var(--text-dark, #333333);
+    display: block;
+  }
+  
+  .meridiem {
+    font-size: 0.7rem;
+    font-weight: 700;
+    color: #9CA3AF;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+  }
+}
+
+.date-label {
+  margin-top: 5px;
+  font-size: 0.85rem;
+  font-weight: 500;
+  text-transform: capitalize;
+}
+
+// 2. Tarjeta de Cita
+.cita-card {
+  border: none; // Quitamos borde por defecto de bootstrap
+  background: white;
+  border-radius: 16px; // Más redondeado = más amigable
+  box-shadow: var(--shadow-sm); // Sombra sutil global
+  
+  border-left: 6px solid transparent; // Preparado para borde de color
+  
+
+  &:hover {
+    // Solo aumentamos la sombra sutilmente, sin mover la tarjeta
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08); 
+  }
+}
+
+.pet-avatar {
+  width: 50px;
+  height: 50px;
+  background-color: #E0F7FA; // Un cyan muy clarito (basado en acento)
+  color: var(--color-accent, #3EC1C9);
+  border-radius: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.5rem;
+}
+
+// Ajustes responsive para el borde separador
+.border-start-md {
+  @media (min-width: 768px) {
+    border-left: 1px solid rgba(0,0,0,0.08);
+  }
+}
+
+.text-truncate-2 {
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+// --- Badges Personalizados ---
+// Sobreescribimos ligeramente los colores para que combinen con la paleta pastel/cálida
+.badge {
+  font-weight: 600;
+  letter-spacing: 0.5px;
+  padding: 0.5em 0.8em;
+  
+  &.bg-success { // Confirmada
+    background-color: #D1FAE5 !important; // Verde pastel
+    color: #065F46 !important; // Texto verde oscuro
+  }
+  
+  &.bg-warning { // Pendiente
+    background-color: #FEF3C7 !important; // Amarillo pastel
+    color: #92400E !important; // Naranja oscuro
+  }
+  
+  &.bg-danger { // Cancelada
+    background-color: #FEE2E2 !important; 
+    color: #991B1B !important;
+  }
+  
+  &.bg-secondary {
+    background-color: #F3F4F6 !important;
+    color: #374151 !important;
+  }
 }
