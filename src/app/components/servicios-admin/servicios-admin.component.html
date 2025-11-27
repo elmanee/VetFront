@@ -1,0 +1,60 @@
+<div class="container mt-4">
+  <h2>Gestión de Servicios (Facade Pattern)</h2>
+
+  <div class="card p-3 mb-4">
+    <h4>{{ editando ? 'Editar Servicio' : 'Nuevo Servicio' }}</h4>
+    <form (ngSubmit)="guardarServicio()">
+      <div class="row">
+        <div class="col-md-4">
+          <label>Título</label>
+          <input type="text" class="form-control" [(ngModel)]="formServicio.titulo" name="titulo" required>
+        </div>
+        <div class="col-md-4">
+          <label>URL Imagen</label>
+          <input type="text" class="form-control" [(ngModel)]="formServicio.imagen_url" name="imagen" placeholder="https://...">
+        </div>
+        <div class="col-md-2">
+          <label>Precio</label>
+          <input type="number" class="form-control" [(ngModel)]="formServicio.precio" name="precio">
+        </div>
+        <div class="col-md-2 mt-4">
+            <div class="form-check form-switch">
+                <input class="form-check-input" type="checkbox" [(ngModel)]="formServicio.activo" name="activo" id="activoCheck">
+                <label class="form-check-label" for="activoCheck">Activo</label>
+            </div>
+        </div>
+      </div>
+      <div class="row mt-2">
+          <div class="col-12">
+            <label>Descripción</label>
+            <textarea class="form-control" [(ngModel)]="formServicio.descripcion" name="descripcion" rows="2"></textarea>
+          </div>
+      </div>
+      
+      <div class="mt-3">
+        <button type="submit" class="btn btn-primary me-2">{{ editando ? 'Actualizar' : 'Guardar' }}</button>
+        <button type="button" class="btn btn-secondary" *ngIf="editando" (click)="resetForm()">Cancelar</button>
+      </div>
+    </form>
+  </div>
+
+  <div class="row">
+    <div class="col-md-4 mb-3" *ngFor="let servicio of servicios$ | async">
+      <div class="card h-100" [class.border-success]="servicio.activo" [class.border-danger]="!servicio.activo">
+        <img [src]="servicio.imagen_url || 'assets/logos/lgoo.png'" class="card-img-top" alt="..." style="height: 200px; object-fit: cover;">
+        <div class="card-body">
+          <h5 class="card-title">{{ servicio.titulo }}</h5>
+          <p class="card-text">{{ servicio.descripcion }}</p>
+          <p class="fw-bold text-primary">${{ servicio.precio }}</p>
+          <span class="badge" [ngClass]="servicio.activo ? 'bg-success' : 'bg-danger'">
+              {{ servicio.activo ? 'Visible al público' : 'Oculto' }}
+          </span>
+        </div>
+        <div class="card-footer">
+          <button class="btn btn-sm btn-warning me-2" (click)="cargarParaEditar(servicio)">Editar</button>
+          <button class="btn btn-sm btn-danger" (click)="borrar(servicio.id!)">Eliminar</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
