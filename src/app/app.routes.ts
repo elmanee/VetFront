@@ -18,6 +18,8 @@ import { LayoutVeterinarioComponent } from './shared/veterinario/layout-veterina
 import { ExpedientesComponent } from './components/expedientes/expedientes.component';
 import { ExpedientesFormComponent } from './components/expedientes-form/expedientes-form.component';
 import { ExpedienteDetalleComponent } from './components/expedientes/expediente-detalle/expediente-detalle.component';
+import { ServiciosPublicosComponent } from './components/home/servicios-publicos/servicios-publicos.component';
+import { ServiciosAdminComponent } from './components/servicios-admin/servicios-admin.component';
 
 export const routes: Routes = [
   // Rutas públicas
@@ -63,6 +65,11 @@ export const routes: Routes = [
     path: 'citas-atender',
     component: CitasAtenderComponent,
     title: 'Citas por Atender | Pet Health+'
+  },
+      {
+    path: 'servicios-morralito',
+    component: ServiciosPublicosComponent,
+    title: 'Servicios Públicos'
   },
 
   // // RQF02 - Expedientes Médicos
@@ -174,6 +181,9 @@ export const routes: Routes = [
         component: MovimientosComponent,
         title: 'Moviemintos | El Morralito'
       },
+       { path: 'servicios', 
+        component: ServiciosAdminComponent
+       },
     ]
   },
 

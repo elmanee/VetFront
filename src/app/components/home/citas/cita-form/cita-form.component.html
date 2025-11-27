@@ -1,8 +1,6 @@
-<!-- /home/agus/Documentos/VetHealth/VetFront/src/app/home/citas/cita-form/cita-form.component.html -->
 <div class="container-fluid min-vh-100 bg-light py-5">
 
   <div class="go-home-button">
-    <!-- El botón ahora llama a 'manejarRetroceso()' para la lógica inteligente (Dashboard, Paso 1 o Paso 2) -->
     <button type="button" class="btn btn-circle-lg btn-warning shadow-lg" (click)="manejarRetroceso()">
       <i class="bi bi-arrow-left-short"></i>
     </button>
@@ -11,7 +9,6 @@
 
   <div class="row justify-content-center">
     <div class="col-12 col-lg-10 col-xl-8">
-
       <!-- Encabezado principal -->
       <div class="text-center mb-5">
         <h1 class="display-5 fw-bold text-dark mb-3">
@@ -22,7 +19,6 @@
         </p>
       </div>
 
-      <!-- Indicador de pasos (Paso 1: Validar Cliente, Paso 2: Agendar Cita/Mascota) -->
       <div class="progress-steps mb-5">
         <div class="row g-0">
           <div class="col-6">
@@ -37,7 +33,6 @@
               <div class="step-text">Agendar Cita</div>
             </div>
           </div>
-          <!-- Nota: El paso 3 (Confirmación) no tiene indicador aquí, ya que se maneja con el SweetAlert final -->
         </div>
       </div>
 
@@ -46,7 +41,7 @@
       <!-- PASO 1: Validar Cliente -->
       <div *ngIf="paso === 1" class="card border-0 shadow-sm">
         <div class="card-body p-4 p-md-5">
-          <h3 class="h4 fw-bold text-dark mb-4">Paso 1: Ingresa tu correo electrónico</h3>
+          <h3 class="h4 fw-bold text-dark mb-4">Paso 2: Ingresa tu correo electrónico</h3>
           <small class="form-text text-muted">
             Verificaremos si ya tienes mascotas registradas con nosotros
           </small>
@@ -69,7 +64,7 @@
             <div class="d-grid">
               <button type="submit" class="btn btn-primary btn-lg fw-semibold" [disabled]="cargando || !correoCliente">
                 <span *ngIf="!cargando">
-                  <i class="bi bi-search me-2"></i>Continuar al Paso 2
+                  <i class="bi bi-search me-2"></i>Continuar al Paso 3
                 </span>
                 <span *ngIf="cargando">
                   <span class="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>
@@ -259,7 +254,6 @@
                   <i class="bi bi-calendar-date me-1"></i>
                   Fecha de la Cita
                 </label>
-                <!-- Se ha corregido la inicialización en TS, por lo que el binding a '' es seguro -->
                 <input type="date" class="form-control" id="fecha" [(ngModel)]="datosCita.fecha_cita" name="fecha_cita_manual"
                   (change)="onFechaChange()" required>
                 <small class="form-text text-muted">
@@ -272,7 +266,6 @@
                   <i class="bi bi-clock me-1"></i>
                   Hora de la Cita
                 </label>
-                <!-- Se ha corregido la inicialización en TS, por lo que el binding a '' es seguro -->
                 <select class="form-select" id="hora" [(ngModel)]="datosCita.hora_cita" name="hora_cita_manual"
                   (change)="onHoraChange()" required>
                   <option value="">Seleccione una hora</option>
@@ -336,7 +329,6 @@
           <button type="button" class="btn btn-outline-secondary btn-lg" (click)="volverPaso1()" [disabled]="cargando">
             <i class="bi bi-arrow-left me-2"></i>Volver al Paso 1
           </button>
-
           <button type="button" class="btn btn-primary btn-lg flex-grow-1" (click)="registrarCita()"
             [disabled]="cargando">
             <span *ngIf="!cargando">
@@ -349,7 +341,6 @@
           </button>
         </div>
       </div>
-
     </div>
   </div>
 </div>

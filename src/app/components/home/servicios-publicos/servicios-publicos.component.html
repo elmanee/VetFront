@@ -1,0 +1,29 @@
+<section class="servicios-section">
+  <div class="container">
+    <div class="text-center mb-5">
+      <h2 class="titulo-principal">Nuestros Servicios</h2>
+      <p class="subtitulo">El mejor cuidado para tu mascota, directo en tu hogar.</p>
+    </div>
+
+    <div class="grid-servicios">
+      <div class="servicio-card" *ngFor="let servicio of servicios$ | async">
+        
+        <div class="imagen-container">
+          <img [src]="servicio.imagen_url || 'assets/logos/logoMorralito.png'" [alt]="servicio.titulo">
+          <div class="precio-badge">${{ servicio.precio }}</div>
+        </div>
+
+        <div class="card-content">
+          <h3>{{ servicio.titulo }}</h3>
+          <p>{{ servicio.descripcion }}</p>
+          <button class="btn-reservar">Reservar Cita</button>
+        </div>
+
+      </div>
+    </div>
+    
+    <div *ngIf="(servicios$ | async)?.length === 0" class="text-center text-muted">
+        <p>No hay servicios disponibles por el momento.</p>
+    </div>
+  </div>
+</section>
