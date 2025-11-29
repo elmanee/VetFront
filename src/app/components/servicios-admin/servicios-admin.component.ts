@@ -7,7 +7,6 @@ import { Observable } from 'rxjs';
 
 @Component({
   selector: 'app-servicios-admin',
-  // Si usas componentes standalone en Angular 17+, descomenta esto:
   standalone: true,
   imports: [CommonModule, FormsModule],
   templateUrl: './servicios-admin.component.html',
@@ -18,8 +17,6 @@ export class ServiciosAdminComponent implements OnInit {
 
   private serviciosFacade = inject(ServiciosFacade);
 
-  // // La fuente de la verdad viene de la fachada
-  // servicios$ = this.serviciosFacade.servicios$;
   servicios$ = this.serviciosFacade.servicios$;
 
   // Objeto para el formulario
@@ -36,7 +33,6 @@ export class ServiciosAdminComponent implements OnInit {
   constructor() { }
 
   ngOnInit(): void {
-    // El componente solo pide cargar datos, no sabe de API
     this.serviciosFacade.loadServicios();
   }
 
@@ -55,7 +51,7 @@ export class ServiciosAdminComponent implements OnInit {
   }
 
   cargarParaEditar(servicio: Servicio) {
-      this.formServicio = { ...servicio }; // Copia para no modificar la lista visualmente al editar
+      this.formServicio = { ...servicio }; 
       this.editando = true;
   }
 

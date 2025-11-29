@@ -26,12 +26,12 @@ export const routes: Routes = [
   {
     path: '',
     component: _DashboardComponent,
-    title: 'Pet Health+'
+    title: 'El Morralito+'
   },
   {
     path: 'login',
     component: LoginComponent,
-    title: 'Iniciar Sesión | Pet Health+'
+    title: 'Iniciar Sesión | El Morralito+'
   },
   {
     path: 'registro-personal',
@@ -41,30 +41,30 @@ export const routes: Routes = [
   {
     path: 'dashboard',
     component: _DashboardComponent,
-    title: 'Dashboard | Pet Health+'
+    title: 'Dashboard | El Morralito+'
   },
 
   // RQF01 - Gestión de Citas
   {
     path: 'solicitar-cita',
     component: SolicitarcitaComponent,
-    title: 'Solicitar Cita | Pet Health+'
+    title: 'Solicitar Cita | El Morralito+'
   },
   {
     path: 'registrar-cita',
     component: CitaFormComponent,
-    title: 'Registrar Cita | Pet Health+'
+    title: 'Registrar Cita | El Morralito+'
   },
   {
     path: 'agenda',
     component: AgendaViewComponent,
-    title: 'Agenda de Citas | Pet Health+'
+    title: 'Agenda de Citas | El Morralito+'
   },
 
   {
     path: 'citas-atender',
     component: CitasAtenderComponent,
-    title: 'Citas por Atender | Pet Health+'
+    title: 'Citas por Atender | El Morralito+'
   },
       {
     path: 'servicios-morralito',
@@ -76,17 +76,17 @@ export const routes: Routes = [
   // {
   //   path: 'expediente/registrar-consulta',
   //   // component: ,
-  //   title: 'Registrar Consulta | Pet Health+'
+  //   title: 'Registrar Consulta | El Morralito+'
   // },
   // {
   //   path: 'expedientes/buscar',
   //   // component: ,
-  //   title: 'Buscar Expedientes | Pet Health+'
+  //   title: 'Buscar Expedientes | El Morralito+'
   // },
   // {
   //   path: 'expediente/ver/:id',
   //   // component: ,
-  //   title: 'Ver Expediente | Pet Health+'
+  //   title: 'Ver Expediente | El Morralito+'
   // },
 
   {
@@ -139,42 +139,42 @@ export const routes: Routes = [
       {
         path: 'inventario',
         component: InventarioComponent,
-        title: 'Inventario | Pet Health+ Admin'
+        title: 'Inventario | El Morralito+ Admin'
       },
       {
         path: 'registrar-cita',
         component: CitaFormComponent,
-        title: 'Registrar Cita | Pet Health+ Admin'
+        title: 'Registrar Cita | El Morralito+ Admin'
       },
       {
         path: 'agenda',
         component: AgendaViewComponent,
-        title: 'Agenda de Citas | Pet Health+ Admin'
+        title: 'Agenda de Citas | El Morralito+ Admin'
       },
       {
         path: 'citas-atender',
         component: CitasAtenderComponent,
-        title: 'Citas por Atender | Pet Health+ Admin'
+        title: 'Citas por Atender | El Morralito+ Admin'
       },
       // {
       //   path: 'expedientes/buscar',
       //   // component: ,
-      //   title: 'Buscar Expedientes | Pet Health+ Admin'
+      //   title: 'Buscar Expedientes | El Morralito+ Admin'
       // },
       // {
       //   path: 'expediente/ver/:id',
       //   // component: ,
-      //   title: 'Ver Expediente | Pet Health+ Admin'
+      //   title: 'Ver Expediente | El Morralito+ Admin'
       // },
       // {
       //   path: 'expediente/registrar-consulta',
       //   // component: ,
-      //   title: 'Registrar Consulta | Pet Health+ Admin'
+      //   title: 'Registrar Consulta | El Morralito+ Admin'
       // },
       {
         path: 'lotes',
         component: LotesComponent,
-        title: 'Lotes | Pet Health+ Admin'
+        title: 'Lotes | El Morralito+ Admin'
       },
       {
         path: 'movimientos',
@@ -190,6 +190,6 @@ export const routes: Routes = [
   {
     path: '**',
     component: ErrorComponent,
-    title: 'Página no encontrada | Pet Health+'
+    title: 'Página no encontrada | El Morralito+'
   }
 ];

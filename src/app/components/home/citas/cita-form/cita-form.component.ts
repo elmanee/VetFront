@@ -8,8 +8,10 @@ import interactionPlugin from '@fullcalendar/interaction';
 import esLocale from '@fullcalendar/core/locales/es';
 import { CommonModule } from '@angular/common';
 import { CitasService, DatosCliente,DatosCita,ValidacionCliente,Mascota,RegistroCitaRequest,Cita} from '../../../../services/citas.service';
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, inject } from '@angular/core';
 import Swal from 'sweetalert2'
+import { ServiciosFacade } from '../../../../facades/servicios.facade';
+import { map } from 'rxjs/operators';
 
 // Constantes para la lógica de disponibilidad (tomadas de solicitarcita)
 const MAX_CAPACITY = 10; 
@@ -24,6 +26,13 @@ const LIMITED_CAPACITY_THRESHOLD = 7;
 })
 export class CitaFormComponent implements OnInit {
   
+    // --- 1. INYECCIÓN DE LA FACHADA ---
+  private serviciosFacade = inject(ServiciosFacade);
+  
+  // --- 2. OBSERVABLE PARA EL HTML ---
+listaServicios$ = this.serviciosFacade.servicios$.pipe(
+    map(servicios => servicios.filter(servicio => servicio.activo === true))
+  );
   paso: number = 1;
   correoCliente: string = '';
   esClienteExistente: boolean = false;
@@ -40,14 +49,15 @@ export class CitaFormComponent implements OnInit {
     direccion: ''
   };
 
-  datosCita: DatosCita = {
+  datosCita: any = {
     // Inicializadas como string vacío para evitar problemas de binding
     fecha_cita: '', 
     hora_cita: '',
     motivo: '',
     animal_id: 0,
     mascota_id: null,
-    veterinario_id: 1
+    veterinario_id: 1,
+    servicios:[]
   };
 
   // Datos fijos (simplificados, en un proyecto real vendrían del servicio)
@@ -123,6 +133,9 @@ export class CitaFormComponent implements OnInit {
   ngOnInit(): void {
     console.log('[CITA FORM] Componente de registro de citas cargado.');
     
+// --- 4. CARGAR SERVICIOS AL INICIAR ---
+    this.serviciosFacade.loadServicios();
+
     this.route.queryParams.subscribe(params => {
       if (params['fecha']) {
         this.fechaPreseleccionada = params['fecha'];
@@ -145,6 +158,23 @@ export class CitaFormComponent implements OnInit {
     });
   }
   
+// FUNCIÓN NUEVA: Maneja la selección múltiple
+  toggleServicio(servicioId: number) {
+    const index = this.datosCita.servicios.indexOf(servicioId);
+    
+    if (index === -1) {
+      // Si no está, lo agregamos
+      this.datosCita.servicios.push(servicioId);
+    } else {
+      // Si ya está, lo quitamos (deseleccionar)
+      this.datosCita.servicios.splice(index, 1);
+    }
+  }
+
+  esServicioSeleccionado(servicioId: number): boolean {
+    return this.datosCita.servicios.includes(servicioId);
+  }
+
   // Nuevo método para configurar la vista de día
   configurarCalendarioParaDia(initialDate: string): void {
       const initialDateObj = new Date(initialDate + 'T12:00:00');
@@ -719,8 +749,8 @@ export class CitaFormComponent implements OnInit {
     // Si estamos en modo de selección de hora, mantenemos el calendario visible y la fecha
     if (!this.modoSeleccionHora) {
       this.calendarVisible = false;
-      this.datosCita.fecha_cita = ''; // Corregido: String vacío
-      this.datosCita.hora_cita = ''; // Corregido: String vacío
+      this.datosCita.fecha_cita = ''; 
+      this.datosCita.hora_cita = ''; 
     }
   }
 
@@ -730,8 +760,8 @@ export class CitaFormComponent implements OnInit {
     this.esClienteExistente = false;
     this.clienteValidado = null;
     this.mascotaSeleccionadaInfo = null;
-    this.fechaPreseleccionada = null; // Limpiamos el modo especial
-    this.modoSeleccionHora = false; // Limpiamos el modo especial
+    this.fechaPreseleccionada = null; 
+    this.modoSeleccionHora = false; 
     
     this.datosClienteNuevo = {
       nombre_completo: '',
@@ -741,12 +771,13 @@ export class CitaFormComponent implements OnInit {
     };
 
     this.datosCita = {
-      fecha_cita: '', // Corregido: String vacío
-      hora_cita: '', // Corregido: String vacío
+      fecha_cita: '', 
+      hora_cita: '',
       motivo: '',
       animal_id: 0,
       mascota_id: null,
-      veterinario_id: 1
+      veterinario_id: 1,
+      servicios:[]
     };
 
     this.mensaje = '';
