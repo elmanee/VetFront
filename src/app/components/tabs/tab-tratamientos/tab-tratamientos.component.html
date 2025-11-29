@@ -6,7 +6,34 @@
 
       <div *ngFor="let tr of tratamientosArr.controls; let i = index"
            [formGroupName]="i"
-           class="border rounded-4 p-3 mb-3">
+           class="border rounded-4 p-3 mb-3 bg-light-subtle">
+
+        <!-- ============================================= -->
+        <!-- NUEVA SECCIÓN: VINCULACIÓN CON INVENTARIO     -->
+        <!-- ============================================= -->
+        <div class="mb-3 pb-3 border-bottom">
+            <div class="row">
+                <div class="col-md-8">
+                    <label class="form-label fw-bold text-primary">
+                        <i class="bi bi-box-seam me-1"></i> Producto de Inventario (Opcional)
+                    </label>
+                    <select class="form-select" formControlName="producto_id" (change)="onProductoChange(i)">
+                        <option [ngValue]="null">-- Ninguno (Solo registro médico) --</option>
+                        <option *ngFor="let prod of productosInventario" [ngValue]="prod.id">
+                            {{ prod.nombre }} (Stock: {{ prod.cantidad_disponible || '?' }})
+                        </option>
+                    </select>
+                </div>
+                <div class="col-md-4">
+                    <label class="form-label text-primary">Cant. a descontar</label>
+                    <input type="number" class="form-control" formControlName="cantidad_inventario" min="1">
+                </div>
+            </div>
+            <div class="form-text text-muted mt-1">
+                <small><i class="bi bi-info-circle"></i> Se descontará del lote más antiguo disponible (FIFO).</small>
+            </div>
+        </div>
+        <!-- ============================================= -->
 
         <div class="row g-3">
 
@@ -47,7 +74,7 @@
                   class="btn btn-outline-danger btn-sm"
                   (click)="quitarTratamiento(i)"
                   *ngIf="tratamientosArr.length > 1">
-            Eliminar
+            <i class="bi bi-trash me-1"></i> Eliminar
           </button>
         </div>
 
@@ -60,13 +87,14 @@
       <button type="button"
               class="btn btn-outline-primary"
               (click)="agregarTratamiento()">
-        Añadir tratamiento
+        <i class="bi bi-plus-lg me-1"></i> Añadir tratamiento
       </button>
 
       <button type="button"
               class="btn btn-primary px-4"
               [disabled]="loading"
               (click)="guardar()">
+        <span *ngIf="loading" class="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>
         Guardar tratamiento(s)
       </button>
 

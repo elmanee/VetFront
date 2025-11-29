@@ -15,7 +15,7 @@ export class ExportService {
     }
 
     const workbook = new Workbook();
-    workbook.creator = 'Pet Health+';
+    workbook.creator = 'El Morralito+';
     workbook.created = new Date();
 
     const worksheet = workbook.addWorksheet(sheetName, {
@@ -84,7 +84,7 @@ export class ExportService {
       hour: '2-digit',
       minute: '2-digit'
     });
-    dateCell.value = `Pet Health+ | Generado: ${fechaHora} | Registros: ${data.length}`;
+    dateCell.value = `El Morralito+ | Generado: ${fechaHora} | Registros: ${data.length}`;
     dateCell.font = {
       name: 'Calibri',
       size: 11,
@@ -253,7 +253,7 @@ export class ExportService {
 
     doc.setFontSize(11);
     doc.setFont('helvetica', 'normal');
-    doc.text('Pet Health+ | Sistema de Gestión Veterinaria', 45, 26);
+    doc.text('El Morralito+ | Sistema de Gestión Veterinaria', 45, 26);
 
     doc.setFontSize(9);
     const fechaHora = new Date().toLocaleString('es-MX', {
@@ -305,7 +305,7 @@ export class ExportService {
         doc.setTextColor(120, 120, 120);
         doc.setFont('helvetica', 'italic');
         doc.text(
-          '© 2025 Pet Health+ - Todos los derechos reservados',
+          '© 2025 El Morralito+ - Todos los derechos reservados',
           pageWidth / 2,
           pageHeight - 8,
           { align: 'center' }

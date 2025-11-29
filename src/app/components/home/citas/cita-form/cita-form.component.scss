@@ -613,3 +613,108 @@ $warning-color: #ffc107;
   color: $text-dark !important; 
   border-color: $secondary-color !important;
 }
+/* Estilos para el selector de servicios */
+.servicios-grid-selector {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(160px, 1fr)); /* Tarjetas responsivas */
+  gap: 15px;
+  max-height: 400px;
+  overflow-y: auto; /* Scroll si son muchos */
+  padding: 5px;
+}
+
+.servicio-option-card {
+  position: relative;
+  background: white;
+  border: 2px solid #e9ecef;
+  border-radius: 12px;
+  cursor: pointer;
+  transition: all 0.2s ease-in-out;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+
+  /* Efecto Hover */
+  &:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+    border-color: #adb5bd;
+  }
+
+  /* ESTADO SELECCIONADO (Importante) */
+  &.selected {
+    border-color: #FFC107; /* Tu color amarillo/naranja de marca */
+    background-color: #fff9e6; /* Fondo amarillito suave */
+    box-shadow: 0 0 0 1px #FFC107;
+    
+    .price-tag {
+      background-color: #FFC107;
+      color: black;
+    }
+  }
+
+  /* Imagen del servicio */
+  img {
+    width: 100%;
+    height: 100px;
+    object-fit: cover;
+    border-bottom: 1px solid #f0f0f0;
+  }
+
+  /* Icono para la opción "Solo Consulta" */
+  .icon-container {
+    width: 100%;
+    height: 100px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 2.5rem;
+    border-bottom: 1px solid #f0f0f0;
+  }
+
+  .info {
+    padding: 10px;
+    text-align: center;
+    flex-grow: 1;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    align-items: center;
+
+    h6 {
+      font-size: 0.9rem;
+      margin-bottom: 8px;
+      font-weight: 600;
+      color: #495057;
+      line-height: 1.2;
+    }
+
+    .price-tag {
+      font-size: 0.85rem;
+      font-weight: bold;
+      background-color: #e9ecef;
+      padding: 4px 10px;
+      border-radius: 20px;
+      color: #6c757d;
+      transition: background 0.2s;
+    }
+  }
+
+  /* Icono de Check flotante */
+  .check-icon {
+    position: absolute;
+    top: 8px;
+    right: 8px;
+    color: #FFC107; /* Color de marca */
+    font-size: 1.2rem;
+    background: white;
+    border-radius: 50%;
+    width: 24px;
+    height: 24px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+  }
+}
