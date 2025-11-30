@@ -117,7 +117,8 @@
               <div class="col-12">
                 <label for="nombre_completo" class="form-label fw-semibold">Nombre Completo</label>
                 <input type="text" class="form-control" id="nombre_completo"
-                  [(ngModel)]="datosClienteNuevo.nombre_completo" name="nombre_completo" placeholder="Nombre Completo" required>
+                  [(ngModel)]="datosClienteNuevo.nombre_completo" name="nombre_completo" placeholder="Nombre Completo"
+                  required>
               </div>
 
               <div class="col-md-6">
@@ -254,8 +255,8 @@
                   <i class="bi bi-calendar-date me-1"></i>
                   Fecha de la Cita
                 </label>
-                <input type="date" class="form-control" id="fecha" [(ngModel)]="datosCita.fecha_cita" name="fecha_cita_manual"
-                  (change)="onFechaChange()" required>
+                <input type="date" class="form-control" id="fecha" [(ngModel)]="datosCita.fecha_cita"
+                  name="fecha_cita_manual" (change)="onFechaChange()" required>
                 <small class="form-text text-muted">
                   También puedes seleccionar en el calendario
                 </small>
@@ -313,56 +314,38 @@
                 </small>
               </div>
 
-              <!-- <div class="col-12">
-                <label for="servicio" class="form-label fw-semibold">
-                  <i class="bi bi-bag-heart-fill me-1"></i>
-                  Servicio Adicional <span class="text-muted fw-normal">(Opcional)</span>
+
+
+              <div class="col-12 mb-4">
+                <label class="form-label fw-semibold mb-3">
+                  <i class="bi bi-bag-heart-fill me-1 text-primary"></i>
+                  Selecciona los servicios adicionales (Opcional)
                 </label>
-                
-                <select class="form-select" id="servicio" [(ngModel)]="datosCita.servicio_id" name="servicio_id">
-                  <option [ngValue]="null" selected>-- Solo Consulta General --</option>
-                  
-                  <option *ngFor="let servicio of listaServicios$ | async" [value]="servicio.id">
-                    {{ servicio.titulo }}  ( +${{ servicio.precio }} )
-                  </option>
-                </select>
-                
-                <small class="form-text text-muted" *ngIf="datosCita.servicio_id">
-                  <i class="bi bi-info-circle me-1"></i> Se agregará el costo del servicio a la cita.
+
+                <div class="servicios-grid-selector">
+
+                  <div class="servicio-option-card" *ngFor="let servicio of listaServicios$ | async"
+                    [class.selected]="esServicioSeleccionado(servicio.id!)" (click)="toggleServicio(servicio.id!)">
+
+                    <img [src]="servicio.imagen_url || 'assets/logos/lgoo.png'" [alt]="servicio.titulo">
+
+                    <div class="info">
+                      <h6>{{ servicio.titulo }}</h6>
+                      <span class="price-tag">+${{ servicio.precio }}</span>
+                    </div>
+
+                    <div class="check-icon" *ngIf="esServicioSeleccionado(servicio.id!)">
+                      <i class="bi bi-check-circle-fill"></i>
+                    </div>
+                  </div>
+
+                </div>
+
+                <small class="form-text text-primary mt-2 d-block" *ngIf="datosCita.servicios.length > 0">
+                  <i class="bi bi-info-circle-fill me-1"></i> Has seleccionado {{ datosCita.servicios.length }}
+                  servicios adicionales.
                 </small>
-              </div> -->
-
-<div class="col-12 mb-4">
-  <label class="form-label fw-semibold mb-3">
-    <i class="bi bi-bag-heart-fill me-1 text-primary"></i>
-    Selecciona los servicios adicionales (Opcional)
-  </label>
-
-  <div class="servicios-grid-selector">
-    
-    <div class="servicio-option-card" 
-         *ngFor="let servicio of listaServicios$ | async"
-         [class.selected]="esServicioSeleccionado(servicio.id!)"
-         (click)="toggleServicio(servicio.id!)">
-      
-      <img [src]="servicio.imagen_url || 'assets/logos/lgoo.png'" [alt]="servicio.titulo">
-      
-      <div class="info">
-        <h6>{{ servicio.titulo }}</h6>
-        <span class="price-tag">+${{ servicio.precio }}</span>
-      </div>
-
-      <div class="check-icon" *ngIf="esServicioSeleccionado(servicio.id!)">
-        <i class="bi bi-check-circle-fill"></i>
-      </div>
-    </div>
-
-  </div>
-
-  <small class="form-text text-primary mt-2 d-block" *ngIf="datosCita.servicios.length > 0">
-    <i class="bi bi-info-circle-fill me-1"></i> Has seleccionado {{ datosCita.servicios.length }} servicios adicionales.
-  </small>
-</div>
+              </div>
               <div class="col-12">
                 <label for="motivo" class="form-label fw-semibold">
                   <i class="bi bi-file-text me-1"></i>

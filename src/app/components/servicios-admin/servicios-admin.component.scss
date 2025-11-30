@@ -1,0 +1,54 @@
+// Variables corporativas (basadas en tu styles.scss)
+$primary: #FFD95A;
+$secondary: #FFC040;
+$dark: #333333;
+
+.service-card {
+    border-radius: 12px;
+
+
+
+    .line-clamp-3 {
+        display: -webkit-box;
+        -webkit-box-orient: vertical;
+    }
+}
+
+.custom-switch {
+    .form-check-input {
+        width: 3em;
+        height: 1.5em;
+        cursor: pointer;
+        
+        &:checked {
+            background-color: #2ecc71; // Verde éxito
+            border-color: #2ecc71;
+        }
+    }
+}
+
+.image-upload-container {
+    background-color: #f8f9fa;
+    border: 2px dashed #dee2e6 !important;
+    min-height: 180px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    &:hover {
+        border-color: $secondary !important;
+    }
+}
+
+// Botón primario con estilo Morralito
+.btn-primary {
+    background-color: $primary;
+    border-color: $primary;
+    color: $dark;
+    font-weight: 600;
+
+    &:hover {
+        background-color: $secondary;
+        border-color: $secondary;
+    }
+}

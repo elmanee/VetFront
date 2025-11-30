@@ -132,6 +132,17 @@ private USUARIOS_URL = `${environment.apiUrl}/usuarios`;
       );
   }
 
+  // Obtener citas asignadas a un usuario específico (Veterinario o Auxiliar)
+  getCitasAsignadas(idUsuario: number): Observable<RespuestaBackend> {
+    console.log(`[SERVICIO] Buscando citas asignadas al usuario ID: ${idUsuario}`);
+    // Ajusta la ruta según lo que pusimos en el backend (/personal/:id)
+    return this.http.get<RespuestaBackend>(`${this.API_URL}/personal/${idUsuario}`)
+      .pipe(
+        catchError(this.manejarError)
+      );
+  }
+  
+
     getVeterinarios(): Observable<Veterinario[]> {
     console.log('[SERVICIO] Obteniendo lista de veterinarios...');
     
@@ -172,6 +183,27 @@ private USUARIOS_URL = `${environment.apiUrl}/usuarios`;
       );
   }
 
+  // Actualizar estado de un servicio específico (Checklist)
+  actualizarEstadoServicio(citaId: number, servicioId: number, estado: string): Observable<RespuestaBackend> {
+    return this.http.put<RespuestaBackend>(
+      `${this.API_URL}/${citaId}/servicios/${servicioId}`,
+      { estado }
+    ).pipe(
+        tap(() => console.log(`[SERVICIO] Servicio ${servicioId} marcado como ${estado}`)),
+        catchError(this.manejarError)
+    );
+  }
+
+    finalizarCita(idCita: number): Observable<RespuestaBackend> {
+    return this.http.put<RespuestaBackend>(
+        `${this.API_URL}/${idCita}/completar`, 
+        {} // Body vacío
+    ).pipe(
+        tap(() => console.log(`[SERVICIO] Cita ${idCita} finalizada.`)),
+        catchError(this.manejarError)
+    );
+  }
+  
   private manejarError(error: HttpErrorResponse) {
     let mensajeError = 'Ocurrió un error desconocido.';
     
@@ -194,4 +226,5 @@ private USUARIOS_URL = `${environment.apiUrl}/usuarios`;
     console.error('[SERVICIO] Error:', mensajeError);
     return throwError(() => new Error(mensajeError));
   }
+
 }

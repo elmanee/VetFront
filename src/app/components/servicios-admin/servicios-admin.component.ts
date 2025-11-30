@@ -4,6 +4,7 @@ import { FormsModule } from '@angular/forms';     // Importante para ngModel
 import { ServiciosFacade } from '../../facades/servicios.facade';
 import { Servicio } from '../../interfaces/servicio.interface';
 import { Observable } from 'rxjs';
+import Swal from 'sweetalert2';
 
 @Component({
   selector: 'app-servicios-admin',
@@ -29,6 +30,7 @@ export class ServiciosAdminComponent implements OnInit {
   };
 
   editando = false;
+  mostrarFormulario = false; 
 
   constructor() { }
 
@@ -40,29 +42,49 @@ export class ServiciosAdminComponent implements OnInit {
     if (this.editando && this.formServicio.id) {
         this.serviciosFacade.editarServicio(this.formServicio.id, this.formServicio).subscribe(() => {
             this.resetForm();
-            alert('Servicio actualizado');
+            // Aquí podrías usar Swal.fire en lugar de alert
+            alert('Servicio actualizado correctamente');
         });
     } else {
         this.serviciosFacade.crearServicio(this.formServicio).subscribe(() => {
             this.resetForm();
-            alert('Servicio creado');
+            alert('Servicio creado correctamente');
         });
     }
   }
 
+  onFileSelected(event: any) {
+    const file: File = event.target.files[0];
+    
+    if (file) {
+      const reader = new FileReader();
+      
+      // Cuando termine de leer, guardamos el resultado (Base64) en el modelo
+      reader.onload = (e: any) => {
+        this.formServicio.imagen_url = e.target.result;
+      };
+      
+      // Leemos el archivo como URL de datos (Base64)
+      reader.readAsDataURL(file);
+    }
+  }
+
   cargarParaEditar(servicio: Servicio) {
-      this.formServicio = { ...servicio }; 
+      this.formServicio = { ...servicio };
       this.editando = true;
+      this.mostrarFormulario = true; // Abrir el formulario automáticamente
+      window.scrollTo({ top: 0, behavior: 'smooth' }); // Subir para ver el form
   }
 
   borrar(id: number) {
-      if(confirm('¿Seguro que quieres borrar este servicio?')) {
+      if(confirm('¿Estás seguro de eliminar este servicio? Esta acción no se puede deshacer.')) {
           this.serviciosFacade.eliminarServicio(id).subscribe();
       }
   }
 
   resetForm() {
       this.editando = false;
+      this.mostrarFormulario = false;
       this.formServicio = {
         titulo: '',
         descripcion: '',
@@ -70,5 +92,14 @@ export class ServiciosAdminComponent implements OnInit {
         activo: true,
         precio: 0
       };
+      // Limpiar el input file si fuera necesario (requiere ViewChild, pero por ahora así funciona)
   }
+
+  toggleFormulario() {
+    this.mostrarFormulario = !this.mostrarFormulario;
+    if (!this.mostrarFormulario) {
+      this.resetForm();
+    }
+  }
+
 }
