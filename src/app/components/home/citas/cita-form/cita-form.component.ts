@@ -211,20 +211,36 @@ export class CitaFormComponent implements OnInit {
     }
   }
 
-  manejarRetroceso(): void {
+  // manejarRetroceso(): void {
+  //   if (this.paso === 2) {
+  //     this.volverPaso1();
+  //     console.log(
+  //       '[CITA FORM] Retrocediendo de Paso 2 a Paso 1 (Validar Cliente).'
+  //     );
+  //   } else if (this.modoSeleccionHora) {
+  //     console.log(
+  //       '[CITA FORM] Volviendo a Solicitar Cita para cambiar la fecha.'
+  //     );
+  //     this.router.navigate(['/solicitar-cita']);
+  //   } else {
+  //     console.log('[CITA FORM] Navegando al Dashboard.');
+  //     this.router.navigate(['/dashboard']);
+  //   }
+  // }
+   manejarRetroceso(): void {
+    // Verificar si estamos en ruta de admin
+    const esAdmin = this.router.url.includes('/admin');
+
     if (this.paso === 2) {
       this.volverPaso1();
-      console.log(
-        '[CITA FORM] Retrocediendo de Paso 2 a Paso 1 (Validar Cliente).'
-      );
     } else if (this.modoSeleccionHora) {
-      console.log(
-        '[CITA FORM] Volviendo a Solicitar Cita para cambiar la fecha.'
-      );
-      this.router.navigate(['/solicitar-cita']);
+      // Volver a solicitar cita respetando el contexto (Admin o Público)
+      const rutaDestino = esAdmin ? '/admin/solicitar-cita' : '/solicitar-cita';
+      this.router.navigate([rutaDestino]);
     } else {
-      console.log('[CITA FORM] Navegando al Dashboard.');
-      this.router.navigate(['/dashboard']);
+      // Salir al dashboard correcto
+      const rutaDestino = esAdmin ? '/admin/das-admin' : '/dashboard';
+      this.router.navigate([rutaDestino]);
     }
   }
 
@@ -669,7 +685,18 @@ export class CitaFormComponent implements OnInit {
         });
         setTimeout(() => {
           this.resetFormulario();
-          this.router.navigate(['/dashboard']); // Redirigir al dashboard después del éxito
+          
+          // --- CORRECCIÓN 2: Redirección basada en Rol al finalizar ---
+          // Detectamos el rol y redirigimos a la agenda correspondiente
+          const rol = localStorage.getItem('rol');
+          
+          if (rol === 'Admin') {
+             this.router.navigate(['/admin/agenda']); // O '/admin/citas-atender'
+          } else {
+             // Si es cliente público
+             this.router.navigate(['/dashboard']);
+          }
+
         }, 5000);
       },
       error: (err: Error) => {
