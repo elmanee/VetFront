@@ -30,6 +30,8 @@ export class LoginComponent {
           this.router.navigate(['/admin/das-admin']);
         } else if (rol === 'Veterinario') {
           this.router.navigate(['/veterinario/mis-citas']);
+        } else if (rol === 'Auxiliar') {
+          this.router.navigate(['/auxiliar/mis-citas']);
         } else {
           this.router.navigate(['/login']);
         }

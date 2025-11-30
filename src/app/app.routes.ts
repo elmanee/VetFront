@@ -20,6 +20,8 @@ import { ExpedientesFormComponent } from './components/expedientes-form/expedien
 import { ExpedienteDetalleComponent } from './components/expedientes/expediente-detalle/expediente-detalle.component';
 import { ServiciosPublicosComponent } from './components/home/servicios-publicos/servicios-publicos.component';
 import { ServiciosAdminComponent } from './components/servicios-admin/servicios-admin.component';
+import { LayoutAuxiliarComponent } from './shared/auxiliar/layout-auxiliar/layout-auxiliar.component';
+import { MisCitasAuxiliarComponent } from './components/mis-citas-auxiliar/mis-citas-auxiliar.component';
 
 export const routes: Routes = [
   // Rutas públicas
@@ -141,11 +143,22 @@ export const routes: Routes = [
         component: InventarioComponent,
         title: 'Inventario | El Morralito+ Admin'
       },
+      // PASO 1: Selección de Fecha (Lo que faltaba)
+      // El sidebar debe apuntar AQUÍ: /admin/solicitar-cita
+      {
+        path: 'solicitar-cita',
+        component: SolicitarcitaComponent,
+        title: 'Solicitar Cita | El Morralito+ Admin'
+      },
+      
+      // PASO 2: Formulario de Registro
+      // El Paso 1 redirige AQUÍ: /admin/registrar-cita
       {
         path: 'registrar-cita',
         component: CitaFormComponent,
-        title: 'Registrar Cita | El Morralito+ Admin'
+        title: 'Completar Registro | El Morralito+ Admin'
       },
+      
       {
         path: 'agenda',
         component: AgendaViewComponent,
@@ -184,6 +197,25 @@ export const routes: Routes = [
        { path: 'servicios', 
         component: ServiciosAdminComponent
        },
+    ]
+  },
+
+  //  Área de auxiliares
+  {
+    path: 'auxiliar',
+    component: LayoutAuxiliarComponent,
+    canActivate: [AuthGuard],
+    data: { roles: ['Auxiliar'] }, // Asegúrate de que tu AuthGuard soporte este rol
+    children: [
+      {
+        path: '',
+        redirectTo: 'mis-citas',
+        pathMatch: 'full'
+      },
+      {
+        path: 'mis-citas',
+        component: MisCitasAuxiliarComponent // Aquí verán su agenda
+      }
     ]
   },
 

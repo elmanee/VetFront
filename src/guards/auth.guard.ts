@@ -20,6 +20,7 @@ export class AuthGuard implements CanActivate {
       console.warn(`🚫 Acceso denegado: rol "${rol}" no permitido para esta ruta`);
       if (rol === 'Veterinario') return this.router.createUrlTree(['/veterinario']);
       if (rol === 'Admin') return this.router.createUrlTree(['/admin']);
+      if (rol === 'Auxiliar') return this.router.createUrlTree(['/auxiliar']);
       return this.router.createUrlTree(['/login']);
     }
 
