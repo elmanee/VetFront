@@ -1,8 +1,7 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
-import { DashboardData, StockBajo, ProductoAVencer, TopProductoVendido } from '../interfaces/dashboard.interface'; 
-import { ResponseDTO } from '../interfaces/response.interface'; 
+import { DashboardData, ApiResponse } from '../interfaces/dashboard.interface'; 
 import { environment } from '../../environments/environment';
 
 @Injectable({
@@ -10,21 +9,12 @@ import { environment } from '../../environments/environment';
 })
 export class DashboardService {
 
-  // URL base del backend (ejemplo: 'http://localhost:3000/api')
-  private baseUrl: string = environment.apiUrl; 
-  private dashboardUrl: string = `${this.baseUrl}/alertas/dashboard-data`; 
+  private baseUrl = environment.apiUrl;
 
   constructor(private http: HttpClient) { }
 
-  /**
-   * Obtiene todos los datos necesarios para el dashboard de administrador:
-   * 1. Alertas de Stock Bajo
-   * 2. Alertas de Productos a Vencer
-   * 3. Datos para la Gráfica (Top Productos Vendidos)
-   * * @returns Observable con la respuesta tipada que contiene DashboardData.
-   */
-  getDashboardAdminData(): Observable<ResponseDTO<DashboardData>> {
-    // El TokenInterceptor (si lo usas) se encargará de adjuntar el token de autenticación.
-    return this.http.get<ResponseDTO<DashboardData>>(this.dashboardUrl);
+  getDashboardAdminData(): Observable<ApiResponse<DashboardData>> {
+    return this.http.get<ApiResponse<DashboardData>>(`${this.baseUrl}/estadisticas/dashboard`);
   }
+
 }
