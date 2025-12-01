@@ -8,7 +8,7 @@ import { of } from 'rxjs';
   providedIn: 'root'
 })
 export class AuthService {
-  private apiUrl = 'http://localhost:3000/api/auth';
+  private apiUrl = 'https://vetback-api.onrender.com/api/auth';
 
   constructor(private http: HttpClient, private router: Router) {}
 
