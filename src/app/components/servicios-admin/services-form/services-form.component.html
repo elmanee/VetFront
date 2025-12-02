@@ -1,0 +1,78 @@
+<div class="row w-100" [ngClass]="{ 'slide-out': isClosing, 'slide-in': !isClosing }">
+  <div class="col-xl-12">
+    <div class="card custom-card shadow-sm border-0">
+      <div class="d-flex justify-content-between align-items-center mb-4">
+        <div class="d-flex align-items-center gap-3">
+          <button type="button" class="breadcrumb-back" (click)="triggerClose()">
+            <i class="ri-arrow-left-line"></i>
+          </button>
+          <div class="d-flex align-items-center flex-wrap gap-2">
+            <h2 class="page-title cursor-pointer mb-0">
+              {{ editando ? 'Editar Servicio' : 'Nuevo Servicio' }}
+            </h2>
+            <span class="breadcrumb-separator">/ Catálogo</span>
+          </div>
+        </div>
+      </div>
+
+      <form #f="ngForm" (ngSubmit)="guardarServicio()">
+        <div class="row g-3">
+
+          <div class="col-md-12">
+            <div class="row g-3">
+
+              <div class="col-12">
+                <label class="form-label">Título del Servicio</label>
+                <input type="text" class="form-control" [(ngModel)]="formServicio.titulo" name="titulo" placeholder="Ej. Baño Medicado" required>
+              </div>
+
+              <div class="col-md-6">
+                <label class="form-label">Precio ($)</label>
+                <input type="number" class="form-control" [(ngModel)]="formServicio.precio" name="precio" placeholder="0.00" required min="0">
+              </div>
+
+              <div class="col-md-6">
+                <label class="form-label">Estado</label>
+                <select class="form-select" [(ngModel)]="formServicio.activo" name="activo">
+                  <option [ngValue]="true">Activo (Visible)</option>
+                  <option [ngValue]="false">Inactivo (Oculto)</option>
+                </select>
+              </div>
+
+              <div class="col-12">
+                <label class="form-label">Descripción</label>
+                <textarea class="form-control" [(ngModel)]="formServicio.descripcion" name="descripcion" rows="4" placeholder="Detalles del servicio..."></textarea>
+              </div>
+
+              <div class="col-12 mt-4 pt-2 border-top">
+                <label class="form-label">Imagen de Portada</label>
+                <div class="image-upload-container text-center p-3 border rounded bg-light mb-3">
+                  <div *ngIf="formServicio.imagen_url; else noImage">
+                    <img [src]="formServicio.imagen_url" class="img-fluid rounded shadow-sm" style="max-height: 180px; object-fit: cover;">
+                  </div>
+                  <ng-template #noImage>
+                    <div class="text-muted py-4">
+                      <i class="ri-image-line fs-1 d-block mb-2"></i>
+                      <small>Sin imagen seleccionada</small>
+                    </div>
+                  </ng-template>
+                </div>
+                <input type="file" class="form-control" (change)="onFileSelected($event)" accept="image/*">
+                <div class="form-text small mt-1">Recomendado: JPG/PNG.</div>
+              </div>
+              </div>
+          </div>
+          </div>
+
+        <div class="mt-4 d-flex justify-content-end gap-2">
+          <button type="button" class="btn btn-outline-secondary" (click)="cancelar()">
+            <i class="ri-close-line"></i> Cancelar
+          </button>
+          <button type="submit" class="btn btn-primary-si" [disabled]="f.invalid">
+            <i class="ri-save-3-line"></i> {{ editando ? 'Actualizar Servicio' : 'Guardar Servicio' }}
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>

@@ -3,18 +3,18 @@
 <div class="container-fluid min-vh-100 bg-light py-5 agenda-page">
   <div class="row justify-content-center">
     <div class="col-12 col-xl-11">
-      
+
       <div class="d-flex justify-content-between align-items-center mb-5 flex-wrap gap-3">
         <div>
-          <h1 class="display-5 fw-bold text-dark mb-2">
+          <h2 class="titulo-principal m-0">
             <i class="bi bi-calendar3 me-2"></i>
             Agenda Veterinaria
-          </h1>
+          </h2>
           <p class="lead text-muted mb-0">
             Gestiona y consulta todas las citas programadas
           </p>
         </div>
-        
+
         <!-- ✨ BOTÓN PARA ATENDER CITAS -->
         <div>
           <a routerLink="/citas-atender" class="btn btn-success btn-lg shadow-sm">
@@ -25,7 +25,7 @@
       </div>
 
       <!-- Mensajes -->
-      <div *ngIf="mensaje && !mostrarModal" class="alert alert-dismissible fade show mb-4" 
+      <div *ngIf="mensaje && !mostrarModal" class="alert alert-dismissible fade show mb-4"
            [ngClass]="{
              'alert-success': mensajeClase === 'success',
              'alert-danger': mensajeClase === 'error',
@@ -33,7 +33,7 @@
            }"
            role="alert">
         <div class="d-flex align-items-center">
-          <i class="bi me-2" 
+          <i class="bi me-2"
              [ngClass]="{
                'bi-check-circle-fill': mensajeClase === 'success',
                'bi-exclamation-triangle-fill': mensajeClase === 'error',
@@ -48,7 +48,7 @@
       <div class="card border-0 shadow-sm mb-4">
         <div class="card-body p-4">
           <div class="row g-3 align-items-end">
-            
+
             <!-- Selector de veterinario -->
             <div class="col-lg-3 col-md-6">
               <label for="vetSelect" class="form-label fw-semibold">
@@ -56,10 +56,10 @@
                 Veterinario
               </label>
               <!-- MODIFICADO: (change) ahora llama a aplicarFiltros() -->
-              <select 
-                id="vetSelect" 
-                class="form-select" 
-                [(ngModel)]="veterinarioSeleccionadoId" 
+              <select
+                id="vetSelect"
+                class="form-select"
+                [(ngModel)]="veterinarioSeleccionadoId"
                 (change)="aplicarFiltros()">
                 <!-- ¡NUEVA OPCIÓN "TODOS"! -->
                 <option value="todos">-- Todos los Veterinarios --</option>
@@ -68,7 +68,7 @@
                 </option>
               </select>
             </div>
-            
+
             <!-- Navegación de fecha -->
             <div class="col-lg-4 col-md-6">
               <label class="form-label fw-semibold">
@@ -76,38 +76,38 @@
                 Fecha
               </label>
               <div class="input-group">
-                <button 
-                  class="btn btn-outline-secondary" 
+                <button
+                  class="btn btn-outline-secondary"
                   type="button"
                   (click)="cambiarFecha(-1)">
                   <i class="bi bi-chevron-left"></i>
                 </button>
                 <!-- MODIFICADO: (change) ahora llama a aplicarFiltros() -->
-                <input 
-                  type="date" 
-                  class="form-control text-center fw-semibold" 
-                  [(ngModel)]="fechaSeleccionada" 
+                <input
+                  type="date"
+                  class="form-control text-center fw-semibold"
+                  [(ngModel)]="fechaSeleccionada"
                   (change)="aplicarFiltros()">
-                <button 
-                  class="btn btn-outline-secondary" 
+                <button
+                  class="btn btn-outline-secondary"
                   type="button"
                   (click)="cambiarFecha(1)">
                   <i class="bi bi-chevron-right"></i>
                 </button>
               </div>
             </div>
-            
+
             <!-- Botones de acción de fecha -->
             <div class="col-lg-3 col-md-6 d-flex gap-2">
-              <button 
-                class="btn btn-outline-secondary w-100" 
+              <button
+                class="btn btn-outline-secondary w-100"
                 (click)="verHoy()">
                 <i class="bi bi-calendar-check me-1"></i>
                 Ver Hoy
               </button>
               <!-- ¡NUEVO BOTÓN "VER TODAS"! -->
-              <button 
-                class="btn btn-outline-info w-100" 
+              <button
+                class="btn btn-outline-info w-100"
                 (click)="verTodasLasFechas()">
                 <i class="bi bi-calendar3-range me-1"></i>
                 Ver Todas
@@ -116,8 +116,8 @@
 
             <!-- Botón de Actualizar -->
             <div class="col-lg-2 col-md-6">
-              <button 
-                class="btn btn-primary w-100" 
+              <button
+                class="btn btn-primary w-100"
                 (click)="cargarCitas()">
                 <i class="bi bi-arrow-clockwise me-1"></i>
                 Actualizar
@@ -133,9 +133,9 @@
                   <i class="bi bi-search"></i>
                 </span>
                 <!-- MODIFICADO: (input) ahora llama a onBusquedaInput() -->
-                <input 
-                  type="text" 
-                  class="form-control" 
+                <input
+                  type="text"
+                  class="form-control"
                   placeholder="Buscar por mascota, cliente, correo o motivo..."
                   [(ngModel)]="busquedaTexto"
                   (input)="onBusquedaInput()">
@@ -188,11 +188,11 @@
             <!-- Título dinámico -->
             <span *ngIf="!fechaSeleccionada">Mostrando todas las citas</span>
             <span *ngIf="fechaSeleccionada">Citas para el {{ fechaSeleccionada | date:'fullDate' }}</span>
-            
+
             <span class="badge bg-primary-si text-dark ms-2">{{ citasFiltradas.length }}</span>
           </h3>
         </div>
-        
+
         <!-- Mensaje si no hay citas -->
         <div *ngIf="citasFiltradas.length === 0" class="col-12">
           <div class="card border-0 shadow-sm">
@@ -211,7 +211,7 @@
           <!-- Usamos [ngClass] para el borde dinámico -->
           <div class="card h-100 border-0 shadow-sm card-cita" [ngClass]="getEstadoCardClass(cita.estado || '')">
             <div class="card-body p-4 d-flex flex-column">
-              
+
               <!-- Header de la cita -->
               <div class="d-flex justify-content-between align-items-start mb-3">
                 <div>
@@ -231,7 +231,7 @@
                   </small>
                 </div>
               </div>
-              
+
               <!-- Motivo de la cita -->
               <h5 class="fw-bold text-dark mb-3">{{ cita.motivo }}</h5>
 
@@ -249,13 +249,13 @@
 
               <!-- Botones de acción (empujados al fondo) -->
               <div class="d-flex gap-2 mt-auto cita-acciones">
-                <button 
+                <button
                   class="btn btn-sm btn-outline-primary flex-fill"
                   (click)="abrirModal(cita, 'reprogramar')"
                   [disabled]="cita.estado === 'Cancelada' || cita.estado === 'Completada'">
                   <i class="bi bi-calendar-event"></i> Reprogramar
                 </button>
-                <button 
+                <button
                   class="btn btn-sm btn-outline-danger flex-fill"
                   (click)="abrirModal(cita, 'cancelar')"
                   [disabled]="cita.estado === 'Cancelada' || cita.estado === 'Completada'">
@@ -282,9 +282,9 @@
         <button type="button" class="btn-close" (click)="cerrarModal()"></button>
       </div>
       <div class="modal-body pt-2">
-        
+
         <!-- Mensaje de error/éxito DENTRO del modal -->
-        <div *ngIf="mensaje && mostrarModal" class="alert mb-3" 
+        <div *ngIf="mensaje && mostrarModal" class="alert mb-3"
              [ngClass]="{
                'alert-success': mensajeClase === 'success',
                'alert-danger': mensajeClase === 'error'
@@ -306,13 +306,13 @@
         <!-- Reprogramar -->
         <div *ngIf="accionModal === 'reprogramar'">
           <p class="text-muted mb-3">Selecciona la nueva fecha y hora para la cita #{{ citaSeleccionada?.id_cita }} de <strong>{{ citaSeleccionada?.mascota_nombre || 'Mascota Nueva' }}</strong></p>
-          
+
           <div class="row g-3">
             <div class="col-12">
               <label class="form-label fw-semibold">Nueva Fecha</label>
-              <input 
-                type="date" 
-                class="form-control" 
+              <input
+                type="date"
+                class="form-control"
                 [(ngModel)]="nuevaFecha">
             </div>
             <div class="col-12">
@@ -349,13 +349,13 @@
         <button type="button" class="btn btn-secondary" (click)="cerrarModal()">
           Cerrar
         </button>
-        <button 
-          type="button" 
+        <button
+          type="button"
           class="btn"
           [disabled]="cargando"
           [ngClass]="accionModal === 'cancelar' ? 'btn-danger' : 'btn-primary'"
           (click)="accionModal === 'cancelar' ? confirmarCancelar() : confirmarReprogramar()">
-          
+
           <span *ngIf="cargando" class="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>
 
           {{ accionModal === 'cancelar' ? 'Sí, Cancelar' : 'Reprogramar' }}
