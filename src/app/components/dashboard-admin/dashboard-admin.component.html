@@ -7,10 +7,6 @@
       <span class="d-none d-md-inline">Actualizar Datos</span>
     </button>
   </div>
-  
-  <p *ngIf="!cargando && dashboardData" class="text-muted small mb-4">
-    Datos generados por el **EstadisticasFacade** el: {{ dashboardData.fecha_generacion | date: 'dd/MM/yyyy HH:mm:ss' }}
-  </p>
 
   <div *ngIf="cargando" class="w-100 text-center my-5 py-5">
     <div class="spinner-border text-primary" role="status" style="width: 3rem; height: 3rem;">
@@ -53,8 +49,30 @@
       </div>
     </div>
 
+    <div class="col-lg-6 mb-4">
+      <div class="card shadow-sm chart-card">
+        <div class="card-body">
+          <div echarts [options]="animalesChartOptions" [autoResize]="true" style="height: 400px;"></div>
+        </div>
+      </div>
+    </div>
 
-  </div> <div *ngIf="!cargando && !dashboardData" class="w-100 text-center my-5 py-5">
+    <div class="col-lg-6 mb-4">
+      <div class="card shadow-sm chart-card">
+        <div class="card-body">
+          <div echarts [options]="serviciosChartOptions" [autoResize]="true" style="height: 400px;"></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="col-12 mb-4">
+        <div class="card shadow-sm chart-card">
+            <div class="card-body">
+                <div echarts [options]="stockChartOptions" [autoResize]="true" style="height: 450px;"></div>
+            </div>
+        </div>
+    </div>
+    </div> <div *ngIf="!cargando && !dashboardData" class="w-100 text-center my-5 py-5">
     <p class="text-danger">No se pudieron cargar los datos del dashboard. Verifique su servicio.</p>
   </div>
 
