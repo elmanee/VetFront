@@ -1,136 +1,180 @@
-<div class="container-fluid p-4">
-  
-  <!-- ENCABEZADO -->
-  <div class="d-flex justify-content-between align-items-center mb-4">
-    <div>
-      <h2 class="text-dark fw-bold mb-0">Catálogo de Servicios</h2>
-      <p class="text-muted">Administra los servicios ofrecidos en la veterinaria.</p>
-    </div>
-    <button class="btn btn-primary shadow-sm" (click)="toggleFormulario()">
-      <i class="bi" [ngClass]="mostrarFormulario ? 'bi-x-lg' : 'bi-plus-lg'"></i>
-      {{ mostrarFormulario ? 'Cerrar Formulario' : 'Nuevo Servicio' }}
-    </button>
-  </div>
+<div class="row w-100 h-100 mt-4">
 
-  <!-- FORMULARIO (COLAPSIBLE) -->
-  <div class="card border-0 shadow-sm mb-5 overflow-hidden" *ngIf="mostrarFormulario">
-    <div class="card-header bg-white border-bottom p-4">
-      <h5 class="mb-0 fw-bold text-primary">
-        <i class="bi bi-pencil-square me-2"></i>{{ editando ? 'Editar Servicio' : 'Registrar Nuevo Servicio' }}
-      </h5>
-    </div>
-    <div class="card-body p-4">
-      <form (ngSubmit)="guardarServicio()">
-        <div class="row g-4">
-          
-          <!-- Columna Izquierda: Datos -->
-          <div class="col-md-8">
-            <div class="row g-3">
-              <div class="col-md-8">
-                <label class="form-label fw-semibold">Título del Servicio</label>
-                <input type="text" class="form-control" [(ngModel)]="formServicio.titulo" name="titulo" placeholder="Ej. Baño Medicado" required>
-              </div>
-              
-              <div class="col-md-4">
-                <label class="form-label fw-semibold">Precio ($)</label>
-                <div class="input-group">
-                  <span class="input-group-text bg-light">$</span>
-                  <input type="number" class="form-control" [(ngModel)]="formServicio.precio" name="precio" placeholder="0.00">
-                </div>
-              </div>
-
-              <div class="col-12">
-                <label class="form-label fw-semibold">Descripción</label>
-                <textarea class="form-control" [(ngModel)]="formServicio.descripcion" name="descripcion" rows="3" placeholder="Detalles del servicio..."></textarea>
-              </div>
-
-              <div class="col-12">
-                <div class="form-check form-switch custom-switch">
-                  <input class="form-check-input" type="checkbox" [(ngModel)]="formServicio.activo" name="activo" id="activoCheck">
-                  <label class="form-check-label ms-2" for="activoCheck">
-                    Estado: 
-                    <span class="fw-bold" [ngClass]="formServicio.activo ? 'text-success' : 'text-danger'">
-                      {{ formServicio.activo ? 'Activo (Visible)' : 'Inactivo (Oculto)' }}
-                    </span>
-                  </label>
-                </div>
-              </div>
-            </div>
+  @if (!mostrarFormulario){
+    <div class="col-12">
+      <div class="card shadow rounded-4 mb-4 mx-4">
+        <div class="card-body p-4 d-flex justify-content-between align-items-center">
+          <div>
+            <h2 class="titulo-principal m-0">Catálogo de Servicios</h2>
+            <p class="text-muted mb-0">Administra los servicios ofrecidos en la veterinaria.</p>
           </div>
-
-          <!-- Columna Derecha: Imagen -->
-          <div class="col-md-4">
-            <label class="form-label fw-semibold">Imagen de Portada</label>
-            
-            <div class="image-upload-container text-center p-3 border rounded bg-light mb-3">
-              <div *ngIf="formServicio.imagen_url; else noImage">
-                <img [src]="formServicio.imagen_url" class="img-fluid rounded shadow-sm" style="max-height: 180px; object-fit: cover;">
-              </div>
-              <ng-template #noImage>
-                <div class="text-muted py-4">
-                  <i class="bi bi-image fs-1 d-block mb-2"></i>
-                  <small>Sin imagen seleccionada</small>
-                </div>
-              </ng-template>
-            </div>
-
-            <input type="file" class="form-control" (change)="onFileSelected($event)" accept="image/*">
-            <div class="form-text small mt-1">Recomendado: JPG/PNG, máx 2MB.</div>
-          </div>
-
-        </div>
-
-        <div class="d-flex justify-content-end gap-2 mt-4 border-top pt-3">
-          <button type="button" class="btn btn-light" (click)="resetForm()">Cancelar</button>
-          <button type="submit" class="btn btn-primary px-4">
-            <i class="bi bi-save me-2"></i>{{ editando ? 'Actualizar Cambios' : 'Guardar Servicio' }}
-          </button>
-        </div>
-      </form>
-    </div>
-  </div>
-
-  <!-- GRID DE SERVICIOS -->
-  <div class="row g-4">
-    <div class="col-12 col-md-6 col-xl-4" *ngFor="let servicio of servicios$ | async">
-      <div class="card h-100 border-0 shadow-sm service-card">
-        
-        <!-- Imagen con Badge de estado -->
-        <div class="position-relative">
-          <img [src]="servicio.imagen_url || 'assets/logos/lgoo.png'" class="card-img-top" alt="Servicio" style="height: 200px; object-fit: cover;">
-          <span class="position-absolute top-0 end-0 m-3 badge rounded-pill shadow-sm"
-                [ngClass]="servicio.activo ? 'bg-success' : 'bg-danger'">
-            {{ servicio.activo ? 'Activo' : 'Inactivo' }}
-          </span>
-          <div class="price-tag position-absolute bottom-0 start-0 m-3 bg-white text-dark fw-bold px-3 py-1 rounded shadow-sm">
-            ${{ servicio.precio }}
-          </div>
-        </div>
-
-        <div class="card-body">
-          <h5 class="card-title fw-bold text-dark mb-2">{{ servicio.titulo }}</h5>
-          <p class="card-text text-muted small line-clamp-3">{{ servicio.descripcion }}</p>
-        </div>
-
-        <div class="card-footer bg-white btn-primary btn-outline border-0 pt-0 pb-7 px-7 d-flex justify-content-between">
-          <button class="btn btn-light btn-primary  btn-sm px-3" (click)="cargarParaEditar(servicio)">
-            <i class="bi bi-pencil me-1"></i> Editar
-          </button>
-          <button class="btn btn-white btn-secondary btn-outline btn-sm px-3" (click)="borrar(servicio.id!)">
-            <i class="bi bi-trash me-1"></i> Eliminar
+          <button class="btn btn-primary-si" (click)="abrirFormulario()">
+            <i class="bi bi-plus-lg"></i>
+            Nuevo Servicio
           </button>
         </div>
       </div>
-    </div>
-  </div>
-  
-  <!-- Estado Vacío -->
-  <div *ngIf="(servicios$ | async)?.length === 0" class="text-center py-5 mt-5">
-    <div class="text-muted opacity-50 mb-3">
-      <i class="bi bi-inbox fs-1"></i>
-    </div>
-    <h5 class="text-muted">No hay servicios registrados</h5>
-    <p class="text-muted small">Comienza agregando uno nuevo con el botón superior.</p>
-  </div>
 
+      <div class="card shadow rounded-4 mx-4">
+        <div class="card-body">
+          <div class="row g-4">
+            <div class="col-12 col-md-6 col-lg-4" *ngFor="let servicio of servicios$ | async">
+              <div class="card h-100 border-0 shadow-sm service-card">
+                <div class="position-relative">
+                  <img [src]="servicio.imagen_url || 'assets/logos/lgoo.png'" class="card-img-top" alt="Servicio" style="height: 200px; object-fit: cover;">
+                  <span class="position-absolute top-0 end-0 m-3 badge rounded-pill shadow-sm"
+                        [ngClass]="servicio.activo ? 'bg-success' : 'bg-danger'">
+                    {{ servicio.activo ? 'Activo' : 'Inactivo' }}
+                  </span>
+                  <div class="price-tag position-absolute bottom-0 start-0 m-3 bg-white text-dark fw-bold px-3 py-1 rounded shadow-sm">
+                    ${{ servicio.precio }}
+                  </div>
+                </div>
+                <div class="card-body">
+                  <h5 class="card-title fw-bold text-dark mb-2">{{ servicio.titulo }}</h5>
+                  <p class="card-text text-muted small line-clamp-3">{{ servicio.descripcion }}</p>
+                </div>
+                <div class="card-footer bg-white border-0 d-flex justify-content-between">
+                  <button class="btn btn-warning btn-sm px-3" (click)="cargarParaEditar(servicio)">
+                    <i class="bi bi-pencil me-1"></i> Editar
+                  </button>
+                  <button class="btn btn-secondary btn-sm px-3" (click)="borrar(servicio.id!)">
+                    <i class="bi bi-trash me-1"></i> Eliminar
+                  </button>
+                </div>
+              </div>
+            </div>
+            </div>
+
+          <div *ngIf="(servicios$ | async)?.length === 0" class="col-12 text-center py-5 mt-5">
+            </div>
+          <div class="d-flex flex-column flex-md-row align-items-center justify-content-between gap-3 mt-4 pt-3">
+            <div class="d-flex align-items-center gap-2">
+              <label class="form-label m-0">Filas por página</label>
+              <select class="form-select form-select-sm w-auto" [(ngModel)]="pageSize" (change)="goToPage(1)">
+                <option *ngFor="let s of pageSizeOptions" [value]="s">{{ s }}</option>
+              </select>
+            </div>
+            <div class="d-flex align-items-center gap-3 ms-md-auto">
+              <div class="text-muted small">
+                Mostrando {{ rangeStart }}–{{ rangeEnd }} de {{ totalItems }}
+              </div>
+              <nav aria-label="Paginación servicios">
+                <ul class="pagination pagination-sm mb-0">
+                  <li class="page-item" [class.disabled]="page === 1">
+                    <button class="page-link" (click)="goToPage(1)">«</button>
+                  </li>
+                  <li class="page-item" [class.disabled]="page === 1">
+                    <button class="page-link" (click)="prevPage()">‹</button>
+                  </li>
+                  <li class="page-item" *ngFor="let p of visiblePages" [class.active]="p === page">
+                    <button class="page-link" (click)="goToPage(p)">{{ p }}</button>
+                  </li>
+                  <li class="page-item" [class.disabled]="page === totalPages || totalPages === 0">
+                    <button class="page-link" (click)="nextPage()">›</button>
+                  </li>
+                  <li class="page-item" [class.disabled]="page === totalPages || totalPages === 0">
+                    <button class="page-link" (click)="goToPage(totalPages)">»</button>
+                  </li>
+                </ul>
+              </nav>
+            </div>
+          </div>
+
+        </div>
+      </div>
+    </div>
+  } @else {
+    <div class="col-lg-8 tabla-lotes-container">
+
+      <div class="card shadow rounded-4 mb-4">
+        <div class="card-body p-4 d-flex justify-content-between align-items-center">
+          <div>
+            <h2 class="titulo-principal m-0">Catálogo de Servicios</h2>
+            <p class="text-muted mb-0">Administra los servicios ofrecidos en la veterinaria.</p>
+          </div>
+          <button class="btn btn-primary-si" (click)="abrirFormulario()">
+            <i class="bi bi-plus-lg"></i>
+            Nuevo Servicio
+          </button>
+        </div>
+      </div>
+
+      <div class="card shadow rounded-4">
+        <div class="card-body">
+          <div class="row g-4">
+            <div class="col-12 col-md-6" *ngFor="let servicio of servicios$ | async">
+              <div class="card h-100 border-0 shadow-sm service-card">
+                <div class="position-relative">
+                  <img [src]="servicio.imagen_url || 'assets/logos/lgoo.png'" class="card-img-top" alt="Servicio" style="height: 200px; object-fit: cover;">
+                  <span class="position-absolute top-0 end-0 m-3 badge rounded-pill shadow-sm"
+                        [ngClass]="servicio.activo ? 'bg-success' : 'bg-danger'">
+                    {{ servicio.activo ? 'Activo' : 'Inactivo' }}
+                  </span>
+                  <div class="price-tag position-absolute bottom-0 start-0 m-3 bg-white text-dark fw-bold px-3 py-1 rounded shadow-sm">
+                    ${{ servicio.precio }}
+                  </div>
+                </div>
+                <div class="card-body">
+                  <h5 class="card-title fw-bold text-dark mb-2">{{ servicio.titulo }}</h5>
+                  <p class="card-text text-muted small line-clamp-3">{{ servicio.descripcion }}</p>
+                </div>
+                <div class="card-footer bg-white border-0 d-flex justify-content-between">
+                  <button class="btn btn-warning btn-sm px-3" (click)="cargarParaEditar(servicio)">
+                    <i class="bi bi-pencil me-1"></i> Editar
+                  </button>
+                  <button class="btn btn-secondary btn-sm px-3" (click)="borrar(servicio.id!)">
+                    <i class="bi bi-trash me-1"></i> Eliminar
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div *ngIf="(servicios$ | async)?.length === 0" class="col-12 text-center py-5 mt-5">
+            </div>
+          <div class="d-flex flex-column flex-md-row align-items-center justify-content-between gap-3 mt-4 pt-3">
+            <div class="d-flex align-items-center gap-2">
+              <label class="form-label m-0">Filas por página</label>
+              <select class="form-select form-select-sm w-auto" [(ngModel)]="pageSize" (change)="goToPage(1)">
+                <option *ngFor="let s of pageSizeOptions" [value]="s">{{ s }}</option>
+              </select>
+            </div>
+            <div class="d-flex align-items-center gap-3 ms-md-auto">
+              <div class="text-muted small">
+                Mostrando {{ rangeStart }}–{{ rangeEnd }} de {{ totalItems }}
+              </div>
+              <nav aria-label="Paginación servicios">
+                <ul class="pagination pagination-sm mb-0">
+                  <li class="page-item" [class.disabled]="page === 1">
+                    <button class="page-link" (click)="goToPage(1)">«</button>
+                  </li>
+                  <li class="page-item" [class.disabled]="page === 1">
+                    <button class="page-link" (click)="prevPage()">‹</button>
+                  </li>
+                  <li class="page-item" *ngFor="let p of visiblePages" [class.active]="p === page">
+                    <button class="page-link" (click)="goToPage(p)">{{ p }}</button>
+                  </li>
+                  <li class="page-item" [class.disabled]="page === totalPages || totalPages === 0">
+                    <button class="page-link" (click)="nextPage()">›</button>
+                  </li>
+                  <li class="page-item" [class.disabled]="page === totalPages || totalPages === 0">
+                    <button class="page-link" (click)="goToPage(totalPages)">»</button>
+                  </li>
+                </ul>
+              </nav>
+            </div>
+          </div>
+
+        </div>
+      </div>
+    </div>
+    <div class="col-lg-4 form-lotes-container">
+      <app-services-form
+        [servicioEditando]="servicioSeleccionado"
+        (closeEvent)="cerrarFormulario()"
+        (onGuardar)="handleGuardar()">
+      </app-services-form>
+    </div>
+    }
 </div>

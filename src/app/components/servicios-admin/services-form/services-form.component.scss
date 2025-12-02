@@ -1,0 +1,153 @@
+$primary: #FFD95A;
+$secondary: #FFC040;
+$dark: #333333;
+
+@keyframes slideOut {
+  from {
+    transform: translateX(0);
+    opacity: 1;
+  }
+  to {
+    transform: translateX(100%);
+    opacity: 0;
+  }
+}
+
+@keyframes slideIn {
+  from {
+    transform: translateX(100%);
+    opacity: 0;
+  }
+  to {
+    transform: translateX(0);
+    opacity: 1;
+  }
+}
+
+.slide-in {
+  animation: slideIn 0.4s ease-out;
+}
+.slide-out {
+  animation: slideOut 0.4s ease-in;
+}
+
+
+.card.custom-card {
+  border-radius: 14px;
+  padding: 1.5rem;
+  background: #fff;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+  transition: all 0.25s ease;
+
+  &:hover {
+    transform: translateY(-2px);
+  }
+}
+
+.breadcrumb-back {
+  background: rgba(255, 192, 64, 0.15);
+  border: none;
+  color: $secondary;
+  font-size: 1.2rem;
+  padding: 8px;
+  border-radius: 50%;
+  cursor: pointer;
+  transition: all 0.25s ease;
+
+  &:hover {
+    background: rgba(255, 192, 64, 0.25);
+    transform: translateX(-2px);
+  }
+}
+
+.page-title {
+  color: $secondary;
+  font-weight: 800;
+  font-size: 1.4rem;
+  margin: 0;
+}
+
+.breadcrumb-separator {
+  color: #9ca3af;
+  font-size: 0.9rem;
+}
+
+label.form-label {
+  font-weight: 600;
+  color: #374151;
+  font-size: 0.9rem;
+}
+
+.form-control,
+.form-select,
+textarea {
+  border: 1px solid rgba(0, 0, 0, 0.1);
+  border-radius: 8px;
+  padding: 0.55rem 0.75rem;
+  font-size: 0.95rem;
+  transition: all 0.25s ease;
+  background-color: #fff;
+
+  &:focus {
+    border-color: $secondary;
+    box-shadow: 0 0 0 3px rgba(255, 192, 64, 0.2);
+  }
+}
+
+.btn-outline-secondary {
+  border-radius: 8px;
+  padding: 0.5rem 1.2rem;
+  border-color: rgba(0, 0, 0, 0.15);
+  font-weight: 500;
+  color: #555;
+  transition: all 0.25s ease;
+
+  i {
+    margin-right: 4px;
+  }
+
+  &:hover {
+    background: rgba(0, 0, 0, 0.05);
+  }
+}
+
+.btn-primary-si {
+  background: $primary;
+  color: $dark;
+  border-radius: 8px;
+  padding: 0.5rem 1.2rem;
+  font-weight: 600;
+  border: none;
+  transition: all 0.25s ease;
+
+  i {
+    margin-right: 6px;
+    font-size: 1rem;
+  }
+
+  &:hover {
+    background: $secondary;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 10px rgba(255, 217, 90, 0.25);
+  }
+}
+
+.image-upload-container {
+    background-color: #f8f9fa;
+    border: 2px dashed #dee2e6 !important;
+    min-height: 180px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 8px;
+
+    &:hover {
+        border-color: $secondary !important;
+    }
+}
+
+@media (max-width: 768px) {
+  .page-title {
+    font-size: 1.2rem;
+  }
+}

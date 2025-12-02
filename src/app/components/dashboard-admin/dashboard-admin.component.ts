@@ -4,7 +4,7 @@ import { DashboardService } from '../../services/dashboard.service';
 import { NgxEchartsModule } from 'ngx-echarts';
 import Swal from 'sweetalert2'; 
 import { EChartsOption } from 'echarts';
-import { DashboardData, CitasMensuales, RankingClientes, TopVentas, ApiResponse } from '../../interfaces/dashboard.interface'; 
+import { DashboardData, CitasMensuales, RankingClientes, TopVentas, RankingVeterinarios, ApiResponse, TopAnimales, StockBajo, TopServicios } from '../../interfaces/dashboard.interface'; 
 
 @Component({
   selector: 'app-dashboard-admin',
@@ -17,10 +17,18 @@ export class DashboardAdminComponent implements OnInit {
 
   dashboardData: DashboardData | null = null; 
 
+  topAnimales: TopAnimales[] = [];
+  stockBajo: StockBajo[] = [];
+  topServicios: TopServicios[] = [];
+  
   citasChartOptions: EChartsOption = {};
   clientesChartOptions: EChartsOption = {};
   ventasChartOptions: EChartsOption = {};
-  veterinariosChartOptions: EChartsOption = {};   
+  veterinariosChartOptions: EChartsOption = {}; 
+  animalesChartOptions: EChartsOption = {};
+  stockChartOptions: EChartsOption = {};
+  serviciosChartOptions: EChartsOption = {};
+
   cargando: boolean = true; 
 
   constructor(private dashboardService: DashboardService) { }
@@ -40,7 +48,13 @@ export class DashboardAdminComponent implements OnInit {
             this.setCitasMensualesChart(this.dashboardData.citas_mensuales);
             this.setRankingClientesChart(this.dashboardData.ranking_clientes);
             this.setTopVentasChart(this.dashboardData.top_ventas);
-            this.setVeterinarioRankingChart(this.dashboardData.citas_mensuales); 
+            this.setVeterinarioRankingChart(this.dashboardData.ranking_veterinarios); 
+            this.topAnimales = this.dashboardData.top_animales;
+            this.stockBajo = this.dashboardData.stock_bajo;
+            this.topServicios = this.dashboardData.top_servicios;
+            this.setTopAnimalesChart(this.topAnimales);
+            this.setStockBajoChart(this.stockBajo);
+            this.setTopServiciosChart(this.topServicios);
         }
 
         this.cargando = false;
@@ -192,16 +206,10 @@ export class DashboardAdminComponent implements OnInit {
     };
   }
   
-    setVeterinarioRankingChart(citasData: CitasMensuales[]): void {
-    const rankingVets = [
-        { nombre: 'Dra. Elena Ramos', citas: 90 },
-        { nombre: 'Dr. Ricardo Velez', citas: 75 },
-        { nombre: 'Dr. Hugo Chávez', citas: 50 },
-        { nombre: 'Dra. Sofía Mora', citas: 45 },
-    ];
+  setVeterinarioRankingChart(data: RankingVeterinarios[]): void { 
     
-    const nombres = rankingVets.map(item => item.nombre).reverse();
-    const citas = rankingVets.map(item => item.citas).reverse();
+    const nombres = data.map(item => item.nombre).reverse();
+    const citas = data.map(item => item.citas).reverse();
     
     const blueGradient = {
         type: 'linear' as const, 
@@ -229,6 +237,142 @@ export class DashboardAdminComponent implements OnInit {
                 itemStyle: { 
                     borderRadius: [0, 5, 5, 0],
                     color: blueGradient 
+                }, 
+                label: { 
+                    show: true, 
+                    position: 'right', 
+                    valueAnimation: true,
+                    fontWeight: 'bold'
+                }
+            }
+        ]
+    };
+  }
+
+  setTopAnimalesChart(data: TopAnimales[]): void {
+    const pieData = data.map(item => ({ name: item.nombre, value: item.citas }));
+    const colorPalette = ['#FF6384', '#36A2EB', '#FFCE56', '#4BC0C0', '#9966FF'];
+
+    this.animalesChartOptions = {
+        backgroundColor: 'transparent',
+        title: { 
+            text: 'Top 5 Tipos de Animales más Frecuentes', 
+            left: 'center',
+            textStyle: { color: '#333' }
+        },
+        color: colorPalette,
+        tooltip: { 
+            trigger: 'item', 
+            formatter: '{b}: {c} citas ({d}%)' 
+        },
+        legend: { 
+            orient: 'vertical', 
+            right: 0, 
+            top: 'middle', 
+            data: data.map(item => item.nombre) 
+        },
+        series: [
+            {
+                name: 'Citas por Especie',
+                type: 'pie',
+                radius: ['40%', '65%'], 
+                center: ['35%', '50%'], 
+                data: pieData,
+                emphasis: {
+                    itemStyle: {
+                        shadowBlur: 10,
+                        shadowOffsetX: 0,
+                        shadowColor: 'rgba(0, 0, 0, 0.5)'
+                    }
+                },
+                label: {
+                    formatter: '{d}%', 
+                    color: '#333'
+                }
+            }
+        ]
+    };
+  }
+
+  setStockBajoChart(data: StockBajo[]): void {
+    const nombres = data.map(p => p.nombre);
+    const stock = data.map(p => p.stock);
+    const stockMinimo = data.map(p => p.stockMinimo);
+
+    this.stockChartOptions = {
+        backgroundColor: 'transparent',
+        title: { text: 'Alerta de Productos con Stock Bajo', left: 'center' },
+        tooltip: { trigger: 'axis', axisPointer: { type: 'shadow' } },
+        grid: { left: '3%', right: '8%', bottom: '15%', containLabel: true },
+        legend: { data: ['Stock Actual', 'Stock Mínimo'], bottom: 0 },
+        xAxis: {
+            type: 'category',
+            data: nombres,
+            axisLabel: {
+                rotate: 45, 
+                color: '#555'
+            },
+            axisLine: { lineStyle: { color: '#ccc' } }
+        },
+        yAxis: { 
+            type: 'value',
+            name: 'Unidades',
+            axisLabel: { color: '#555' },
+            splitLine: { lineStyle: { type: 'dashed' } }
+        },
+        series: [
+            {
+                name: 'Stock Actual',
+                type: 'bar',
+                data: stock,
+                itemStyle: { color: '#dc3545' } 
+            },
+            {
+                name: 'Stock Mínimo',
+                type: 'line',
+                data: stockMinimo,
+                itemStyle: { color: '#ffc107' }, 
+                symbol: 'none'
+            }
+        ]
+    };
+  }
+  
+  setTopServiciosChart(data: TopServicios[]): void {
+    const sortedData = data.slice(0, 5).sort((a, b) => a.count - b.count);
+    const servicios = sortedData.map(s => s.titulo);
+    const counts = sortedData.map(s => s.count);
+
+    const purpleGradient = {
+        type: 'linear' as const, 
+        x: 0, y: 0, x2: 1, y2: 0,
+        colorStops: [{ offset: 0, color: '#9c27b0' }, { offset: 1, color: '#ce93d8' }]
+    };
+
+    this.serviciosChartOptions = {
+        backgroundColor: 'transparent',
+        title: { text: 'Top 5 Servicios Más Solicitados', left: 'center' },
+        tooltip: { trigger: 'axis', axisPointer: { type: 'shadow' } },
+        grid: { left: '3%', right: '8%', bottom: '3%', containLabel: true },
+        xAxis: { 
+            type: 'value',
+            name: 'Solicitudes',
+            axisLabel: { color: '#555' }
+        },
+        yAxis: {
+            type: 'category',
+            data: servicios,
+            axisLabel: { color: '#333', fontWeight: 'bold' } 
+        },
+        series: [
+            {
+                name: 'Solicitudes',
+                type: 'bar',
+                data: counts,
+                barWidth: '70%', 
+                itemStyle: { 
+                    borderRadius: [0, 5, 5, 0],
+                    color: purpleGradient 
                 }, 
                 label: { 
                     show: true, 

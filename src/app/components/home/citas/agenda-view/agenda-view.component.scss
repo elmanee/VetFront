@@ -6,6 +6,13 @@
   min-height: 100vh;
 }
 
+.titulo-principal {
+  color: var(--color-primary, #f27c2b);
+  font-weight: 800;
+  font-size: 1.9rem;
+  margin-bottom: 0;
+}
+
 .agenda-page {
   .form-label {
     font-size: 0.85rem;
@@ -35,7 +42,7 @@
   transition: all 0.25s ease;
   height: 100%;
   // Borde lateral grueso para estado
-  border-left-width: 5px; 
+  border-left-width: 5px;
 
   &:hover {
     transform: translateY(-4px);
@@ -59,7 +66,7 @@
     border-left: 3px solid var(--color-primary); // Detalle amarillo
     padding-left: 12px;
   }
-  
+
   .cita-paciente-nombre {
     font-size: 1.1rem;
     font-weight: 600;
@@ -75,7 +82,7 @@
     display: flex;
     align-items: center;
   }
-  
+
   .cita-acciones {
     // Para asegurar que los botones siempre estén al fondo
     // La clase .mt-auto en el HTML hace el trabajo principal

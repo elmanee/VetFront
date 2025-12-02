@@ -1,36 +1,39 @@
 import { Component, OnInit, inject } from '@angular/core';
-import { CommonModule } from '@angular/common'; // Si es standalone
-import { FormsModule } from '@angular/forms';     // Importante para ngModel
+import { CommonModule } from '@angular/common';
+import { FormsModule } from '@angular/forms';
 import { ServiciosFacade } from '../../facades/servicios.facade';
 import { Servicio } from '../../interfaces/servicio.interface';
 import { Observable } from 'rxjs';
 import Swal from 'sweetalert2';
+import { ServicesFormComponent } from './services-form/services-form.component'; // Importar el nuevo componente
 
 @Component({
   selector: 'app-servicios-admin',
   standalone: true,
-  imports: [CommonModule, FormsModule],
+  imports: [CommonModule, FormsModule, ServicesFormComponent], // Agregar el formulario
   templateUrl: './servicios-admin.component.html',
   styleUrls: ['./servicios-admin.component.scss']
 })
 export class ServiciosAdminComponent implements OnInit {
 
-
   private serviciosFacade = inject(ServiciosFacade);
 
   servicios$ = this.serviciosFacade.servicios$;
 
-  // Objeto para el formulario
-  formServicio: Servicio = {
-    titulo: '',
-    descripcion: '',
-    imagen_url: '',
-    activo: true,
-    precio: 0
-  };
+  mostrarFormulario = false;
+  servicioSeleccionado: Servicio | null = null;
 
-  editando = false;
-  mostrarFormulario = false; 
+  page = 1;
+  pageSize = 10;
+  pageSizeOptions = [5, 10, 20, 50];
+  totalItems = 0;
+  totalPages = 1;
+
+  get visiblePages(): number[] {
+    return [1];
+  }
+  get rangeStart(): number { return 1; }
+  get rangeEnd(): number { return 1; }
 
   constructor() { }
 
@@ -38,68 +41,46 @@ export class ServiciosAdminComponent implements OnInit {
     this.serviciosFacade.loadServicios();
   }
 
-  guardarServicio() {
-    if (this.editando && this.formServicio.id) {
-        this.serviciosFacade.editarServicio(this.formServicio.id, this.formServicio).subscribe(() => {
-            this.resetForm();
-            // Aquí podrías usar Swal.fire en lugar de alert
-            alert('Servicio actualizado correctamente');
-        });
-    } else {
-        this.serviciosFacade.crearServicio(this.formServicio).subscribe(() => {
-            this.resetForm();
-            alert('Servicio creado correctamente');
-        });
-    }
-  }
-
-  onFileSelected(event: any) {
-    const file: File = event.target.files[0];
-    
-    if (file) {
-      const reader = new FileReader();
-      
-      // Cuando termine de leer, guardamos el resultado (Base64) en el modelo
-      reader.onload = (e: any) => {
-        this.formServicio.imagen_url = e.target.result;
-      };
-      
-      // Leemos el archivo como URL de datos (Base64)
-      reader.readAsDataURL(file);
-    }
-  }
+  goToPage(p: number) { this.page = p; }
+  prevPage() { this.goToPage(this.page - 1); }
+  nextPage() { this.goToPage(this.page + 1); }
 
   cargarParaEditar(servicio: Servicio) {
-      this.formServicio = { ...servicio };
-      this.editando = true;
-      this.mostrarFormulario = true; // Abrir el formulario automáticamente
-      window.scrollTo({ top: 0, behavior: 'smooth' }); // Subir para ver el form
+      this.servicioSeleccionado = servicio;
+      this.mostrarFormulario = true;
+      window.scrollTo({ top: 0, behavior: 'smooth' });
   }
 
   borrar(id: number) {
-      if(confirm('¿Estás seguro de eliminar este servicio? Esta acción no se puede deshacer.')) {
-          this.serviciosFacade.eliminarServicio(id).subscribe();
-      }
+      Swal.fire({
+        title: '¿Estás seguro?',
+        text: '¡Esta acción no se puede deshacer!',
+        icon: 'warning',
+        showCancelButton: true,
+        confirmButtonColor: '#3085d6',
+        cancelButtonColor: '#d33',
+        confirmButtonText: 'Sí, eliminar',
+        cancelButtonText: 'Cancelar'
+      }).then((result) => {
+        if (result.isConfirmed) {
+          this.serviciosFacade.eliminarServicio(id).subscribe(() => {
+            Swal.fire('¡Eliminado!', 'El servicio ha sido eliminado.', 'success');
+          });
+        }
+      });
   }
 
-  resetForm() {
-      this.editando = false;
-      this.mostrarFormulario = false;
-      this.formServicio = {
-        titulo: '',
-        descripcion: '',
-        imagen_url: '',
-        activo: true,
-        precio: 0
-      };
-      // Limpiar el input file si fuera necesario (requiere ViewChild, pero por ahora así funciona)
+  abrirFormulario(): void {
+    this.servicioSeleccionado = null;
+    this.mostrarFormulario = true;
   }
 
-  toggleFormulario() {
-    this.mostrarFormulario = !this.mostrarFormulario;
-    if (!this.mostrarFormulario) {
-      this.resetForm();
-    }
+  cerrarFormulario(): void {
+    this.mostrarFormulario = false;
+    this.servicioSeleccionado = null;
   }
 
+  handleGuardar(): void {
+    this.serviciosFacade.loadServicios();
+  }
 }
