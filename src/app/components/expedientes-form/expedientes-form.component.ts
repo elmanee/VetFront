@@ -14,6 +14,7 @@ import { ExpedienteService } from '../../services/expediente.service';
 import { PacienteService } from '../../services/paciente.service';
 import { AlertsService } from '../../shared/services/alerts.service';
 import { CitasService } from '../../services/citas.service';
+import Swal from 'sweetalert2';
 
 @Component({
   selector: 'app-expedientes-form',
@@ -305,13 +306,50 @@ export class ExpedientesFormComponent implements OnInit {
     }
   }
 
-  finalizarAtencion() {
-    this.alertsService.showConfirmAlert(
-      'Atención Finalizada',
-      'La consulta se ha registrado correctamente'
-    ).then(() => {
-      this.router.navigate(['/veterinario/mis-citas']);
-    });
+  async finalizarAtencion() {
+      const idCita = this.cita?.id_cita;
+
+      if (!idCita) {
+          this.alertsService.showErrorAlert('Error', 'No se puede obtener el ID de la cita para finalizar.');
+          return;
+      }
+
+      const result = await Swal.fire({
+          title: 'Confirmar Finalización',
+          text: '¿Está seguro de que desea marcar la consulta como COMPLETADA? Se enviará una notificación al cliente.',
+          icon: 'warning',
+          showCancelButton: true,
+          confirmButtonColor: '#FFC040',
+          cancelButtonColor: '#d33',
+          confirmButtonText: 'Sí, Completar',
+          cancelButtonText: 'Cancelar'
+      });
+
+      if (result.isConfirmed) {
+          this.loading = true;
+
+          this.citasService.finalizarCita(idCita).subscribe({
+              next: (resp) => {
+                  this.loading = false;
+                  Swal.fire(
+                      '¡Consulta Finalizada!',
+                      'La cita ha sido marcada como COMPLETADA y el cliente ha sido notificado.',
+                      'success'
+                  ).then(() => {
+                      this.router.navigate(['/veterinario/mis-citas']);
+                  });
+              },
+              error: (err) => {
+                  this.loading = false;
+                  console.error('Error al finalizar la cita:', err);
+                  const message = err.error?.message || 'Ocurrió un error al intentar completar la cita.';
+                  this.alertsService.showErrorAlert(
+                      'Error al Finalizar',
+                      message
+                  );
+              }
+          });
+      }
   }
 
   volver() {

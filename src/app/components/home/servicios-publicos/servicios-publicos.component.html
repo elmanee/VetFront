@@ -8,7 +8,7 @@
 
     <div class="grid-servicios">
       <div class="servicio-card" *ngFor="let servicio of servicios$ | async">
-        
+
         <div class="imagen-container">
           <img [src]="servicio.imagen_url || 'assets/logos/logoMorralito.png'" [alt]="servicio.titulo">
           <div class="precio-badge">${{ servicio.precio }}</div>
@@ -17,12 +17,12 @@
         <div class="card-content">
           <h3>{{ servicio.titulo }}</h3>
           <p>{{ servicio.descripcion }}</p>
-          <button class="btn-reservar">Reservar Cita</button>
+          <button class="btn-reservar" (click)="reservarCita(servicio.id!)">Reservar Cita</button>
         </div>
 
       </div>
     </div>
-    
+
     <div *ngIf="(servicios$ | async)?.length === 0" class="text-center text-muted">
         <p>No hay servicios disponibles por el momento.</p>
     </div>

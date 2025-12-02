@@ -22,6 +22,8 @@ const LIMITED_CAPACITY_THRESHOLD = 7;
 })
 export class SolicitarcitaComponent implements OnInit {
 
+  servicioId: number | null = null;
+
   citasExistentes: Cita[] = [];
   calendarOptions!: CalendarOptions;
   calendarVisible = false;
@@ -37,6 +39,15 @@ export class SolicitarcitaComponent implements OnInit {
   ) { }
 
   ngOnInit(): void {
+
+    this.route.queryParams.subscribe(params => {
+        const servicioIdParam = params['servicioId'];
+        if (servicioIdParam && !isNaN(parseInt(servicioIdParam, 10))) {
+            this.servicioId = parseInt(servicioIdParam, 10);
+            console.log(`[SOLICITAR CITA] ID de Servicio detectado: ${this.servicioId}`);
+        }
+    });
+
     this.citasService.obtenerTodasLasCitas().subscribe(
       (citas: Cita[]) => {
         this.citasExistentes = citas;
@@ -192,15 +203,19 @@ export class SolicitarcitaComponent implements OnInit {
       return;
     }
 
-    // === CORRECCIÓN AQUÍ ===
-    // Usamos '../registrar-cita' para subir un nivel y buscar el hermano.
-    // Si estamos en /admin/solicitar-cita -> va a /admin/registrar-cita
-    // Si estamos en /solicitar-cita -> va a /registrar-cita
-    this.router.navigate(['../registrar-cita'], {
-      relativeTo: this.route,
-      queryParams: {
-        fecha: this.fechaSeleccionada
-      }
-    });
+    const queryParams: any = {
+      fecha: this.fechaSeleccionada
+    };
+
+    // 2. AÑADES condicionalmente el servicioId si existe.
+    if (this.servicioId !== null) {
+        queryParams.servicioId = this.servicioId;
+    }
+
+    // 3. ¡CORRECCIÓN AQUÍ! Usamos el objeto 'queryParams' que YA contiene el servicioId.
+    this.router.navigate(['../registrar-cita'], {
+      relativeTo: this.route,
+      queryParams: queryParams // <--- ¡Asegúrate de usar la variable 'queryParams' y no crear un objeto nuevo!
+    });
   }
 }

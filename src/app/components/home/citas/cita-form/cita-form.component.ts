@@ -29,6 +29,17 @@ import { map } from 'rxjs/operators';
 const MAX_CAPACITY = 10;
 const LIMITED_CAPACITY_THRESHOLD = 7;
 
+interface CitaData {
+    // ... otras propiedades
+    fecha_cita: string | null;
+    hora_cita: string | null; // Necesario para los dropdowns de hora
+    motivo: string;
+    veterinario_id: number;
+    animal_id: number;
+    servicios: number[];
+    // ...
+}
+
 @Component({
   selector: 'app-cita-form',
   standalone: true,
@@ -135,38 +146,50 @@ export class CitaFormComponent implements OnInit {
   ) {}
 
   ngOnInit(): void {
-    console.log('[CITA FORM] Componente de registro de citas cargado.');
-    // --- 4. CARGAR SERVICIOS AL INICIAR ---
-    this.serviciosFacade.loadServicios();
+    console.log('[CITA FORM] Componente de registro de citas cargado.');
+    this.serviciosFacade.loadServicios();
 
-    this.route.queryParams.subscribe((params) => {
-      if (params['fecha']) {
-        this.fechaPreseleccionada = params['fecha']; // Aquí this.datosCita.fecha_cita se asigna con un string válido
-        this.datosCita.fecha_cita = this.fechaPreseleccionada!;
-        this.modoSeleccionHora = true; // Activamos el modo de selección de hora
-        this.paso = 1; // Mantenemos en el paso 1 (Validación de Cliente)
+    this.route.queryParams.subscribe(params => {
+      const fechaParam = params['fecha'];
+      const servicioIdParam = params['servicioId'];
 
-        console.log(
-          '[CITA FORM] Modo Seleccionar Hora activado. Fecha:',
-          this.fechaPreseleccionada
-        ); // Cargamos las citas para poder mostrar los horarios ocupados
-        // Corrección: Usamos '!' para asegurar que es string si pasa el 'if'
-        this.cargarCitasParaCalendario(this.fechaPreseleccionada!);
+      if (fechaParam) {
+        this.fechaPreseleccionada = fechaParam;
+        this.datosCita.fecha_cita = fechaParam;
+        this.modoSeleccionHora = true;
+        this.paso = 1;
+
+        console.log(
+          '[CITA FORM] Modo Seleccionar Hora activado. Fecha:',
+          this.fechaPreseleccionada
+        );
+        this.cargarCitasParaCalendario(this.fechaPreseleccionada!);
+      } else {
+        this.modoSeleccionHora = false;
+        this.paso = 1;
+      }
+
+      if (servicioIdParam && !isNaN(parseInt(servicioIdParam, 10))) {
+          const servicioId = parseInt(servicioIdParam, 10);
+         
+          if (!this.datosCita.servicios.includes(servicioId)) {
+              this.toggleServicio(servicioId);
+          }
+
+          if (!this.datosCita.motivo || this.datosCita.motivo.trim() === '') {
+              this.datosCita.motivo = 'Cita para el servicio o paquete seleccionado.';
+          }
+      }
+    });
+  }
+
+  toggleServicio(servicioId: number): void {
+      const index = this.datosCita.servicios.indexOf(servicioId);
+      if (index > -1) {
+          this.datosCita.servicios.splice(index, 1);
       } else {
-        // Modo normal (Paso 1: Validar Cliente)
-        this.modoSeleccionHora = false;
-        this.paso = 1;
+          this.datosCita.servicios.push(servicioId);
       }
-    });
-  }
-  toggleServicio(servicioId: number) {
-    const index = this.datosCita.servicios.indexOf(servicioId);
-
-    if (index === -1) {
-      this.datosCita.servicios.push(servicioId);
-    } else {
-      this.datosCita.servicios.splice(index, 1);
-    }
   }
 
   esServicioSeleccionado(servicioId: number): boolean {
@@ -685,11 +708,11 @@ export class CitaFormComponent implements OnInit {
         });
         setTimeout(() => {
           this.resetFormulario();
-          
+
           // --- CORRECCIÓN 2: Redirección basada en Rol al finalizar ---
           // Detectamos el rol y redirigimos a la agenda correspondiente
           const rol = localStorage.getItem('rol');
-          
+
           if (rol === 'Admin') {
              this.router.navigate(['/admin/agenda']); // O '/admin/citas-atender'
           } else {
