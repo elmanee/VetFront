@@ -81,11 +81,11 @@ export class CitaFormComponent implements OnInit {
     { id: 1, nombre: 'Perro', categoria_id: 1 },
     { id: 2, nombre: 'Gato', categoria_id: 1 },
     { id: 3, nombre: 'Loro', categoria_id: 2 },
-    { id: 4, nombre: 'Pichón', categoria_id: 2 },
+    { id: 4, nombre: 'Tortuga', categoria_id: 3 },
     { id: 5, nombre: 'Iguana', categoria_id: 3 },
-    { id: 6, nombre: 'Tortuga', categoria_id: 3 },
-    { id: 7, nombre: 'Pez dorado', categoria_id: 4 },
-    { id: 8, nombre: 'Betta', categoria_id: 4 },
+    { id: 6, nombre: 'Pichon', categoria_id: 2 },
+    { id: 7, nombre: 'Betta', categoria_id: 4 },
+    { id: 8, nombre: 'Pez Dorado', categoria_id: 4 }
   ];
 
   mensaje: string = '';
@@ -708,19 +708,20 @@ export class CitaFormComponent implements OnInit {
         });
         setTimeout(() => {
           this.resetFormulario();
+            this.router.navigate(['/'])
 
-          // --- CORRECCIÓN 2: Redirección basada en Rol al finalizar ---
-          // Detectamos el rol y redirigimos a la agenda correspondiente
-          const rol = localStorage.getItem('rol');
+        //   // --- CORRECCIÓN 2: Redirección basada en Rol al finalizar ---
+        //   // Detectamos el rol y redirigimos a la agenda correspondiente
+        //   const rol = localStorage.getItem('rol');
 
-          if (rol === 'Admin') {
-             this.router.navigate(['/admin/agenda']); // O '/admin/citas-atender'
-          } else {
-             // Si es cliente público
-             this.router.navigate(['/dashboard']);
-          }
+        //   if (rol === 'Admin') {
+        //      this.router.navigate(['/admin/agenda']); // O '/admin/citas-atender'
+        //   } else {
+        //      // Si es cliente público
+        //      this.router.navigate(['/dashboard']);
+        //   }
 
-        }, 5000);
+        }, 2000);
       },
       error: (err: Error) => {
         this.cargando = false;
